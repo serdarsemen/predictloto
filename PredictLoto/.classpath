@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="D:/workspace/jars/hsqldb.jar"/>
+	<classpathentry kind="lib" path="D:/workspace/jars/junit-4.10.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/encog-core32"/>
+	<classpathentry kind="lib" path="D:/workspace/jars/mysql-connector-java-5.1.22-bin.jar"/>
+	<classpathentry kind="lib" path="D:/workspace/jars/log4j.jar"/>
+	<classpathentry kind="lib" path="properties"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
