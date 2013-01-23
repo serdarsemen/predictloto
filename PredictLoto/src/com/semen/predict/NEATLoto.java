@@ -17,6 +17,7 @@ import org.encog.neural.networks.training.TrainingSetScore;
 import org.encog.persist.EncogDirectoryPersistence;
 import org.encog.platformspecific.j2se.data.SQLNeuralDataSet;
 import org.encog.util.csv.CSVFormat;
+import org.encog.util.obj.SerializeObject;
 import org.encog.util.simple.EncogUtility;
 import org.encog.util.simple.TrainingSetUtil;
 
@@ -30,17 +31,16 @@ import org.encog.util.simple.TrainingSetUtil;
 public class NEATLoto {
 	/* Get actual class name to be printed on */
 	public static final Logger log = Logger.getLogger(NEATLoto.class); // .getName());
-	private static final long serialVersionUID = 3L;
+	// private static final long serialVersionUID = 3L;
 	private static Properties prop = new Properties();
 
-	/*
-	 * For each file, you'll need a separate Logger. private static Logger log =
-	 * Logger.getLogger( JordanLoto.class ) private static Logger connectionsLog
-	 * = Logger.getLogger( "connections." + JordanLoto.class.getName() ) private
-	 * static Logger stacktracesLog = Logger.getLogger( "stacktraces." +
-	 * JordanLoto.class.getName() ) private static Logger httpLog =
-	 * Logger.getLogger( "http." + JordanLoto.class.getName() )
-	 */
+	
+	 // For each file, you'll need a separate Logger. 
+	 // private static Logger log =	 * Logger.getLogger( JordanLoto.class ) 
+	// private static Logger connectionsLog = Logger.getLogger( "connections." + JordanLoto.class.getName() )
+	// private  static Logger stacktracesLog = Logger.getLogger( "stacktraces." + JordanLoto.class.getName() ) 
+	// private static Logger httpLog = Logger.getLogger( "http." + JordanLoto.class.getName() )
+	 
 
 	public NEATNetwork trainAndSave(int sourceTrainData) {
 
@@ -72,10 +72,16 @@ public class NEATLoto {
 
 		NEATNetwork network = (NEATNetwork) train.getMethod();
 
+		try {
+			// for neat save is used
+			SerializeObject.save(new File(ConfigLoto.NEAT_FILENAME), network);
 		// Save NEAT Network
-		// TODO : pop saved but neatnetwork did not work supported ?
-		EncogDirectoryPersistence.saveObject(
-				new File(ConfigLoto.NEAT_FILENAME), pop); // network ??
+		
+		   // EncogDirectoryPersistence.saveObject(
+		 //		new File(ConfigLoto.NEAT_FILENAME), pop); // only pop
+		} catch (Throwable t) {
+			t.printStackTrace();
+	    }
 		return network;
 	}
 

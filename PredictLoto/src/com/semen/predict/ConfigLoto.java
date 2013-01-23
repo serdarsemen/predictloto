@@ -25,8 +25,8 @@ public class ConfigLoto {
 
 	/* Get actual class name to be printed on */
 	public static final Logger log = Logger.getLogger(ConfigLoto.class);//			.getName());
-	private static final NumberFormat nf = new DecimalFormat("0.00");
-	private static final long serialVersionUID = 4L;
+	//private static final NumberFormat nf = new DecimalFormat("0.00");
+	//private static final long serialVersionUID = 4L;
 	public Properties props;
 
 	public final static int INPUT_SIZE = 49;
