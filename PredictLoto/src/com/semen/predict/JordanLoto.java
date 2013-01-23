@@ -44,18 +44,19 @@ import java.util.Properties;
  */
 public class JordanLoto {
 	/* Get actual class name to be printed on */
-	public static final Logger log = Logger.getLogger(JordanLoto.class); //			.getName());
+	public static final Logger log = Logger.getLogger(JordanLoto.class); // .getName());
 	private static final long serialVersionUID = 1L;
 	private static Properties prop = new Properties();
 
 	/*
-	 * For each file, you'll need a separate Logger.
-	private static Logger log = Logger.getLogger( JordanLoto.class )
-			private static Logger connectionsLog = Logger.getLogger( "connections." + JordanLoto.class.getName() )
-			private static Logger stacktracesLog = Logger.getLogger( "stacktraces." + JordanLoto.class.getName() )
-			private static Logger httpLog = Logger.getLogger( "http." + JordanLoto.class.getName() )
-*/
-	
+	 * For each file, you'll need a separate Logger. private static Logger log =
+	 * Logger.getLogger( JordanLoto.class ) private static Logger connectionsLog
+	 * = Logger.getLogger( "connections." + JordanLoto.class.getName() ) private
+	 * static Logger stacktracesLog = Logger.getLogger( "stacktraces." +
+	 * JordanLoto.class.getName() ) private static Logger httpLog =
+	 * Logger.getLogger( "http." + JordanLoto.class.getName() )
+	 */
+
 	static BasicNetwork createJordanNetwork() {
 		// construct an Jordan type network
 		log.debug("construct an Jordan type network");
@@ -81,7 +82,7 @@ public class JordanLoto {
 	public static double trainNetwork(final String what,
 			final BasicNetwork network, final MLDataSet trainingSet) {
 		// train the neural network
-		log.debug("Train "+what+" Network");
+		log.debug("Train " + what + " Network");
 		CalculateScore score = new TrainingSetScore(trainingSet);
 		final MLTrain trainAlt = new NeuralSimulatedAnnealing(network, score,
 				ConfigLoto.SIMANNEAL_STARTTEMP, ConfigLoto.SIMANNEAL_STOPTEMP,
@@ -176,17 +177,18 @@ public class JordanLoto {
 
 	public static void main(String[] args) {
 		try {
-			
-			//load a properties file from class path, inside static method
-    		prop.load(JordanLoto.class.getClassLoader().getResourceAsStream("config.properties"));
- 
-               //get the property value and print it out
-                System.out.println(prop.getProperty("database"));
-    		System.out.println(prop.getProperty("dbuser"));
-    		System.out.println(prop.getProperty("dbpassword"));
 
-			
-			
+			// load a properties file from class path, inside static method
+			prop.load(JordanLoto.class.getClassLoader().getResourceAsStream(
+					"config.properties"));
+
+			// get the property value and print it out
+			/*
+			 * System.out.println(prop.getProperty("database"));
+			 * System.out.println(prop.getProperty("dbuser"));
+			 * System.out.println(prop.getProperty("dbpassword"));
+			 */
+
 			JordanLoto program = new JordanLoto();
 			// 0 from MSSQL 1 from .csv text file
 			BasicNetwork jordanNetwork = program.trainAndSave(0);

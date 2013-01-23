@@ -8,6 +8,7 @@ package com.semen.predict;
  */
 
 import java.io.File;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.encog.Encog;
@@ -41,8 +42,19 @@ import org.encog.util.simple.TrainingSetUtil;
  */
 public class ElmanLoto {
 	/* Get actual class name to be printed on */
-	public static final Logger log = Logger.getLogger(ElmanLoto.class); //.getName());
+	public static final Logger log = Logger.getLogger(ElmanLoto.class); // .getName());
 	private static final long serialVersionUID = 2L;
+
+	private static Properties prop = new Properties();
+
+	/*
+	 * For each file, you'll need a separate Logger. private static Logger log =
+	 * Logger.getLogger( JordanLoto.class ) private static Logger connectionsLog
+	 * = Logger.getLogger( "connections." + JordanLoto.class.getName() ) private
+	 * static Logger stacktracesLog = Logger.getLogger( "stacktraces." +
+	 * JordanLoto.class.getName() ) private static Logger httpLog =
+	 * Logger.getLogger( "http." + JordanLoto.class.getName() )
+	 */
 
 	static BasicNetwork createElmanNetwork() {
 		// construct an Elman type network
@@ -84,8 +96,8 @@ public class ElmanLoto {
 		int epoch = 0;
 		while (!stop.shouldStop()) {
 			trainMain.iteration();
-			log.debug("Training " + what + ", Epoch #" + epoch
-					+ " Error:" + trainMain.getError());
+			log.debug("Training " + what + ", Epoch #" + epoch + " Error:"
+					+ trainMain.getError());
 			epoch++;
 		}
 		return trainMain.getError();
@@ -165,6 +177,18 @@ public class ElmanLoto {
 
 	public static void main(String[] args) {
 		try {
+		// load a properties file from class path, inside static method
+		prop.load(ElmanLoto.class.getClassLoader().getResourceAsStream(
+				"config.properties"));
+
+		// get the property value and print it out
+		/*
+		 * System.out.println(prop.getProperty("database"));
+		 * System.out.println(prop.getProperty("dbuser"));
+		 * System.out.println(prop.getProperty("dbpassword"));
+		 */
+
+		
 			ElmanLoto program = new ElmanLoto();
 			// 0 from MSSQL 1 from .csv text file
 			BasicNetwork elmanNetwork = program.trainAndSave(1);

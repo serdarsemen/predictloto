@@ -3,6 +3,7 @@
 package com.semen.predict;
 
 import java.io.File;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.encog.Encog;
@@ -28,8 +29,18 @@ import org.encog.util.simple.TrainingSetUtil;
  */
 public class NEATLoto {
 	/* Get actual class name to be printed on */
-	public static final Logger log = Logger.getLogger(NEATLoto.class); //.getName());
+	public static final Logger log = Logger.getLogger(NEATLoto.class); // .getName());
 	private static final long serialVersionUID = 3L;
+	private static Properties prop = new Properties();
+
+	/*
+	 * For each file, you'll need a separate Logger. private static Logger log =
+	 * Logger.getLogger( JordanLoto.class ) private static Logger connectionsLog
+	 * = Logger.getLogger( "connections." + JordanLoto.class.getName() ) private
+	 * static Logger stacktracesLog = Logger.getLogger( "stacktraces." +
+	 * JordanLoto.class.getName() ) private static Logger httpLog =
+	 * Logger.getLogger( "http." + JordanLoto.class.getName() )
+	 */
 
 	public NEATNetwork trainAndSave(int sourceTrainData) {
 
@@ -43,14 +54,15 @@ public class NEATLoto {
 
 		else if (sourceTrainData == 1)
 			trainingSet = TrainingSetUtil.loadCSVTOMemory(
-					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true, ConfigLoto.INPUT_SIZE,
-					ConfigLoto.IDEAL_SIZE);
+					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
+					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
 		else
 			trainingSet = TrainingSetUtil.loadCSVTOMemory(
-					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true, ConfigLoto.INPUT_SIZE,
-					ConfigLoto.IDEAL_SIZE);
+					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
+					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
 
-		NEATPopulation pop = new NEATPopulation(ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE, ConfigLoto.NEATPOPULATIONSIZE);
+		NEATPopulation pop = new NEATPopulation(ConfigLoto.INPUT_SIZE,
+				ConfigLoto.IDEAL_SIZE, ConfigLoto.NEATPOPULATIONSIZE);
 		CalculateScore score = new TrainingSetScore(trainingSet);
 
 		// train the neural network
@@ -60,10 +72,10 @@ public class NEATLoto {
 
 		NEATNetwork network = (NEATNetwork) train.getMethod();
 
-		// Save NEAT Network  
+		// Save NEAT Network
 		// TODO : pop saved but neatnetwork did not work supported ?
 		EncogDirectoryPersistence.saveObject(
-				new File(ConfigLoto.NEAT_FILENAME), pop); //network ?? 
+				new File(ConfigLoto.NEAT_FILENAME), pop); // network ??
 		return network;
 	}
 
@@ -92,6 +104,17 @@ public class NEATLoto {
 
 	public static void main(String[] args) {
 		try {
+			// load a properties file from class path, inside static method
+			prop.load(NEATLoto.class.getClassLoader().getResourceAsStream(
+					"config.properties"));
+
+			// get the property value and print it out
+			/*
+			 * System.out.println(prop.getProperty("database"));
+			 * System.out.println(prop.getProperty("dbuser"));
+			 * System.out.println(prop.getProperty("dbpassword"));
+			 */
+
 			NEATLoto program = new NEATLoto();
 			// 0 from MSSQL 1 from .csv text file
 			NEATNetwork neatNetwork = program.trainAndSave(1);
