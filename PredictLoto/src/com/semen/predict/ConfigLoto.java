@@ -41,15 +41,15 @@ public class ConfigLoto {
 	// Neural Simulated Annealing
 	public static double SIMANNEAL_STARTTEMP = 10.0; // The starting
 														// temperature.
-	public static double SIMANNEAL_STOPTEMP = 2.0; // The ending temperature.
-	public static int SIMANNEAL_CYCLES = 100; // The number of cycles in a
+	public static double SIMANNEAL_STOPTEMP = 1.0; // The ending temperature.
+	public static int SIMANNEAL_CYCLES = 300; // The number of cycles in a
 												// training iteration.
 	// Backpropagation
 	public static double BPROP_LEARNRATE = 0.00001; // The rate at which the
 													// weight matrix will be
 													// adjusted based on
 													// learning.
-	public static double BPROP_MOMENTUM = 0.0;// The influence that previous
+	public static double BPROP_MOMENTUM = 0.05;// The influence that previous
 												// iteration's training deltas
 												// will have on the current
 												// iteration.

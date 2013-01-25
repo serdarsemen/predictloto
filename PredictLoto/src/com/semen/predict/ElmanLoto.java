@@ -133,19 +133,19 @@ public class ElmanLoto {
 
 		// Backprop section
 
-		// final BasicNetwork feedforwardNetwork =
-		// ElmanLoto.createFeedforwardNetwork();
+		 final BasicNetwork feedforwardNetwork =
+		 ElmanLoto.createFeedforwardNetwork();
 
-		// final double feedforwardError = ElmanLoto.trainNetwork("Feedforward",
-		// feedforwardNetwork, trainingSet);
+		 final double feedforwardError = ElmanLoto.trainNetwork("Feedforward",
+		 feedforwardNetwork, trainingSet);
 
 		// Save feedforward Network
-		// EncogDirectoryPersistence.saveObject(new
-		// File(ELMANFEEDFORWARD_FILENAME), feedforwardNetwork);
+		 EncogDirectoryPersistence.saveObject(new
+		 File(ConfigLoto.ELMANFEEDFORWARD_FILENAME), feedforwardNetwork);
 
 		log.debug("Best error rate with Elman Network: " + elmanError);
-		// log.debug("Best error rate with Feedforward Network: " +
-		// feedforwardError);
+		 log.debug("Best error rate with Feedforward Network: " +
+		 feedforwardError);
 		log.debug("Elman should be able to get into the 10% range,"
 				+ "\nfeedforward should not go below 25%."
 				+ "\nThe recurrent Elment net can learn better in this case.");
