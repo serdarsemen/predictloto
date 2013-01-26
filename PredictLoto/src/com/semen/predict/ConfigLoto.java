@@ -18,6 +18,7 @@ import org.apache.log4j.Priority;
  * 
  */
 public class ConfigLoto {
+	
 	/**
 	 * The base directory that all of the data for this example is stored in.
 	 */
@@ -172,4 +173,16 @@ public class ConfigLoto {
 		rewardLowColour = props.getDoubleProperty(REWARD_LOW_COLOUR, 0.2);
 		rewardHighColour = props.getDoubleProperty(REWARD_HIGH_COLOUR, 1);
 	} */
+	
+	// TODO: make it singleton
+    private static final ConfigLoto instance = new ConfigLoto();
+    
+    private ConfigLoto() {
+    	// call init
+    }
+ 
+    public static ConfigLoto getInstance() {
+        return instance;
+    }
+	
 }
