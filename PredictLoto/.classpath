@@ -7,6 +7,6 @@
 	<classpathentry kind="lib" path="D:/workspace/jars/mysql-connector-java-5.1.22-bin.jar"/>
 	<classpathentry kind="lib" path="D:/workspace/jars/log4j.jar"/>
 	<classpathentry kind="lib" path="properties"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/encog-core32a"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/encog-core"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

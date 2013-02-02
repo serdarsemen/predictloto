@@ -38,7 +38,7 @@ public class ConfigLoto {
 	public static int FEEDFORWARDHIDDENNEURONSIZE = 180;
 	// Neat
 	public static int NEATPOPULATIONSIZE = 1000; // 1000
-	public static double NEATDESIREDERROR = 0.32; // 0.01 32 olabiliyor
+	public static double NEATDESIREDERROR = 0.16; // 0.01 En çabuk 0.32 olabiliyor  0.1114
 	// Neural Simulated Annealing
 	public static double SIMANNEAL_STARTTEMP = 10.0; // The starting
 														// temperature.

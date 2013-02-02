@@ -7,13 +7,16 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.encog.Encog;
+
 import org.encog.ml.data.MLDataSet;
 
 import org.encog.neural.neat.NEATNetwork;
 import org.encog.neural.neat.NEATPopulation;
 import org.encog.neural.neat.training.NEATTraining;
-import org.encog.neural.networks.training.CalculateScore;
+import org.encog.ml.CalculateScore;
+//import org.encog.neural.networks.training.CalculateScore;
 import org.encog.neural.networks.training.TrainingSetScore;
+
 import org.encog.persist.EncogDirectoryPersistence;
 import org.encog.platformspecific.j2se.data.SQLNeuralDataSet;
 import org.encog.util.csv.CSVFormat;
@@ -64,10 +67,11 @@ public class NEATLoto {
 		NEATPopulation pop = new NEATPopulation(ConfigLoto.INPUT_SIZE,
 				ConfigLoto.IDEAL_SIZE, ConfigLoto.NEATPOPULATIONSIZE);
 		CalculateScore score = new TrainingSetScore(trainingSet);
+		
 
 		// train the neural network
 		final NEATTraining train = new NEATTraining(score, pop);
-
+// Desired error omitted in 3.2 version
 		EncogUtility.trainToError(train, ConfigLoto.NEATDESIREDERROR);
 
 		NEATNetwork network = (NEATNetwork) train.getMethod();
