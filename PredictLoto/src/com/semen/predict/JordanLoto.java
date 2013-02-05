@@ -31,8 +31,6 @@ import org.encog.util.simple.EncogUtility;
 import org.encog.util.simple.TrainingSetUtil;
 
 import java.io.File;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.Properties;
 
 /**
@@ -46,7 +44,7 @@ import java.util.Properties;
 public class JordanLoto {
 	/* Get actual class name to be printed on */
 	public static final Logger log = Logger.getLogger(JordanLoto.class); // .getName());
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -4738357581L;
 	private static Properties prop = new Properties();
 
 	/*
@@ -97,14 +95,21 @@ public class JordanLoto {
 		trainMain.addStrategy(new HybridStrategy(trainAlt));
 		trainMain.addStrategy(stop);
 
-		int epoch = 0;
-		while (!stop.shouldStop()) {
+		
+	//	EncogUtility.trainToError(trainMain, ConfigLoto.JORDANDESIREDERROR);
+		
+		int epoch = 1;
+		double train_Error = 1.0;
+		while ((!stop.shouldStop()) && (train_Error >ConfigLoto.JORDANDESIREDERROR)) {
 			trainMain.iteration();
+			train_Error = trainMain.getError();
 			log.debug("Training " + what + ", Epoch #" + epoch + " Error:"
-					+ trainMain.getError());
+					+ train_Error+" Target Error= "+ConfigLoto.JORDANDESIREDERROR);
 			epoch++;
 		}
-		return trainMain.getError();
+		trainMain.finishTraining();
+		  
+		return train_Error;
 	}
 
 	public BasicNetwork trainAndSave(int sourceTrainData) {
@@ -155,11 +160,11 @@ public class JordanLoto {
 		return jordanNetwork;
 	}
 
-	public void loadAndEvaluate(BasicNetwork network) {
+	public void loadAndEvaluate(BasicNetwork jordanNetwork) {
 
-		if (network == null) {
+		if (jordanNetwork == null) {
 			log.debug("Loading JORDAN network");
-			network = (BasicNetwork) EncogDirectoryPersistence
+			jordanNetwork = (BasicNetwork) EncogDirectoryPersistence
 					.loadObject(new File(ConfigLoto.JORDAN_FILENAME));
 		}
 
@@ -168,16 +173,20 @@ public class JordanLoto {
 				ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL, ConfigLoto.SQL_UID,
 				ConfigLoto.SQL_PWD);
 
-		double e = network.calculateError(testSet);
-		log.debug("Loaded network's error is(should be same as above): " + e);
+		double e = jordanNetwork.calculateError(testSet);
+		log.debug("Loaded Jordan network's error for test set is: " + e);
 
 		// test the neural network
 		log.debug("****     Neural Network Results:");
-		EncogUtility.evaluate(network, testSet);
+		EncogUtility.evaluate(jordanNetwork, testSet);
 	}
 
 	public static void main(String[] args) {
 		try {
+			String arg1 = null;
+			if (args.length != 0) {
+				arg1 = args[0]; // means load eg file
+			}
 
 			// load a properties file from class path, inside static method
 			prop.load(JordanLoto.class.getClassLoader().getResourceAsStream(
@@ -191,14 +200,38 @@ public class JordanLoto {
 			 */
 
 			JordanLoto program = new JordanLoto();
-			// 0 from MSSQL 1 from .csv text file
-			BasicNetwork jordanNetwork = program.trainAndSave(0);
-			program.loadAndEvaluate(jordanNetwork);
+
+			BasicNetwork jordanNetwork = null;
+
+			if (arg1 != null) {
+				// use the previous saved eg file so no training
+				try {
+					jordanNetwork = (BasicNetwork) EncogDirectoryPersistence
+							.loadObject(new File(ConfigLoto.JORDAN_FILENAME));
+				} catch (Throwable t) {
+					t.printStackTrace();
+					jordanNetwork = program
+							.trainAndSave(ConfigLoto.DATASOURCETYPE);
+				} finally {
+				}
+				if (jordanNetwork == null) {
+					jordanNetwork = program
+							.trainAndSave(ConfigLoto.DATASOURCETYPE);
+				}
+				program.loadAndEvaluate(jordanNetwork);
+			} else {
+				jordanNetwork = program.trainAndSave(ConfigLoto.DATASOURCETYPE);
+				program.loadAndEvaluate(jordanNetwork);
+			}
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
 			Encog.getInstance().shutdown();
 		}
 
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 }

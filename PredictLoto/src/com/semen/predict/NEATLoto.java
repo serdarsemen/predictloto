@@ -3,6 +3,7 @@
 package com.semen.predict;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -37,13 +38,14 @@ public class NEATLoto {
 	// private static final long serialVersionUID = 3L;
 	private static Properties prop = new Properties();
 
-	
-	 // For each file, you'll need a separate Logger. 
-	 // private static Logger log =	 * Logger.getLogger( JordanLoto.class ) 
-	// private static Logger connectionsLog = Logger.getLogger( "connections." + JordanLoto.class.getName() )
-	// private  static Logger stacktracesLog = Logger.getLogger( "stacktraces." + JordanLoto.class.getName() ) 
-	// private static Logger httpLog = Logger.getLogger( "http." + JordanLoto.class.getName() )
-	 
+	// For each file, you'll need a separate Logger.
+	// private static Logger log = * Logger.getLogger( JordanLoto.class )
+	// private static Logger connectionsLog = Logger.getLogger( "connections." +
+	// JordanLoto.class.getName() )
+	// private static Logger stacktracesLog = Logger.getLogger( "stacktraces." +
+	// JordanLoto.class.getName() )
+	// private static Logger httpLog = Logger.getLogger( "http." +
+	// JordanLoto.class.getName() )
 
 	public NEATNetwork trainAndSave(int sourceTrainData) {
 
@@ -66,12 +68,17 @@ public class NEATLoto {
 
 		NEATPopulation pop = new NEATPopulation(ConfigLoto.INPUT_SIZE,
 				ConfigLoto.IDEAL_SIZE, ConfigLoto.NEATPOPULATIONSIZE);
+
+		// not required, but speeds training if added startes from 40 intead of
+		// 31
+		pop.setInitialConnectionDensity(ConfigLoto.NEATPOPULATIONDENSITY);
+		pop.reset();
+
 		CalculateScore score = new TrainingSetScore(trainingSet);
-		
 
 		// train the neural network
 		final NEATTraining train = new NEATTraining(score, pop);
-// Desired error omitted in 3.2 version
+		log.debug("Training NEAT network");
 		EncogUtility.trainToError(train, ConfigLoto.NEATDESIREDERROR);
 
 		NEATNetwork network = (NEATNetwork) train.getMethod();
@@ -79,13 +86,13 @@ public class NEATLoto {
 		try {
 			// for neat save is used
 			SerializeObject.save(new File(ConfigLoto.NEAT_FILENAME), network);
-		// Save NEAT Network
-		
-		   // EncogDirectoryPersistence.saveObject(
-		 //		new File(ConfigLoto.NEAT_FILENAME), pop); // only pop
+			// Save NEAT Network
+			// only pop
+			// EncogDirectoryPersistence.saveObject( new
+			// File(ConfigLoto.NEAT_FILENAME), network);
 		} catch (Throwable t) {
 			t.printStackTrace();
-	    }
+		}
 		return network;
 	}
 
@@ -93,9 +100,17 @@ public class NEATLoto {
 
 		if (network == null) {
 			log.debug("Loading NEAT network");
-			network = (NEATNetwork) EncogDirectoryPersistence
-					.loadObject(new File(ConfigLoto.NEAT_FILENAME));
-
+			/*
+			 * network = (NEATNetwork) EncogDirectoryPersistence .loadObject(new
+			 * File(ConfigLoto.NEAT_FILENAME));
+			 */
+			try {
+				network = (NEATNetwork) SerializeObject.load(new File(
+						ConfigLoto.NEAT_FILENAME));
+			} catch (ClassNotFoundException | IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 
 		final MLDataSet testSet = new SQLNeuralDataSet(ConfigLoto.TESTSQL,
@@ -114,6 +129,11 @@ public class NEATLoto {
 
 	public static void main(String[] args) {
 		try {
+			String arg1 = null;
+			if (args.length != 0) {
+				arg1 = args[0]; // means load eg file
+			}
+
 			// load a properties file from class path, inside static method
 			prop.load(NEATLoto.class.getClassLoader().getResourceAsStream(
 					"config.properties"));
@@ -126,9 +146,37 @@ public class NEATLoto {
 			 */
 
 			NEATLoto program = new NEATLoto();
-			// 0 from MSSQL 1 from .csv text file
-			NEATNetwork neatNetwork = program.trainAndSave(1);
-			program.loadAndEvaluate(neatNetwork);
+
+			NEATNetwork neatNetwork = null;
+
+			if (arg1 != null) {
+				// use the previous saved eg file so no training
+				try {
+					// neatNetwork = (NEATNetwork)
+					// EncogDirectoryPersistence.loadObject(new
+					// File(ConfigLoto.NEAT_FILENAME));
+
+						neatNetwork = (NEATNetwork) SerializeObject
+								.load(new File(ConfigLoto.NEAT_FILENAME));
+
+				} catch (Throwable t) {
+					t.printStackTrace();
+					neatNetwork = program
+							.trainAndSave(ConfigLoto.DATASOURCETYPE);
+
+				} finally {
+				}
+				if (neatNetwork == null) {
+					neatNetwork = program
+							.trainAndSave(ConfigLoto.DATASOURCETYPE);
+				}
+				program.loadAndEvaluate(neatNetwork);
+
+			} else {
+
+				neatNetwork = program.trainAndSave(ConfigLoto.DATASOURCETYPE);
+				program.loadAndEvaluate(neatNetwork);
+			}
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {

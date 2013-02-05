@@ -36,13 +36,21 @@ public class ConfigLoto {
 	public static int JORDANHIDDENNEURONSIZE = 180;
 	public static int ELMANHIDDENNEURONSIZE = 180;
 	public static int FEEDFORWARDHIDDENNEURONSIZE = 180;
+	
+	// 0 from MSSQL 1 from .csv text file
+	public static int DATASOURCETYPE=0;
+	
 	// Neat
 	public static int NEATPOPULATIONSIZE = 1000; // 1000
-	public static double NEATDESIREDERROR = 0.16; // 0.01 En çabuk 0.32 olabiliyor  0.1114
+	public static double NEATPOPULATIONDENSITY= 0.0; //1.0
+	public static double NEATDESIREDERROR = 0.10; // 0.01 En çabuk 0.24 0.32 olabiliyor  0.1114
+	public static double JORDANDESIREDERROR = 0.1205;
+	public static double ELMANDESIREDERROR = 0.107;
+	public static double FEEDFORWARDDESIREDERROR = 0.14;
 	// Neural Simulated Annealing
 	public static double SIMANNEAL_STARTTEMP = 10.0; // The starting
 														// temperature.
-	public static double SIMANNEAL_STOPTEMP = 1.0; //2.0 The ending temperature.
+	public static double SIMANNEAL_STOPTEMP = 2.0; //2.0 The ending temperature.
 	public static int SIMANNEAL_CYCLES = 300; // 100 The number of cycles in a
 												// training iteration.
 	// Backpropagation
@@ -67,7 +75,7 @@ public class ConfigLoto {
 	public static final String ELMANFEEDFORWARD_FILENAME = basePathStr
 			+ "\\ElmanFeedForwardLoto.eg";
 
-	public final static int TRAIN_SIZE = 770; // 774
+	public final static int TRAIN_SIZE = 840; // 
 
 	public final static String SELECTSQL = "SELECT `lotoresults`.`input1`,"
 			+ "`lotoresults`.`input2`," + "`lotoresults`.`input3`,"

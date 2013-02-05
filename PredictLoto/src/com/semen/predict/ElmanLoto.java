@@ -13,11 +13,13 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.encog.Encog;
 import org.encog.engine.network.activation.ActivationSigmoid;
+
 import org.encog.ml.data.MLDataSet;
 import org.encog.ml.train.MLTrain;
 import org.encog.ml.train.strategy.Greedy;
 import org.encog.ml.train.strategy.HybridStrategy;
 import org.encog.ml.train.strategy.StopTrainingStrategy;
+
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.ml.CalculateScore;
 //import org.encog.neural.networks.training.CalculateScore;
@@ -32,7 +34,6 @@ import org.encog.util.csv.CSVFormat;
 import org.encog.util.simple.EncogUtility;
 import org.encog.util.simple.TrainingSetUtil;
 
-//import com.semen.util.LotoConfig;
 
 /**
  * Implement an Elman style neural network with Encog. This network attempts to
@@ -44,7 +45,7 @@ import org.encog.util.simple.TrainingSetUtil;
 public class ElmanLoto {
 	/* Get actual class name to be printed on */
 	public static final Logger log = Logger.getLogger(ElmanLoto.class); // .getName());
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = -343434332L;
 
 	private static Properties prop = new Properties();
 
@@ -94,14 +95,19 @@ public class ElmanLoto {
 		trainMain.addStrategy(new HybridStrategy(trainAlt));
 		trainMain.addStrategy(stop);
 
-		int epoch = 0;
-		while (!stop.shouldStop()) {
+		// EncogUtility.trainToError(trainMain, ConfigLoto.ELMANDESIREDERROR);
+		
+		int epoch = 1;
+		double train_Error = 1.0;
+		while ((!stop.shouldStop()) && (train_Error>ConfigLoto.ELMANDESIREDERROR)) {
 			trainMain.iteration();
+			train_Error = trainMain.getError();
 			log.debug("Training " + what + ", Epoch #" + epoch + " Error:"
-					+ trainMain.getError());
+					+ train_Error+" Target Error= "+ConfigLoto.ELMANDESIREDERROR );
 			epoch++;
 		}
-		return trainMain.getError();
+		trainMain.finishTraining();
+		return train_Error;
 	}
 
 	public BasicNetwork trainAndSave(int sourceTrainData) {
@@ -134,19 +140,19 @@ public class ElmanLoto {
 
 		// Backprop section
 
-		 final BasicNetwork feedforwardNetwork =
-		 ElmanLoto.createFeedforwardNetwork();
+		final BasicNetwork feedforwardNetwork = ElmanLoto
+				.createFeedforwardNetwork();
 
-		 final double feedforwardError = ElmanLoto.trainNetwork("Feedforward",
-		 feedforwardNetwork, trainingSet);
+		final double feedforwardError = ElmanLoto.trainNetwork("Feedforward",
+				feedforwardNetwork, trainingSet);
 
 		// Save feedforward Network
-		 EncogDirectoryPersistence.saveObject(new
-		 File(ConfigLoto.ELMANFEEDFORWARD_FILENAME), feedforwardNetwork);
+		EncogDirectoryPersistence.saveObject(new File(
+				ConfigLoto.ELMANFEEDFORWARD_FILENAME), feedforwardNetwork);
 
 		log.debug("Best error rate with Elman Network: " + elmanError);
-		 log.debug("Best error rate with Feedforward Network: " +
-		 feedforwardError);
+		log.debug("Best error rate with Feedforward Network: "
+				+ feedforwardError);
 		log.debug("Elman should be able to get into the 10% range,"
 				+ "\nfeedforward should not go below 25%."
 				+ "\nThe recurrent Elment net can learn better in this case.");
@@ -155,11 +161,11 @@ public class ElmanLoto {
 		return elmanNetwork;
 	}
 
-	public void loadAndEvaluate(BasicNetwork network) {
+	public void loadAndEvaluate(BasicNetwork elmanNetwork) {
 
-		if (network == null) {
+		if (elmanNetwork == null) {
 			log.debug("Loading ELMAN network");
-			network = (BasicNetwork) EncogDirectoryPersistence
+			elmanNetwork = (BasicNetwork) EncogDirectoryPersistence
 					.loadObject(new File(ConfigLoto.ELMAN_FILENAME));
 		}
 
@@ -168,36 +174,93 @@ public class ElmanLoto {
 				ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL, ConfigLoto.SQL_UID,
 				ConfigLoto.SQL_PWD);
 
-		double e = network.calculateError(testSet);
-		log.debug("Loaded network's error is: " + e);
+		double e = elmanNetwork.calculateError(testSet);
+		log.debug("Loaded Elman network's error for test set is: " + e);
 
 		// test the neural network
-		log.debug("****     Neural Network Results:");
-		EncogUtility.evaluate(network, testSet);
+		log.debug("**** Elman Neural Network Results:");
+		EncogUtility.evaluate(elmanNetwork, testSet);
 	}
 
 	public static void main(String[] args) {
 		try {
-		// load a properties file from class path, inside static method
-		prop.load(ElmanLoto.class.getClassLoader().getResourceAsStream(
-				"config.properties"));
+			String arg1 = null;
+			if (args.length != 0) {
+				arg1 = args[0]; // means load eg file
+			}
 
-		// get the property value and print it out
-		/*
-		 * System.out.println(prop.getProperty("database"));
-		 * System.out.println(prop.getProperty("dbuser"));
-		 * System.out.println(prop.getProperty("dbpassword"));
-		 */
+			// load a properties file from class path, inside static method
+			prop.load(ElmanLoto.class.getClassLoader().getResourceAsStream(
+					"config.properties"));
 
-		
+			// get the property value and print it out
+			/*
+			 * System.out.println(prop.getProperty("database"));
+			 * System.out.println(prop.getProperty("dbuser"));
+			 * System.out.println(prop.getProperty("dbpassword"));
+			 */
+
 			ElmanLoto program = new ElmanLoto();
-			// 0 from MSSQL 1 from .csv text file
-			BasicNetwork elmanNetwork = program.trainAndSave(1);
-			program.loadAndEvaluate(elmanNetwork);
+
+			BasicNetwork elmanNetwork = null;
+
+			
+			
+			
+			/*
+			 * 
+			 * 
+			 * 
+			 * 		final File networkFile = new File(dataDir, Config.NETWORK_FILE);
+
+		// network file
+		if (!networkFile.exists()) {
+			System.out.println("Can't read file: " + networkFile.getAbsolutePath());
+			return;
+		}
+		
+		BasicNetwork network = (BasicNetwork)EncogDirectoryPersistence.loadObject(networkFile);
+		// training file
+		if (!trainingFile.exists()) {
+			System.out.println("Can't read file: " + trainingFile.getAbsolutePath());
+			return;
+		}
+		
+		final MLDataSet trainingSet = EncogUtility.loadEGB2Memory(trainingFile);
+
+			 * 
+			 */
+			
+			if (arg1 != null) {
+				// use the previous saved eg file so no training
+				try {
+					elmanNetwork = (BasicNetwork) EncogDirectoryPersistence
+							.loadObject(new File(ConfigLoto.ELMAN_FILENAME));
+				} catch (Throwable t) {
+					t.printStackTrace();
+					elmanNetwork = program
+							.trainAndSave(ConfigLoto.DATASOURCETYPE);
+				} finally {
+				}
+				if (elmanNetwork == null) {
+					elmanNetwork = program
+							.trainAndSave(ConfigLoto.DATASOURCETYPE);
+				}
+				program.loadAndEvaluate(elmanNetwork);
+			} else {
+
+				elmanNetwork = program.trainAndSave(ConfigLoto.DATASOURCETYPE);
+				program.loadAndEvaluate(elmanNetwork);
+
+			}
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
 			Encog.getInstance().shutdown();
 		}
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 }
