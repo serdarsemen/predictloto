@@ -15,6 +15,7 @@ import org.encog.neural.neat.NEATNetwork;
 import org.encog.neural.neat.NEATPopulation;
 import org.encog.neural.neat.training.NEATTraining;
 import org.encog.ml.CalculateScore;
+import org.encog.neural.networks.BasicNetwork;
 //import org.encog.neural.networks.training.CalculateScore;
 import org.encog.neural.networks.training.TrainingSetScore;
 
@@ -141,13 +142,22 @@ public class NEATLoto {
 			// get the property value and print it out
 			/*
 			 * System.out.println(prop.getProperty("database"));
-			 * System.out.println(prop.getProperty("dbuser"));
-			 * System.out.println(prop.getProperty("dbpassword"));
+			
 			 */
 
 			NEATLoto program = new NEATLoto();
 
 			NEATNetwork neatNetwork = null;
+			
+			final File networkFile = new File(ConfigLoto.NEAT_FILENAME);
+
+			if (!networkFile.exists()) {
+				log.debug("Can't read Neat eg file: " + networkFile.getAbsolutePath());
+			} else {
+
+				neatNetwork = (NEATNetwork) EncogDirectoryPersistence
+						.loadObject(networkFile);
+			}
 
 			if (arg1 != null) {
 				// use the previous saved eg file so no training
@@ -162,19 +172,19 @@ public class NEATLoto {
 				} catch (Throwable t) {
 					t.printStackTrace();
 					neatNetwork = program
-							.trainAndSave(ConfigLoto.DATASOURCETYPE);
+							.trainAndSave(ConfigLoto.DATASOURCESQL);
 
 				} finally {
 				}
 				if (neatNetwork == null) {
 					neatNetwork = program
-							.trainAndSave(ConfigLoto.DATASOURCETYPE);
+							.trainAndSave(ConfigLoto.DATASOURCESQL);
 				}
 				program.loadAndEvaluate(neatNetwork);
 
 			} else {
 
-				neatNetwork = program.trainAndSave(ConfigLoto.DATASOURCETYPE);
+				neatNetwork = program.trainAndSave(ConfigLoto.DATASOURCESQL);
 				program.loadAndEvaluate(neatNetwork);
 			}
 		} catch (Throwable t) {

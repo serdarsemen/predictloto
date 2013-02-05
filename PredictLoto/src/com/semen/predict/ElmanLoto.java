@@ -34,7 +34,6 @@ import org.encog.util.csv.CSVFormat;
 import org.encog.util.simple.EncogUtility;
 import org.encog.util.simple.TrainingSetUtil;
 
-
 /**
  * Implement an Elman style neural network with Encog. This network attempts to
  * predict the next value in Loto
@@ -94,17 +93,30 @@ public class ElmanLoto {
 		trainMain.addStrategy(new Greedy());
 		trainMain.addStrategy(new HybridStrategy(trainAlt));
 		trainMain.addStrategy(stop);
-		
-		// If below lined is used strategy can not be used.. 
+
+		// If below lined is used strategy can not be used..
 		// EncogUtility.trainToError(trainMain, ConfigLoto.ELMANDESIREDERROR);
-		
+
 		int epoch = 1;
 		double train_Error = 1.0;
-		while ((!stop.shouldStop()) && (train_Error>ConfigLoto.ELMANDESIREDERROR)) {
+		while ((!stop.shouldStop())
+				&& (train_Error > ConfigLoto.ELMANDESIREDERROR)) {
 			trainMain.iteration();
 			train_Error = trainMain.getError();
 			log.debug("Training " + what + ", Epoch #" + epoch + " Error:"
-					+ train_Error+" Target Error= "+ConfigLoto.ELMANDESIREDERROR );
+					+ train_Error + " Target Error= "
+					+ ConfigLoto.ELMANDESIREDERROR);
+			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
+				log.debug("Saving " + what + ", Epoch #" + epoch);
+				// Save feedforward Network
+				if (what.equals("Elman"))
+					EncogDirectoryPersistence.saveObject(new File(
+							ConfigLoto.ELMAN_FILENAME), network);
+				else
+					// Save Elman Network
+					EncogDirectoryPersistence.saveObject(new File(
+							ConfigLoto.ELMANFEEDFORWARD_FILENAME), network);
+			}
 			epoch++;
 		}
 		trainMain.finishTraining();
@@ -114,14 +126,14 @@ public class ElmanLoto {
 	public BasicNetwork trainAndSave(int sourceTrainData) {
 
 		MLDataSet trainingSet = null;
-		if (sourceTrainData == 0)
+		if (sourceTrainData == ConfigLoto.DATASOURCESQL)
 
 			trainingSet = new SQLNeuralDataSet(ConfigLoto.TRAINSQL,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
 					ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL,
 					ConfigLoto.SQL_UID, ConfigLoto.SQL_PWD);
 
-		else if (sourceTrainData == 1)
+		else if (sourceTrainData == ConfigLoto.DATASOURCECSV)
 			trainingSet = TrainingSetUtil.loadCSVTOMemory(
 					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
@@ -194,44 +206,24 @@ public class ElmanLoto {
 			prop.load(ElmanLoto.class.getClassLoader().getResourceAsStream(
 					"config.properties"));
 
-			// get the property value and print it out
+			// get the property value
 			/*
 			 * System.out.println(prop.getProperty("database"));
-			 * System.out.println(prop.getProperty("dbuser"));
-			 * System.out.println(prop.getProperty("dbpassword"));
 			 */
 
 			ElmanLoto program = new ElmanLoto();
 
 			BasicNetwork elmanNetwork = null;
 
-			
-			
-			
-			/*
-			 * 
-			 * 
-			 * 
-			 * 		final File networkFile = new File(dataDir, Config.NETWORK_FILE);
+			final File networkFile = new File(ConfigLoto.ELMAN_FILENAME);
 
-		// network file
-		if (!networkFile.exists()) {
-			System.out.println("Can't read file: " + networkFile.getAbsolutePath());
-			return;
-		}
-		
-		BasicNetwork network = (BasicNetwork)EncogDirectoryPersistence.loadObject(networkFile);
-		// training file
-		if (!trainingFile.exists()) {
-			System.out.println("Can't read file: " + trainingFile.getAbsolutePath());
-			return;
-		}
-		
-		final MLDataSet trainingSet = EncogUtility.loadEGB2Memory(trainingFile);
+			if (!networkFile.exists()) {
+				log.debug("Can't read Elman eg file: " + networkFile.getAbsolutePath());
+			} else {
 
-			 * 
-			 */
-			
+				elmanNetwork = (BasicNetwork) EncogDirectoryPersistence
+						.loadObject(networkFile);
+			}
 			if (arg1 != null) {
 				// use the previous saved eg file so no training
 				try {
@@ -240,17 +232,17 @@ public class ElmanLoto {
 				} catch (Throwable t) {
 					t.printStackTrace();
 					elmanNetwork = program
-							.trainAndSave(ConfigLoto.DATASOURCETYPE);
+							.trainAndSave(ConfigLoto.DATASOURCESQL);
 				} finally {
 				}
 				if (elmanNetwork == null) {
 					elmanNetwork = program
-							.trainAndSave(ConfigLoto.DATASOURCETYPE);
+							.trainAndSave(ConfigLoto.DATASOURCESQL);
 				}
 				program.loadAndEvaluate(elmanNetwork);
 			} else {
 
-				elmanNetwork = program.trainAndSave(ConfigLoto.DATASOURCETYPE);
+				elmanNetwork = program.trainAndSave(ConfigLoto.DATASOURCESQL);
 				program.loadAndEvaluate(elmanNetwork);
 
 			}

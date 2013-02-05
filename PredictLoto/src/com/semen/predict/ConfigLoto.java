@@ -38,7 +38,9 @@ public class ConfigLoto {
 	public static int FEEDFORWARDHIDDENNEURONSIZE = 180;
 	
 	// 0 from MSSQL 1 from .csv text file
-	public static int DATASOURCETYPE=0;
+	
+	public static int DATASOURCESQL= 0;
+	public static int DATASOURCECSV =1 ;
 	
 	// Neat
 	public static int NEATPOPULATIONSIZE = 1000; // 1000
@@ -47,6 +49,7 @@ public class ConfigLoto {
 	public static double JORDANDESIREDERROR = 0.1205;
 	public static double ELMANDESIREDERROR = 0.107;
 	public static double FEEDFORWARDDESIREDERROR = 0.14;
+	public static int EPOCHSAVEINTERVAL = 1000; // 1000
 	// Neural Simulated Annealing
 	public static double SIMANNEAL_STARTTEMP = 10.0; // The starting
 														// temperature.

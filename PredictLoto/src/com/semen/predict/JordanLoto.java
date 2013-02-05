@@ -95,20 +95,33 @@ public class JordanLoto {
 		trainMain.addStrategy(new HybridStrategy(trainAlt));
 		trainMain.addStrategy(stop);
 
-		// If below lined is used strategy can not be used.. 
-	//	EncogUtility.trainToError(trainMain, ConfigLoto.JORDANDESIREDERROR);
-		
+		// If below lined is used strategy can not be used..
+		// EncogUtility.trainToError(trainMain, ConfigLoto.JORDANDESIREDERROR);
+
 		int epoch = 1;
 		double train_Error = 1.0;
-		while ((!stop.shouldStop()) && (train_Error >ConfigLoto.JORDANDESIREDERROR)) {
+		while ((!stop.shouldStop())
+				&& (train_Error > ConfigLoto.JORDANDESIREDERROR)) {
 			trainMain.iteration();
 			train_Error = trainMain.getError();
 			log.debug("Training " + what + ", Epoch #" + epoch + " Error:"
-					+ train_Error+" Target Error= "+ConfigLoto.JORDANDESIREDERROR);
+					+ train_Error + " Target Error= "
+					+ ConfigLoto.JORDANDESIREDERROR);
+			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
+				log.debug("Saving "+ what + ", Epoch #" + epoch);
+				// Save feedforward Network
+				if (what.equals("Jordan"))
+					EncogDirectoryPersistence.saveObject(new File(
+							ConfigLoto.JORDAN_FILENAME), network);
+				else
+					// Save Elman Network
+					EncogDirectoryPersistence.saveObject(new File(
+							ConfigLoto.ELMANFEEDFORWARD_FILENAME), network);
+			}
 			epoch++;
 		}
 		trainMain.finishTraining();
-		  
+
 		return train_Error;
 	}
 
@@ -195,14 +208,21 @@ public class JordanLoto {
 			// get the property value and print it out
 			/*
 			 * System.out.println(prop.getProperty("database"));
-			 * System.out.println(prop.getProperty("dbuser"));
-			 * System.out.println(prop.getProperty("dbpassword"));
+			 
 			 */
 
 			JordanLoto program = new JordanLoto();
 
 			BasicNetwork jordanNetwork = null;
+			final File networkFile = new File(ConfigLoto.JORDAN_FILENAME);
 
+			if (!networkFile.exists()) {
+				log.debug("Can't read Jordan eg file: " + networkFile.getAbsolutePath());
+			} else {
+
+				jordanNetwork = (BasicNetwork) EncogDirectoryPersistence
+						.loadObject(networkFile);
+			}
 			if (arg1 != null) {
 				// use the previous saved eg file so no training
 				try {
@@ -211,16 +231,16 @@ public class JordanLoto {
 				} catch (Throwable t) {
 					t.printStackTrace();
 					jordanNetwork = program
-							.trainAndSave(ConfigLoto.DATASOURCETYPE);
+							.trainAndSave(ConfigLoto.DATASOURCESQL);
 				} finally {
 				}
 				if (jordanNetwork == null) {
 					jordanNetwork = program
-							.trainAndSave(ConfigLoto.DATASOURCETYPE);
+							.trainAndSave(ConfigLoto.DATASOURCESQL);
 				}
 				program.loadAndEvaluate(jordanNetwork);
 			} else {
-				jordanNetwork = program.trainAndSave(ConfigLoto.DATASOURCETYPE);
+				jordanNetwork = program.trainAndSave(ConfigLoto.DATASOURCESQL);
 				program.loadAndEvaluate(jordanNetwork);
 			}
 		} catch (Throwable t) {
