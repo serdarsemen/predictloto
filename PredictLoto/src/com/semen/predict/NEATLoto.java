@@ -69,7 +69,7 @@ public class NEATLoto {
 		NEATPopulation pop = new NEATPopulation(ConfigLoto.INPUT_SIZE,
 				ConfigLoto.IDEAL_SIZE, ConfigLoto.NEATPOPULATIONSIZE);
 
-		// not required, but speeds training if added startes from 40 intead of
+		// not required, but speeds training if added startes from 40 instead of
 		// 31
 		pop.setInitialConnectionDensity(ConfigLoto.NEATPOPULATIONDENSITY);
 		pop.reset();

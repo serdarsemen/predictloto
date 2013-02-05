@@ -95,7 +95,7 @@ public class JordanLoto {
 		trainMain.addStrategy(new HybridStrategy(trainAlt));
 		trainMain.addStrategy(stop);
 
-		
+		// If below lined is used strategy can not be used.. 
 	//	EncogUtility.trainToError(trainMain, ConfigLoto.JORDANDESIREDERROR);
 		
 		int epoch = 1;

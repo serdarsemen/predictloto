@@ -94,7 +94,8 @@ public class ElmanLoto {
 		trainMain.addStrategy(new Greedy());
 		trainMain.addStrategy(new HybridStrategy(trainAlt));
 		trainMain.addStrategy(stop);
-
+		
+		// If below lined is used strategy can not be used.. 
 		// EncogUtility.trainToError(trainMain, ConfigLoto.ELMANDESIREDERROR);
 		
 		int epoch = 1;
