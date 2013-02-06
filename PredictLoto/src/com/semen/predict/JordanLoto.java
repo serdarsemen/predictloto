@@ -106,8 +106,8 @@ public class JordanLoto {
 			trainMain.iteration();
 			train_Error = trainMain.getError();
 			log.debug("Training " + what + ", Epoch #" + epoch + " Error:"
-					+ Format.formatPercent(train_Error) + " Target Error= "
-					+ Format.formatPercent(ConfigLoto.JORDANDESIREDERROR));
+					+ Format.formatDouble(train_Error,4) + " Target Error= "
+					+ Format.formatDouble(ConfigLoto.JORDANDESIREDERROR,4));
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
 				log.debug("Saving " + what + ", Epoch #" + epoch);
 				// Save feedforward Network

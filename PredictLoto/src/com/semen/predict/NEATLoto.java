@@ -152,9 +152,9 @@ public class NEATLoto {
 		do {
 			train.iteration();
 
-			log.debug("Iteration #" + Format.formatInteger(epoch) + " Error:"
-					+ Format.formatPercent(train.getError())
-					+ " Target Error: " + Format.formatPercent(error));
+			log.debug("Epoch # " + Format.formatInteger(epoch) + " Error: "
+					+ Format.formatDouble(train.getError(),4)
+					+ " Target Error: " + Format.formatDouble(error,4));
 			epoch++;
 		} while ((train.getError() > error) && !train.isTrainingDone());
 		train.finishTraining();
