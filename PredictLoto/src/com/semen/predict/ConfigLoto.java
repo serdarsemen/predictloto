@@ -40,7 +40,7 @@ public class ConfigLoto {
 	// 0 from MSSQL 1 from .csv text file
 	
 	public static int DATASOURCESQL= 0;
-	public static int DATASOURCECSV =1 ;
+	public static int DATASOURCECSV=1 ;
 	
 	// Neat
 	public static int NEATPOPULATIONSIZE = 1000; // 1000

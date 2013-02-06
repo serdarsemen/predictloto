@@ -108,7 +108,7 @@ public class JordanLoto {
 					+ train_Error + " Target Error= "
 					+ ConfigLoto.JORDANDESIREDERROR);
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
-				log.debug("Saving "+ what + ", Epoch #" + epoch);
+				log.debug("Saving " + what + ", Epoch #" + epoch);
 				// Save feedforward Network
 				if (what.equals("Jordan"))
 					EncogDirectoryPersistence.saveObject(new File(
@@ -208,26 +208,27 @@ public class JordanLoto {
 			// get the property value and print it out
 			/*
 			 * System.out.println(prop.getProperty("database"));
-			 
 			 */
 
 			JordanLoto program = new JordanLoto();
 
 			BasicNetwork jordanNetwork = null;
-			final File networkFile = new File(ConfigLoto.JORDAN_FILENAME);
+			File networkFile = null;
 
-			if (!networkFile.exists()) {
-				log.debug("Can't read Jordan eg file: " + networkFile.getAbsolutePath());
-			} else {
-
-				jordanNetwork = (BasicNetwork) EncogDirectoryPersistence
-						.loadObject(networkFile);
-			}
 			if (arg1 != null) {
 				// use the previous saved eg file so no training
 				try {
-					jordanNetwork = (BasicNetwork) EncogDirectoryPersistence
-							.loadObject(new File(ConfigLoto.JORDAN_FILENAME));
+					networkFile = new File(ConfigLoto.JORDAN_FILENAME);
+					if (!networkFile.exists()) {
+						log.debug("Can't read Jordan eg file: "
+								+ networkFile.getAbsolutePath());
+						jordanNetwork = program
+								.trainAndSave(ConfigLoto.DATASOURCESQL);
+					} else {
+						jordanNetwork = (BasicNetwork) EncogDirectoryPersistence
+								.loadObject(networkFile);
+					}
+
 				} catch (Throwable t) {
 					t.printStackTrace();
 					jordanNetwork = program

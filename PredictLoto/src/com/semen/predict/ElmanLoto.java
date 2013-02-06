@@ -212,23 +212,22 @@ public class ElmanLoto {
 			 */
 
 			ElmanLoto program = new ElmanLoto();
-
 			BasicNetwork elmanNetwork = null;
+			File networkFile = null;
 
-			final File networkFile = new File(ConfigLoto.ELMAN_FILENAME);
-
-			if (!networkFile.exists()) {
-				log.debug("Can't read Elman eg file: " + networkFile.getAbsolutePath());
-			} else {
-
-				elmanNetwork = (BasicNetwork) EncogDirectoryPersistence
-						.loadObject(networkFile);
-			}
 			if (arg1 != null) {
 				// use the previous saved eg file so no training
 				try {
-					elmanNetwork = (BasicNetwork) EncogDirectoryPersistence
-							.loadObject(new File(ConfigLoto.ELMAN_FILENAME));
+					networkFile = new File(ConfigLoto.ELMAN_FILENAME);
+					if (!networkFile.exists()) {
+						log.debug("Can't read Elman eg file: "
+								+ networkFile.getAbsolutePath());
+						elmanNetwork = program
+								.trainAndSave(ConfigLoto.DATASOURCESQL);
+					} else {
+						elmanNetwork = (BasicNetwork) EncogDirectoryPersistence
+								.loadObject(networkFile);
+					}
 				} catch (Throwable t) {
 					t.printStackTrace();
 					elmanNetwork = program
@@ -241,10 +240,8 @@ public class ElmanLoto {
 				}
 				program.loadAndEvaluate(elmanNetwork);
 			} else {
-
 				elmanNetwork = program.trainAndSave(ConfigLoto.DATASOURCESQL);
 				program.loadAndEvaluate(elmanNetwork);
-
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();

@@ -148,27 +148,28 @@ public class NEATLoto {
 			NEATLoto program = new NEATLoto();
 
 			NEATNetwork neatNetwork = null;
+			File networkFile = null;
 			
-			final File networkFile = new File(ConfigLoto.NEAT_FILENAME);
 
-			if (!networkFile.exists()) {
-				log.debug("Can't read Neat eg file: " + networkFile.getAbsolutePath());
-			} else {
-
-				neatNetwork = (NEATNetwork) EncogDirectoryPersistence
-						.loadObject(networkFile);
-			}
-
+			
 			if (arg1 != null) {
 				// use the previous saved eg file so no training
 				try {
+					networkFile = new File(ConfigLoto.NEAT_FILENAME);
 					// neatNetwork = (NEATNetwork)
 					// EncogDirectoryPersistence.loadObject(new
 					// File(ConfigLoto.NEAT_FILENAME));
 
-						neatNetwork = (NEATNetwork) SerializeObject
-								.load(new File(ConfigLoto.NEAT_FILENAME));
+					
+					if (!networkFile.exists()) {
+						log.debug("Can't read Neat eg file: " + networkFile.getAbsolutePath());
+						neatNetwork = program
+								.trainAndSave(ConfigLoto.DATASOURCESQL);
 
+					} else {
+						neatNetwork = (NEATNetwork) EncogDirectoryPersistence
+								.loadObject(networkFile);
+					}
 				} catch (Throwable t) {
 					t.printStackTrace();
 					neatNetwork = program
