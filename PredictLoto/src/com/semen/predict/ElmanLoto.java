@@ -33,6 +33,7 @@ import org.encog.platformspecific.j2se.data.SQLNeuralDataSet;
 import org.encog.util.csv.CSVFormat;
 import org.encog.util.simple.EncogUtility;
 import org.encog.util.simple.TrainingSetUtil;
+import org.encog.util.Format;
 
 /**
  * Implement an Elman style neural network with Encog. This network attempts to
@@ -104,8 +105,8 @@ public class ElmanLoto {
 			trainMain.iteration();
 			train_Error = trainMain.getError();
 			log.debug("Training " + what + ", Epoch #" + epoch + " Error:"
-					+ train_Error + " Target Error= "
-					+ ConfigLoto.ELMANDESIREDERROR);
+					+ Format.formatPercent(train_Error) + " Target Error= "
+					+ Format.formatPercent(ConfigLoto.ELMANDESIREDERROR));
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
 				log.debug("Saving " + what + ", Epoch #" + epoch);
 				// Save feedforward Network

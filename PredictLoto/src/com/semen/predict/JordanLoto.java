@@ -18,7 +18,7 @@ import org.encog.ml.train.strategy.HybridStrategy;
 import org.encog.ml.train.strategy.StopTrainingStrategy;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.ml.CalculateScore;
-//import org.encog.neural.networks.training.CalculateScore;
+
 import org.encog.neural.networks.training.TrainingSetScore;
 import org.encog.neural.networks.training.anneal.NeuralSimulatedAnnealing;
 import org.encog.neural.networks.training.propagation.back.Backpropagation;
@@ -26,6 +26,7 @@ import org.encog.neural.pattern.FeedForwardPattern;
 import org.encog.neural.pattern.JordanPattern;
 import org.encog.platformspecific.j2se.data.SQLNeuralDataSet;
 import org.encog.persist.EncogDirectoryPersistence;
+import org.encog.util.Format;
 import org.encog.util.csv.CSVFormat;
 import org.encog.util.simple.EncogUtility;
 import org.encog.util.simple.TrainingSetUtil;
@@ -105,8 +106,8 @@ public class JordanLoto {
 			trainMain.iteration();
 			train_Error = trainMain.getError();
 			log.debug("Training " + what + ", Epoch #" + epoch + " Error:"
-					+ train_Error + " Target Error= "
-					+ ConfigLoto.JORDANDESIREDERROR);
+					+ Format.formatPercent(train_Error) + " Target Error= "
+					+ Format.formatPercent(ConfigLoto.JORDANDESIREDERROR));
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
 				log.debug("Saving " + what + ", Epoch #" + epoch);
 				// Save feedforward Network
