@@ -73,9 +73,9 @@ public class NEATLoto {
 		do {
 			train.iteration();
 			train_Error = train.getError();
-			log.debug("NEAT Epoch # " + Format.formatInteger(epoch) + " Error= "
-					+ Format.formatDouble(train_Error, 4) + " Target Error= "
-					+ str_TargetError);
+			log.debug("NEAT Epoch # " + Format.formatInteger(epoch)
+					+ " Error= " + Format.formatDouble(train_Error, 4)
+					+ " Target Error= " + str_TargetError);
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
 				log.debug("Saving NEAT POP / network  Epoch #" + epoch);
 
@@ -233,13 +233,16 @@ public class NEATLoto {
 				ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
 				ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL, ConfigLoto.SQL_UID,
 				ConfigLoto.SQL_PWD);
+		if (testSet.size() > 0) {
+			double e = network.calculateError(testSet);
+			log.debug("Loaded network's error is: " + e);
 
-		double e = network.calculateError(testSet);
-		log.debug("Loaded network's error is: " + e);
-
-		// test the neural network
-		log.debug("****     Neural Network Results:");
-		ConfigLoto.evaluate(network, testSet);
+			// test the neural network
+			log.debug("****     Neural Network Results:");
+			ConfigLoto.evaluate(network, testSet);
+		} else {
+			log.debug("Test set is empty");
+		}
 
 	}
 

@@ -247,14 +247,17 @@ public class JordanLoto {
 				ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
 				ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL, ConfigLoto.SQL_UID,
 				ConfigLoto.SQL_PWD);
+		if (testSet.size() > 0) {
+			double e = jordanNetwork.calculateError(testSet);
+			log.debug("Loaded Jordan network's error for test set is: " + e);
 
-		double e = jordanNetwork.calculateError(testSet);
-		log.debug("Loaded Jordan network's error for test set is: " + e);
+			// test the neural network
+			log.debug("****     Neural Network Results:");
 
-		// test the neural network
-		log.debug("****     Neural Network Results:");
-
-		ConfigLoto.evaluate(jordanNetwork, testSet);
+			ConfigLoto.evaluate(jordanNetwork, testSet);
+		} else {
+			log.debug("Test set is empty");
+		}
 	}
 
 	public static void main(String[] args) {

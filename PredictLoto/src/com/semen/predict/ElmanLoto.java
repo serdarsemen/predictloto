@@ -251,13 +251,16 @@ public class ElmanLoto {
 				ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
 				ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL, ConfigLoto.SQL_UID,
 				ConfigLoto.SQL_PWD);
+		if (testSet.size() > 0) {
+			double e = elmanNetwork.calculateError(testSet);
+			log.debug("Loaded Elman network's error for test set is: " + e);
 
-		double e = elmanNetwork.calculateError(testSet);
-		log.debug("Loaded Elman network's error for test set is: " + e);
-
-		// test the neural network
-		log.debug("**** Elman Neural Network Results:");
-		ConfigLoto.evaluate(elmanNetwork, testSet);
+			// test the neural network
+			log.debug("**** Elman Neural Network Results:");
+			ConfigLoto.evaluate(elmanNetwork, testSet);
+		} else {
+			log.debug("Test set is empty");
+		}
 	}
 
 	public static void main(String[] args) {
