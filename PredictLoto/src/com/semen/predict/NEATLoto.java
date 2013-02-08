@@ -21,6 +21,7 @@ import org.encog.neural.neat.NEATPopulation;
 import org.encog.neural.neat.training.NEATTraining;
 import org.encog.ml.CalculateScore;
 import org.encog.ml.MLRegression;
+import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.training.TrainingSetScore;
 
 import org.encog.persist.EncogDirectoryPersistence;
@@ -44,13 +45,6 @@ public class NEATLoto {
 	// private static final long serialVersionUID = 3L;
 	private static Properties prop = new Properties();
 
-	public static double MINVALUE = 0.4; // 0.0009;
-	public static double IDEALVALUE = 1.0;
-	public static SortedMap<Integer, Double> PREDICTMAPRESULT = new TreeMap<Integer, Double>();
-	public static SortedMap<Integer, Double> PREDICTMAP = new TreeMap<Integer, Double>();
-	public static SortedMap<Integer, Double> PREDICTLOWMAPRESULT = new TreeMap<Integer, Double>();
-	public static SortedMap<Integer, Double> PREDICTLOWMAP = new TreeMap<Integer, Double>();
-
 	// For each file, you'll need a separate Logger.
 	// private static Logger log = * Logger.getLogger( JordanLoto.class )
 	// private static Logger connectionsLog = Logger.getLogger( "connections." +
@@ -59,81 +53,6 @@ public class NEATLoto {
 	// JordanLoto.class.getName() )
 	// private static Logger httpLog = Logger.getLogger( "http." +
 	// JordanLoto.class.getName() )
-
-	
-	/**
-	 * Evaluate the network and display (to the logger) the output for every
-	 * value in the training set. Displays ideal and actual.
-	 * 
-	 * @param network
-	 *            The network to evaluate.
-	 * @param training
-	 *            The training set to evaluate.
-	 */
-	public static void evaluate(final MLRegression network,
-			final MLDataSet training) {
-		for (final MLDataPair pair : training) {
-			final MLData output = network.compute(pair.getInput());
-			log.debug("Input= "
-					+ EncogUtility.formatNeuralData(pair.getInput()));
-			log.debug("Actual=" + EncogUtility.formatNeuralData(output));
-			log.debug("Ideal= "
-					+ EncogUtility.formatNeuralData(pair.getIdeal()));
-			log.debug("Success Report ---------");
-			calculateSuccess(output, pair.getIdeal());
-		}
-	}
-
-	/**
-	 * Calculate success
-	 * 
-	 * @param actual
-	 *            
-	 * @param actual
-	 *            ideal
-	 * @return The success count
-	 */
-	public static void calculateSuccess(final MLData actual, final MLData ideal) {
-
-		int counterSuccess = 0;
-		int counterLowSuccess = 0;
-		int counterTotalPredict = 0;
-		int counterLowTotalPredict = 0;
-		PREDICTMAP.clear();
-		PREDICTMAPRESULT.clear();
-		PREDICTLOWMAP.clear();
-		PREDICTLOWMAPRESULT.clear();
-		for (int i = 0; i < actual.size(); i++) {
-			if (ideal.getData(i) == IDEALVALUE) // 1.0
-				if (actual.getData(i) > MINVALUE) {
-					counterSuccess++;
-					PREDICTMAPRESULT.put(i + 1, actual.getData(i));
-				} else {
-					counterLowSuccess++;
-					PREDICTLOWMAPRESULT.put(i + 1, actual.getData(i));
-				}
-		}
-		for (int i = 0; i < actual.size(); i++) {
-			if (actual.getData(i) > MINVALUE) {
-				counterTotalPredict++;
-				PREDICTMAP.put(i + 1, actual.getData(i));
-			} else {
-				counterLowTotalPredict++;
-				PREDICTLOWMAP.put(i + 1, actual.getData(i));
-			}
-		}
-		log.debug("Successfull Predict Count= " + counterSuccess);
-		log.debug("Result= " + PREDICTMAPRESULT);
-		log.debug("Prediction= " + PREDICTMAP);
-		log.debug("Total Predict Count= " + counterTotalPredict);
-
-		log.debug("Successfull Low Predict Count<  " + MINVALUE + " = "
-				+ counterLowSuccess);
-		log.debug("Low Result= " + PREDICTLOWMAPRESULT);
-		log.debug("Low Prediction= " + PREDICTLOWMAP);
-		log.debug("Total Low Predict Count= " + counterLowTotalPredict);
-
-	}
 
 	/**
 	 * Train to a specific error, using the specified training method, send the
@@ -144,20 +63,102 @@ public class NEATLoto {
 	 * @param error
 	 *            The desired error level.
 	 */
-	public static void trainToError(final MLTrain train, final double error) {
+	public static void trainToError(final MLTrain train, final double error,
+			NEATPopulation pop) {
 
 		int epoch = 1;
-
-		log.debug("Beginning training...");
+		double train_Error = 1.0;
+		String str_TargetError = Format.formatDouble(error, 4);
+		log.debug("Beginning NEAT training...");
 		do {
 			train.iteration();
+			train_Error = train.getError();
+			log.debug("NEAT Epoch # " + Format.formatInteger(epoch) + " Error= "
+					+ Format.formatDouble(train_Error, 4) + " Target Error= "
+					+ str_TargetError);
+			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
+				log.debug("Saving NEAT POP / network  Epoch #" + epoch);
 
-			log.debug("Epoch # " + Format.formatInteger(epoch) + " Error: "
-					+ Format.formatDouble(train.getError(),4)
-					+ " Target Error: " + Format.formatDouble(error,4));
+				// Save NEAT pop
+				EncogDirectoryPersistence.saveObject(new File(
+						ConfigLoto.NEAT_FILENAME), pop);
+
+				NEATNetwork network = (NEATNetwork) train.getMethod();
+				try {
+					// Save NEAT network
+					SerializeObject.save(new File(
+							ConfigLoto.NEAT_SERIALFILENAME), network);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			epoch++;
 		} while ((train.getError() > error) && !train.isTrainingDone());
 		train.finishTraining();
+	}
+
+	/*
+	 * Continue training from the last saved network
+	 */
+	public NEATNetwork loadAndContinueTrain(int sourceTrainData,
+			NEATNetwork network, NEATPopulation pop) {
+		if (network == null) {
+			log.debug("Loading NEAT network");
+
+			try {
+				network = (NEATNetwork) SerializeObject.load(new File(
+						ConfigLoto.NEAT_SERIALFILENAME));
+			} catch (ClassNotFoundException | IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+
+		if (pop == null) {
+			log.debug("Loading NEAT pop");
+			pop = (NEATPopulation) EncogDirectoryPersistence
+					.loadObject(new File(ConfigLoto.NEAT_FILENAME));
+		}
+
+		MLDataSet trainingSet = null;
+		if (sourceTrainData == 0)
+			trainingSet = new SQLNeuralDataSet(ConfigLoto.TRAINSQL,
+					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
+					ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL,
+					ConfigLoto.SQL_UID, ConfigLoto.SQL_PWD);
+		else if (sourceTrainData == 1)
+			trainingSet = TrainingSetUtil.loadCSVTOMemory(
+					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
+					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
+		else
+			trainingSet = TrainingSetUtil.loadCSVTOMemory(
+					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
+					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
+
+		CalculateScore score = new TrainingSetScore(trainingSet);
+
+		double e = network.calculateError(trainingSet);
+		log.debug("Loaded NEAT network's error for previous train set is: " + e);
+
+		// train the neural network
+		final NEATTraining train = new NEATTraining(score, pop);
+
+		trainToError(train, ConfigLoto.NEATDESIREDERROR, pop);
+
+		network = (NEATNetwork) train.getMethod();
+
+		try {
+			// Save pop
+			EncogDirectoryPersistence.saveObject(new File(
+					ConfigLoto.NEAT_FILENAME), pop);
+			// Save NEAT Network
+			SerializeObject.save(new File(ConfigLoto.NEAT_SERIALFILENAME),
+					network);
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+		return network;
 	}
 
 	public NEATNetwork trainAndSave(int sourceTrainData) {
@@ -191,24 +192,24 @@ public class NEATLoto {
 
 		// train the neural network
 		final NEATTraining train = new NEATTraining(score, pop);
-		log.debug("Training NEAT network");
-		trainToError(train, ConfigLoto.NEATDESIREDERROR);
+
+		trainToError(train, ConfigLoto.NEATDESIREDERROR, pop);
 
 		NEATNetwork network = (NEATNetwork) train.getMethod();
 
 		try {
-			// for neat save is used
-		//	SerializeObject.save(new File(ConfigLoto.NEAT_FILENAME), network);
+			// Save pop
+			EncogDirectoryPersistence.saveObject(new File(
+					ConfigLoto.NEAT_FILENAME), pop);
 			// Save NEAT Network
-			// only pop
-			 EncogDirectoryPersistence.saveObject( new	 File(ConfigLoto.NEAT_FILENAME), pop);
+			SerializeObject.save(new File(ConfigLoto.NEAT_SERIALFILENAME),
+					network);
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
 		return network;
 	}
 
-	
 	public void loadAndEvaluate(NEATNetwork network) {
 
 		if (network == null) {
@@ -218,8 +219,10 @@ public class NEATLoto {
 			 * File(ConfigLoto.NEAT_FILENAME));
 			 */
 			try {
+				// network = (NEATNetwork) SerializeObject.load(new File(
+				// ConfigLoto.NEAT_FILENAME));
 				network = (NEATNetwork) SerializeObject.load(new File(
-						ConfigLoto.NEAT_FILENAME));
+						ConfigLoto.NEAT_SERIALFILENAME));
 			} catch (ClassNotFoundException | IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -236,7 +239,7 @@ public class NEATLoto {
 
 		// test the neural network
 		log.debug("****     Neural Network Results:");
-		evaluate(network, testSet);
+		ConfigLoto.evaluate(network, testSet);
 
 	}
 
@@ -254,33 +257,34 @@ public class NEATLoto {
 			// get the property value and print it out
 			/*
 			 * System.out.println(prop.getProperty("database"));
-			
 			 */
 
 			NEATLoto program = new NEATLoto();
 
 			NEATNetwork neatNetwork = null;
 			File networkFile = null;
-			
-
-			
+			File networkSerFile = null;
 			if (arg1 != null) {
 				// use the previous saved eg file so no training
 				try {
 					networkFile = new File(ConfigLoto.NEAT_FILENAME);
+					networkSerFile = new File(ConfigLoto.NEAT_SERIALFILENAME);
 					// neatNetwork = (NEATNetwork)
 					// EncogDirectoryPersistence.loadObject(new
 					// File(ConfigLoto.NEAT_FILENAME));
 
-					
 					if (!networkFile.exists()) {
-						log.debug("Can't read Neat eg file: " + networkFile.getAbsolutePath());
+						log.debug("Can't read Neat eg file: "
+								+ networkFile.getAbsolutePath());
 						neatNetwork = program
 								.trainAndSave(ConfigLoto.DATASOURCESQL);
 
 					} else {
-						neatNetwork = (NEATNetwork) EncogDirectoryPersistence
-								.loadObject(networkFile);
+						// neatNetwork = (NEATNetwork) EncogDirectoryPersistence
+						// .loadObject(networkFile)
+
+						neatNetwork = (NEATNetwork) SerializeObject
+								.load(networkSerFile);
 					}
 				} catch (Throwable t) {
 					t.printStackTrace();

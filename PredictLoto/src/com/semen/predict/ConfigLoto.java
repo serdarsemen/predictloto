@@ -3,13 +3,21 @@
 package com.semen.predict;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
+import org.encog.ml.MLRegression;
+import org.encog.ml.data.MLData;
+import org.encog.ml.data.MLDataPair;
+import org.encog.ml.data.MLDataSet;
+import org.encog.util.simple.EncogUtility;
 
 /**
  * Basic config info for the Predict Loto.
@@ -17,53 +25,55 @@ import org.apache.log4j.Priority;
  * @author serdar semen
  * 
  */
-public class ConfigLoto {
-	
+public final class ConfigLoto {
+
 	/**
 	 * The base directory that all of the data for this example is stored in.
 	 */
 	private static final String basePathStr = "d:\\sayisalAi";
 
 	/* Get actual class name to be printed on */
-	public static final Logger log = Logger.getLogger(ConfigLoto.class);//			.getName());
-	//private static final NumberFormat nf = new DecimalFormat("0.00");
-	//private static final long serialVersionUID = 4L;
+	public static final Logger log = Logger.getLogger(ConfigLoto.class);// .getName());
+	// private static final NumberFormat nf = new DecimalFormat("0.00");
+	// private static final long serialVersionUID = 4L;
 	public Properties props;
 
 	public final static int INPUT_SIZE = 49;
 	public final static int IDEAL_SIZE = 49;
 
-	public static int JORDANHIDDENNEURONSIZE = 180;
-	public static int ELMANHIDDENNEURONSIZE = 180;
-	public static int FEEDFORWARDHIDDENNEURONSIZE = 180;
-	
+	public static int JORDANHIDDENNEURONSIZE = 160;// 180  not success !!!
+	public static int ELMANHIDDENNEURONSIZE = 120; // 180
+	public static int FEEDFORWARDHIDDENNEURONSIZE = 120; // 180
+
 	// 0 from MSSQL 1 from .csv text file
-	
-	public static int DATASOURCESQL= 0;
-	public static int DATASOURCECSV=1 ;
-	
+
+	public static int DATASOURCESQL = 0;
+	public static int DATASOURCECSV = 1;
+
 	// Neat
 	public static int NEATPOPULATIONSIZE = 1000; // 1000
-	public static double NEATPOPULATIONDENSITY= 0.0; //1.0
-	public static double NEATDESIREDERROR = 0.19; // 0.01 En çabuk 0.24 0.32 olabiliyor  0.1063
-	public static double JORDANDESIREDERROR = 0.1205;
-	public static double ELMANDESIREDERROR = 0.107;
+	public static double NEATPOPULATIONDENSITY = 0.0; // 1.0
+	public static double NEATDESIREDERROR = 0.16; // 0.01 En çabuk 0.24 0.32
+													// olabiliyor 0.1071 0.1063
+	public static double JORDANDESIREDERROR = 0.12;//0.12; not success !!!
+	public static double ELMANDESIREDERROR = 0.09; // 0.107;
 	public static double FEEDFORWARDDESIREDERROR = 0.14;
 	public static int EPOCHSAVEINTERVAL = 1000; // 1000
-	
-	
+
 	// Neural Simulated Annealing
 	public static double SIMANNEAL_STARTTEMP = 10.0; // The starting
 														// temperature.
-	public static double SIMANNEAL_STOPTEMP = 2.0; //2.0 The ending temperature.
-	public static int SIMANNEAL_CYCLES = 300; // 100 The number of cycles in a
-												// training iteration.
+	public static double SIMANNEAL_STOPTEMP = 2.0; // 2.0 The ending
+													// temperature.
+	public static int SIMANNEAL_CYCLES = 150; // 100 The number of cycles in a
+												// training iteration. try 300?
 	// Backpropagation
 	public static double BPROP_LEARNRATE = 0.00001; // The rate at which the
 													// weight matrix will be
 													// adjusted based on
 													// learning.
-	public static double BPROP_MOMENTUM = 0.05;// 0.0 The influence that previous
+	public static double BPROP_MOMENTUM = 0.05;// 0.0 The influence that
+												// previous
 												// iteration's training deltas
 												// will have on the current
 												// iteration.
@@ -76,11 +86,14 @@ public class ConfigLoto {
 	public static final String JORDANFEEDFORWARD_FILENAME = basePathStr
 			+ "\\JordanFeedForwardLoto.eg";
 	public static final String NEAT_FILENAME = basePathStr + "\\NeatLoto.eg";
+	public static final String NEAT_SERIALFILENAME = basePathStr
+			+ "\\NeatLoto.ser";
+
 	public static final String ELMAN_FILENAME = basePathStr + "\\ElmanLoto.eg";
 	public static final String ELMANFEEDFORWARD_FILENAME = basePathStr
 			+ "\\ElmanFeedForwardLoto.eg";
 
-	public final static int TRAIN_SIZE = 840; // 
+	public final static int TRAIN_SIZE = 840; //
 
 	public final static String SELECTSQL = "SELECT `lotoresults`.`input1`,"
 			+ "`lotoresults`.`input2`," + "`lotoresults`.`input3`,"
@@ -144,14 +157,8 @@ public class ConfigLoto {
 	public final static String SQL_UID = "root";
 	public final static String SQL_PWD = "serdar";
 
-
-	
-	
-	
-	
-	
 	//
-	
+
 	public static final String TRIAL_COUNT = "fitness.function.tmaze.trial.count";
 	public static final String REWARD_SWITCH_COUNT = "fitness.function.tmaze.reward.switch.count";
 	public static final String REWARD_SWITCH_VARIATION = "fitness.function.tmaze.reward.switch.variation";
@@ -162,40 +169,139 @@ public class ConfigLoto {
 	public static final String REWARD_CRASH = "fitness.function.tmaze.reward.crash";
 	public static final String PASSAGE_LENGTH = "fitness.function.tmaze.passage.length";
 	public static final String DOUBLE_TMAZE = "fitness.function.tmaze.double";
-	
-	
+
 	private boolean isDouble;
 	private int trialCount, rewardSwitchCount, passageLength;
 	private double rewardSwitchVariation;
-	private double rewardLow, rewardHigh, rewardCrash, rewardLowColour, rewardHighColour;
+	private double rewardLow, rewardHigh, rewardCrash, rewardLowColour,
+			rewardHighColour;
 	private int[] rewardSwitchTrials, rewardIndexForSwitch;
-	private byte[][] map; // The map of the maze, consists of values from TYPE_*, format is [x][y].
+	private byte[][] map; // The map of the maze, consists of values from
+							// TYPE_*, format is [x][y].
 	private int startX, startY; // Initial location of agent in map.
 	private int[] rewardLocationsX, rewardLocationsY;
-/*
-	public void init(Properties props) {
-		super.init(props);
-		isDouble = props.getBooleanProperty(DOUBLE_TMAZE, false);
-		trialCount = props.getIntProperty(TRIAL_COUNT, 200);
-		rewardSwitchCount = props.getIntProperty(REWARD_SWITCH_COUNT, 3);
-		rewardSwitchVariation = props.getDoubleProperty(REWARD_SWITCH_VARIATION, 0.2);
-		passageLength = props.getIntProperty(PASSAGE_LENGTH, 3);
-		rewardLow = props.getDoubleProperty(REWARD_LOW, 0.1);
-		rewardHigh = props.getDoubleProperty(REWARD_HIGH, 1);
-		rewardCrash = props.getDoubleProperty(REWARD_CRASH, 0);
-		rewardLowColour = props.getDoubleProperty(REWARD_LOW_COLOUR, 0.2);
-		rewardHighColour = props.getDoubleProperty(REWARD_HIGH_COLOUR, 1);
-	} */
-	
+	/*
+	 * public void init(Properties props) { super.init(props); isDouble =
+	 * props.getBooleanProperty(DOUBLE_TMAZE, false); trialCount =
+	 * props.getIntProperty(TRIAL_COUNT, 200); rewardSwitchCount =
+	 * props.getIntProperty(REWARD_SWITCH_COUNT, 3); rewardSwitchVariation =
+	 * props.getDoubleProperty(REWARD_SWITCH_VARIATION, 0.2); passageLength =
+	 * props.getIntProperty(PASSAGE_LENGTH, 3); rewardLow =
+	 * props.getDoubleProperty(REWARD_LOW, 0.1); rewardHigh =
+	 * props.getDoubleProperty(REWARD_HIGH, 1); rewardCrash =
+	 * props.getDoubleProperty(REWARD_CRASH, 0); rewardLowColour =
+	 * props.getDoubleProperty(REWARD_LOW_COLOUR, 0.2); rewardHighColour =
+	 * props.getDoubleProperty(REWARD_HIGH_COLOUR, 1); }
+	 */
+
 	// TODO: make it singleton
-    private static final ConfigLoto instance = new ConfigLoto();
-    
-    private ConfigLoto() {
-    	// call init
-    }
- 
-    public static ConfigLoto getInstance() {
-        return instance;
-    }
-	
+	private static final ConfigLoto instance = new ConfigLoto();
+
+	private ConfigLoto() {
+		// call init
+	}
+
+	public static ConfigLoto getInstance() {
+		return instance;
+	}
+
+	public static double MINVALUE = 0.4; // 0.0009;
+	public static double IDEALVALUE = 1.0;
+	public static int NUM_DIGITS= 1000;
+	public static SortedMap<Integer, Double> PREDICTMAPRESULT = new TreeMap<Integer, Double>();
+	public static SortedMap<Integer, Double> PREDICTMAP = new TreeMap<Integer, Double>();
+	public static SortedMap<Integer, Double> PREDICTLOWMAPRESULT = new TreeMap<Integer, Double>();
+	public static SortedMap<Integer, Double> PREDICTLOWMAP = new TreeMap<Integer, Double>();
+
+	public static String str_doubleFormat = "#.##";
+
+	/**
+	 * Evaluate the network and display (to the logger) the output for every
+	 * value in the training set. Displays ideal and actual.
+	 * 
+	 * @param network
+	 *            The network to evaluate.
+	 * @param training
+	 *            The training set to evaluate.
+	 */
+	public static void evaluate(final MLRegression network,
+			final MLDataSet training) {
+		for (final MLDataPair pair : training) {
+			final MLData output = network.compute(pair.getInput());
+			log.debug("Input= "
+					+ EncogUtility.formatNeuralData(pair.getInput()));
+			log.debug("Actual=" + EncogUtility.formatNeuralData(output));
+			log.debug("Ideal= "
+					+ EncogUtility.formatNeuralData(pair.getIdeal()));
+			log.debug("Success Report ---------");
+			calculateSuccess(output, pair.getIdeal());
+		}
+	}
+
+	public static double round(double value) {
+		int decimalPlace = 2;
+		BigDecimal bd = new BigDecimal(value);
+		bd = bd.setScale(decimalPlace, BigDecimal.ROUND_UP);
+		return bd.doubleValue();
+	}
+
+	public static double round2(double num) {
+		double result = num * NUM_DIGITS;
+		result = Math.round(result);
+		result = result / NUM_DIGITS;
+		return result;
+	}
+
+	/**
+	 * Calculate success
+	 * 
+	 * @param actual
+	 * 
+	 * @param actual
+	 *            ideal
+	 * @return The success count
+	 */
+	public static void calculateSuccess(final MLData actual, final MLData ideal) {
+
+		int counterSuccess = 0;
+		int counterLowSuccess = 0;
+		int counterTotalPredict = 0;
+		int counterLowTotalPredict = 0;
+		//DecimalFormat df = new DecimalFormat(str_doubleFormat);
+		PREDICTMAP.clear();
+		PREDICTMAPRESULT.clear();
+		PREDICTLOWMAP.clear();
+		PREDICTLOWMAPRESULT.clear();
+		for (int i = 0; i < actual.size(); i++) {
+			if (ideal.getData(i) == IDEALVALUE) // 1.0
+				if (actual.getData(i) > MINVALUE) {
+					counterSuccess++;
+					PREDICTMAPRESULT.put(i + 1, round2(actual.getData(i)));
+				} else {
+					counterLowSuccess++;
+					PREDICTLOWMAPRESULT.put(i + 1, round2(actual.getData(i)));
+				}
+		}
+		for (int i = 0; i < actual.size(); i++) {
+			if (actual.getData(i) > MINVALUE) {
+				counterTotalPredict++;
+				PREDICTMAP.put(i + 1, round2(actual.getData(i)));
+			} else {
+				counterLowTotalPredict++;
+				PREDICTLOWMAP.put(i + 1, round2(actual.getData(i)));
+			}
+		}
+		log.debug("Successfull Predict Count= " + counterSuccess);
+		log.debug("Result= " + PREDICTMAPRESULT);
+		log.debug("Prediction= " + PREDICTMAP);
+		log.debug("Total Predict Count= " + counterTotalPredict);
+
+		log.debug("Successfull Low Predict Count<  " + MINVALUE + " = "
+				+ counterLowSuccess);
+		log.debug("Low Result= " + PREDICTLOWMAPRESULT);
+		log.debug("Low Prediction= " + PREDICTLOWMAP);
+		log.debug("Total Low Predict Count= " + counterLowTotalPredict);
+
+	}
+
 }

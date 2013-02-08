@@ -101,13 +101,14 @@ public class JordanLoto {
 
 		int epoch = 1;
 		double train_Error = 1.0;
-		while ((!stop.shouldStop())
-				&& (train_Error > ConfigLoto.JORDANDESIREDERROR)) {
+		double desired_Error = ConfigLoto.JORDANDESIREDERROR;
+		String str_TargetError = Format.formatDouble(desired_Error, 4);
+		while ((!stop.shouldStop()) && (train_Error > desired_Error)) {
 			trainMain.iteration();
 			train_Error = trainMain.getError();
-			log.debug("Training " + what + ", Epoch #" + epoch + " Error:"
-					+ Format.formatDouble(train_Error,4) + " Target Error= "
-					+ Format.formatDouble(ConfigLoto.JORDANDESIREDERROR,4));
+			log.debug("Training " + what + ", Epoch #" + epoch + " Error= "
+					+ Format.formatDouble(train_Error, 4) + " Target Error= "
+					+ str_TargetError);
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
 				log.debug("Saving " + what + ", Epoch #" + epoch);
 				// Save feedforward Network
@@ -174,6 +175,66 @@ public class JordanLoto {
 		return jordanNetwork;
 	}
 
+	/*
+	 * Continue training from the last saved network
+	 */
+	public BasicNetwork loadAndContinueTrain(int sourceTrainData,
+			BasicNetwork jordanNetwork) {
+
+		if (jordanNetwork == null) {
+			log.debug("Loading JORDAN network");
+			jordanNetwork = (BasicNetwork) EncogDirectoryPersistence
+					.loadObject(new File(ConfigLoto.JORDAN_FILENAME));
+		}
+
+		MLDataSet trainingSet = null;
+		if (sourceTrainData == 0)
+			trainingSet = new SQLNeuralDataSet(ConfigLoto.TRAINSQL,
+					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
+					ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL,
+					ConfigLoto.SQL_UID, ConfigLoto.SQL_PWD);
+		else if (sourceTrainData == 1)
+			trainingSet = TrainingSetUtil.loadCSVTOMemory(
+					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
+					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
+		else
+			trainingSet = TrainingSetUtil.loadCSVTOMemory(
+					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
+					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
+
+		double e = jordanNetwork.calculateError(trainingSet);
+		log.debug("Loaded Jordan network's error for previous train set is: "
+				+ e);
+
+		final double jordanError = JordanLoto.trainNetwork("Jordan",
+				jordanNetwork, trainingSet);
+
+		// Save Jordan Network
+		EncogDirectoryPersistence.saveObject(new File(
+				ConfigLoto.JORDAN_FILENAME), jordanNetwork);
+
+		// Backprop section
+
+		// final BasicNetwork feedforwardNetwork =
+		// JordanLoto.createFeedforwardNetwork();
+
+		// final double feedforwardError =
+		// JordanLoto.trainNetwork("Feedforward",feedforwardNetwork,
+		// trainingSet);
+
+		// Save feedforward Network
+		// EncogDirectoryPersistence.saveObject(new
+		// File(Config.JORDANFEEDFORWARD_FILENAME), feedforwardNetwork);
+
+		log.debug("Best error rate with Jordan Network: " + jordanError);
+		// log.debug("Best error rate with Feedforward Network: " +
+		// feedforwardError);
+		log.debug("Jordan will perform only marginally better than feedforward."
+				+ "\nThe more output neurons, the better performance a Jordan will give.");
+
+		return jordanNetwork;
+	}
+
 	public void loadAndEvaluate(BasicNetwork jordanNetwork) {
 
 		if (jordanNetwork == null) {
@@ -192,7 +253,8 @@ public class JordanLoto {
 
 		// test the neural network
 		log.debug("****     Neural Network Results:");
-		EncogUtility.evaluate(jordanNetwork, testSet);
+
+		ConfigLoto.evaluate(jordanNetwork, testSet);
 	}
 
 	public static void main(String[] args) {

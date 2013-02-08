@@ -100,13 +100,14 @@ public class ElmanLoto {
 
 		int epoch = 1;
 		double train_Error = 1.0;
-		while ((!stop.shouldStop())
-				&& (train_Error > ConfigLoto.ELMANDESIREDERROR)) {
+		double desired_Error = ConfigLoto.ELMANDESIREDERROR;
+		String str_TargetError = Format.formatDouble(desired_Error, 4);
+		while ((!stop.shouldStop()) && (train_Error > desired_Error)) {
 			trainMain.iteration();
 			train_Error = trainMain.getError();
-			log.debug("Training " + what + ", Epoch #" + epoch + " Error:"
-					+ Format.formatDouble(train_Error,4) + " Target Error= "
-					+ Format.formatDouble(ConfigLoto.ELMANDESIREDERROR,4));
+			log.debug("Training " + what + ", Epoch #" + epoch + " Error= "
+					+ Format.formatDouble(train_Error, 4) + " Target Error= "
+					+ str_TargetError);
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
 				log.debug("Saving " + what + ", Epoch #" + epoch);
 				// Save feedforward Network
@@ -153,20 +154,83 @@ public class ElmanLoto {
 				new File(ConfigLoto.ELMAN_FILENAME), elmanNetwork);
 
 		// Backprop section
-
-		final BasicNetwork feedforwardNetwork = ElmanLoto
-				.createFeedforwardNetwork();
-
-		final double feedforwardError = ElmanLoto.trainNetwork("Feedforward",
-				feedforwardNetwork, trainingSet);
-
+		/*
+		 * final BasicNetwork feedforwardNetwork = ElmanLoto
+		 * .createFeedforwardNetwork();
+		 * 
+		 * final double feedforwardError = ElmanLoto.trainNetwork("Feedforward",
+		 * feedforwardNetwork, trainingSet);
+		 */
 		// Save feedforward Network
-		EncogDirectoryPersistence.saveObject(new File(
-				ConfigLoto.ELMANFEEDFORWARD_FILENAME), feedforwardNetwork);
+		// EncogDirectoryPersistence.saveObject(new File(
+		// ConfigLoto.ELMANFEEDFORWARD_FILENAME), feedforwardNetwork);
 
 		log.debug("Best error rate with Elman Network: " + elmanError);
-		log.debug("Best error rate with Feedforward Network: "
-				+ feedforwardError);
+		// log.debug("Best error rate with Feedforward Network: "+
+		// feedforwardError);
+		log.debug("Elman should be able to get into the 10% range,"
+				+ "\nfeedforward should not go below 25%."
+				+ "\nThe recurrent Elment net can learn better in this case.");
+		log.debug("If your results are not as good, try rerunning, or perhaps training longer.");
+
+		return elmanNetwork;
+	}
+
+	/*
+	 * Continue training from the last saved network
+	 */
+	public BasicNetwork loadAndContinueTrain(int sourceTrainData,
+			BasicNetwork elmanNetwork) {
+
+		if (elmanNetwork == null) {
+			log.debug("Loading ELMAN network");
+			elmanNetwork = (BasicNetwork) EncogDirectoryPersistence
+					.loadObject(new File(ConfigLoto.ELMAN_FILENAME));
+		}
+
+		MLDataSet trainingSet = null;
+		if (sourceTrainData == ConfigLoto.DATASOURCESQL)
+
+			trainingSet = new SQLNeuralDataSet(ConfigLoto.TRAINSQL,
+					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
+					ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL,
+					ConfigLoto.SQL_UID, ConfigLoto.SQL_PWD);
+
+		else if (sourceTrainData == ConfigLoto.DATASOURCECSV)
+			trainingSet = TrainingSetUtil.loadCSVTOMemory(
+					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
+					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
+		else
+			trainingSet = TrainingSetUtil.loadCSVTOMemory(
+					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
+					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
+
+		double e = elmanNetwork.calculateError(trainingSet);
+		log.debug("Loaded Elman  network's error for previous train set is: "
+				+ e);
+
+		final double elmanError = ElmanLoto.trainNetwork("Elman", elmanNetwork,
+				trainingSet);
+
+		// Save Elman Network
+		EncogDirectoryPersistence.saveObject(
+				new File(ConfigLoto.ELMAN_FILENAME), elmanNetwork);
+
+		// Backprop section
+		/*
+		 * final BasicNetwork feedforwardNetwork = ElmanLoto
+		 * .createFeedforwardNetwork();
+		 * 
+		 * final double feedforwardError = ElmanLoto.trainNetwork("Feedforward",
+		 * feedforwardNetwork, trainingSet);
+		 */
+		// Save feedforward Network
+		// EncogDirectoryPersistence.saveObject(new File(
+		// ConfigLoto.ELMANFEEDFORWARD_FILENAME), feedforwardNetwork);
+
+		log.debug("Best error rate with Elman Network: " + elmanError);
+		// log.debug("Best error rate with Feedforward Network: "+
+		// feedforwardError);
 		log.debug("Elman should be able to get into the 10% range,"
 				+ "\nfeedforward should not go below 25%."
 				+ "\nThe recurrent Elment net can learn better in this case.");
@@ -193,7 +257,7 @@ public class ElmanLoto {
 
 		// test the neural network
 		log.debug("**** Elman Neural Network Results:");
-		EncogUtility.evaluate(elmanNetwork, testSet);
+		ConfigLoto.evaluate(elmanNetwork, testSet);
 	}
 
 	public static void main(String[] args) {
