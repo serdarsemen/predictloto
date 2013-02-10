@@ -293,8 +293,7 @@ public class ElmanLoto {
 						elmanNetwork = program
 								.trainAndSave(ConfigLoto.DATASOURCESQL);
 					} else {
-						elmanNetwork = (BasicNetwork) EncogDirectoryPersistence
-								.loadObject(networkFile);
+						elmanNetwork = program.loadAndContinueTrain(ConfigLoto.DATASOURCESQL,elmanNetwork);
 					}
 				} catch (Throwable t) {
 					t.printStackTrace();
@@ -306,6 +305,7 @@ public class ElmanLoto {
 					elmanNetwork = program
 							.trainAndSave(ConfigLoto.DATASOURCESQL);
 				}
+				
 				program.loadAndEvaluate(elmanNetwork);
 			} else {
 				elmanNetwork = program.trainAndSave(ConfigLoto.DATASOURCESQL);

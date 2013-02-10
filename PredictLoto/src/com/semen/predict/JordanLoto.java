@@ -253,7 +253,6 @@ public class JordanLoto {
 
 			// test the neural network
 			log.debug("****     Neural Network Results:");
-
 			ConfigLoto.evaluate(jordanNetwork, testSet);
 		} else {
 			log.debug("Test set is empty");
@@ -291,8 +290,7 @@ public class JordanLoto {
 						jordanNetwork = program
 								.trainAndSave(ConfigLoto.DATASOURCESQL);
 					} else {
-						jordanNetwork = (BasicNetwork) EncogDirectoryPersistence
-								.loadObject(networkFile);
+						jordanNetwork = program.loadAndContinueTrain(ConfigLoto.DATASOURCESQL,jordanNetwork);
 					}
 
 				} catch (Throwable t) {

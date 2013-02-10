@@ -15,6 +15,9 @@ import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
 import org.encog.ml.train.MLTrain;
+import org.encog.ml.train.strategy.Greedy;
+import org.encog.ml.train.strategy.HybridStrategy;
+import org.encog.ml.train.strategy.StopTrainingStrategy;
 
 import org.encog.neural.neat.NEATNetwork;
 import org.encog.neural.neat.NEATPopulation;
@@ -23,6 +26,7 @@ import org.encog.ml.CalculateScore;
 import org.encog.ml.MLRegression;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.training.TrainingSetScore;
+import org.encog.neural.networks.training.anneal.NeuralSimulatedAnnealing;
 
 import org.encog.persist.EncogDirectoryPersistence;
 import org.encog.platformspecific.j2se.data.SQLNeuralDataSet;
@@ -63,19 +67,20 @@ public class NEATLoto {
 	 * @param error
 	 *            The desired error level.
 	 */
-	public static void trainToError(final MLTrain train, final double error,
+	public static void trainToError(final NEATTraining train, final double error,
 			NEATPopulation pop) {
 
 		int epoch = 1;
 		double train_Error = 1.0;
 		String str_TargetError = Format.formatDouble(error, 4);
+		
 		log.debug("Beginning NEAT training...");
 		do {
 			train.iteration();
 			train_Error = train.getError();
-			log.debug("NEAT Epoch # " + Format.formatInteger(epoch)
+			log.debug("NEAT Epoch #= " + Format.formatInteger(epoch)
 					+ " Error= " + Format.formatDouble(train_Error, 4)
-					+ " Target Error= " + str_TargetError);
+					+ " Target Error= " + str_TargetError+", Species= " + train.getNEATPopulation().getSpecies().size());
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
 				log.debug("Saving NEAT POP / network  Epoch #" + epoch);
 
@@ -183,7 +188,7 @@ public class NEATLoto {
 		NEATPopulation pop = new NEATPopulation(ConfigLoto.INPUT_SIZE,
 				ConfigLoto.IDEAL_SIZE, ConfigLoto.NEATPOPULATIONSIZE);
 
-		// not required, but speeds training if added startes from 40 instead of
+		// not required, but speeds training if added starts from 40 instead of
 		// 31
 		pop.setInitialConnectionDensity(ConfigLoto.NEATPOPULATIONDENSITY);
 		pop.reset();
@@ -243,7 +248,6 @@ public class NEATLoto {
 		} else {
 			log.debug("Test set is empty");
 		}
-
 	}
 
 	public static void main(String[] args) {
@@ -264,6 +268,7 @@ public class NEATLoto {
 
 			NEATLoto program = new NEATLoto();
 
+			NEATPopulation pop=null;
 			NEATNetwork neatNetwork = null;
 			File networkFile = null;
 			File networkSerFile = null;
@@ -282,12 +287,11 @@ public class NEATLoto {
 						neatNetwork = program
 								.trainAndSave(ConfigLoto.DATASOURCESQL);
 
-					} else {
-						// neatNetwork = (NEATNetwork) EncogDirectoryPersistence
-						// .loadObject(networkFile)
-
+					} else {/*
+						pop= (NEATPopulation) EncogDirectoryPersistence.loadObject(networkFile);
 						neatNetwork = (NEATNetwork) SerializeObject
-								.load(networkSerFile);
+								.load(networkSerFile);*/
+						neatNetwork = program.loadAndContinueTrain(ConfigLoto.DATASOURCESQL,neatNetwork,pop);
 					}
 				} catch (Throwable t) {
 					t.printStackTrace();
@@ -301,9 +305,7 @@ public class NEATLoto {
 							.trainAndSave(ConfigLoto.DATASOURCESQL);
 				}
 				program.loadAndEvaluate(neatNetwork);
-
 			} else {
-
 				neatNetwork = program.trainAndSave(ConfigLoto.DATASOURCESQL);
 				program.loadAndEvaluate(neatNetwork);
 			}
@@ -312,6 +314,5 @@ public class NEATLoto {
 		} finally {
 			Encog.getInstance().shutdown();
 		}
-
 	}
 }

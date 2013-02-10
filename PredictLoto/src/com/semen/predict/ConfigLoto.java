@@ -6,7 +6,14 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -34,14 +41,13 @@ public final class ConfigLoto {
 
 	/* Get actual class name to be printed on */
 	public static final Logger log = Logger.getLogger(ConfigLoto.class);// .getName());
-	// private static final NumberFormat nf = new DecimalFormat("0.00");
-	// private static final long serialVersionUID = 4L;
+	private static final long serialVersionUID = -447374783L;
 	public Properties props;
 
 	public final static int INPUT_SIZE = 49;
 	public final static int IDEAL_SIZE = 49;
 
-	public static int JORDANHIDDENNEURONSIZE = 160;// 180  not success !!!
+	public static int JORDANHIDDENNEURONSIZE = 160;// 180 not success !!!
 	public static int ELMANHIDDENNEURONSIZE = 120; // 180
 	public static int FEEDFORWARDHIDDENNEURONSIZE = 120; // 180
 
@@ -53,9 +59,9 @@ public final class ConfigLoto {
 	// Neat
 	public static int NEATPOPULATIONSIZE = 1000; // 1000
 	public static double NEATPOPULATIONDENSITY = 0.0; // 1.0
-	public static double NEATDESIREDERROR = 0.16; // 0.01 En çabuk 0.24 0.32
+	public static double NEATDESIREDERROR = 0.19; // 0.01 En çabuk 0.24 0.32
 													// olabiliyor 0.1071 0.1063
-	public static double JORDANDESIREDERROR = 0.12;//0.12; not success !!!
+	public static double JORDANDESIREDERROR = 0.12;// 0.12; not success !!!
 	public static double ELMANDESIREDERROR = 0.09; // 0.107;
 	public static double FEEDFORWARDDESIREDERROR = 0.14;
 	public static int EPOCHSAVEINTERVAL = 1000; // 1000
@@ -205,9 +211,9 @@ public final class ConfigLoto {
 		return instance;
 	}
 
-	public static double MINVALUE = 0.4; // 0.0009;
+	public static double MINVALUE = 0.3; // 0.0009;
 	public static double IDEALVALUE = 1.0;
-	public static int NUM_DIGITS= 1000;
+	public static int NUM_DIGITS = 1000;
 	public static SortedMap<Integer, Double> PREDICTMAPRESULT = new TreeMap<Integer, Double>();
 	public static SortedMap<Integer, Double> PREDICTMAP = new TreeMap<Integer, Double>();
 	public static SortedMap<Integer, Double> PREDICTLOWMAPRESULT = new TreeMap<Integer, Double>();
@@ -267,7 +273,9 @@ public final class ConfigLoto {
 		int counterLowSuccess = 0;
 		int counterTotalPredict = 0;
 		int counterLowTotalPredict = 0;
-		//DecimalFormat df = new DecimalFormat(str_doubleFormat);
+
+		HashMap<Integer, Double> SortedMap = new HashMap<Integer, Double>();
+
 		PREDICTMAP.clear();
 		PREDICTMAPRESULT.clear();
 		PREDICTLOWMAP.clear();
@@ -281,8 +289,7 @@ public final class ConfigLoto {
 					counterLowSuccess++;
 					PREDICTLOWMAPRESULT.put(i + 1, round2(actual.getData(i)));
 				}
-		}
-		for (int i = 0; i < actual.size(); i++) {
+
 			if (actual.getData(i) > MINVALUE) {
 				counterTotalPredict++;
 				PREDICTMAP.put(i + 1, round2(actual.getData(i)));
@@ -290,18 +297,61 @@ public final class ConfigLoto {
 				counterLowTotalPredict++;
 				PREDICTLOWMAP.put(i + 1, round2(actual.getData(i)));
 			}
+			SortedMap.put(i + 1, round2(actual.getData(i)));
 		}
+		log.debug("*****   HIGH  ************");
 		log.debug("Successfull Predict Count= " + counterSuccess);
 		log.debug("Result= " + PREDICTMAPRESULT);
 		log.debug("Prediction= " + PREDICTMAP);
 		log.debug("Total Predict Count= " + counterTotalPredict);
-
+		log.debug("Sorted Actual= " + sortHashMapByValues(SortedMap));
+		log.debug("*****   LOW  ************");
 		log.debug("Successfull Low Predict Count<  " + MINVALUE + " = "
 				+ counterLowSuccess);
 		log.debug("Low Result= " + PREDICTLOWMAPRESULT);
 		log.debug("Low Prediction= " + PREDICTLOWMAP);
 		log.debug("Total Low Predict Count= " + counterLowTotalPredict);
 
+		log.debug("*************************************");
+	}
+
+	/*
+	 * Sort Hashmap by Value
+	 */
+
+	public static LinkedHashMap<Integer, Double> sortHashMapByValues(
+			HashMap<Integer, Double> passedMap) {
+		List<Integer> mapKeys = new ArrayList<Integer>(passedMap.keySet());
+		List<Double> mapValues = new ArrayList<Double>(passedMap.values());
+		Collections.sort(mapValues,Collections.reverseOrder());
+		Collections.sort(mapKeys,Collections.reverseOrder());
+
+		LinkedHashMap<Integer, Double> sortedMap = new LinkedHashMap<Integer, Double>();
+
+		Iterator<Double> valueIt = mapValues.iterator();
+		while (valueIt.hasNext()) {
+			Object val = valueIt.next();
+			Iterator<Integer> keyIt = mapKeys.iterator();
+
+			while (keyIt.hasNext()) {
+				Object key = keyIt.next();
+				String comp1 = passedMap.get(key).toString();
+				String comp2 = val.toString();
+
+				if (comp1.equals(comp2)) {
+					passedMap.remove(key);
+					mapKeys.remove(key);
+					sortedMap.put((Integer) key, (Double) val);
+					break;
+				}
+
+			}
+		}
+		return (LinkedHashMap<Integer, Double>) sortedMap;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 }
