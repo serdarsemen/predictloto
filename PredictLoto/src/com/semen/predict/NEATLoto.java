@@ -78,9 +78,9 @@ public class NEATLoto {
 		do {
 			train.iteration();
 			train_Error = train.getError();
-			log.debug("NEAT Epoch #= " + Format.formatInteger(epoch)
-					+ " Error= " + Format.formatDouble(train_Error, 4)
-					+ " Target Error= " + str_TargetError+", Species= " + train.getNEATPopulation().getSpecies().size());
+			log.debug("NEAT #= " + Format.formatInteger(epoch)
+					+ " Err= " + Format.formatDouble(train_Error, 4)
+					+ " Target Err= " + str_TargetError+", Species= " + train.getNEATPopulation().getSpecies().size());
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
 				log.debug("Saving NEAT POP / network  Epoch #" + epoch);
 

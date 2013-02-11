@@ -22,7 +22,7 @@ import org.encog.ml.train.strategy.StopTrainingStrategy;
 
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.ml.CalculateScore;
-//import org.encog.neural.networks.training.CalculateScore;
+
 import org.encog.neural.networks.training.TrainingSetScore;
 import org.encog.neural.networks.training.anneal.NeuralSimulatedAnnealing;
 import org.encog.neural.networks.training.propagation.back.Backpropagation;
@@ -31,7 +31,7 @@ import org.encog.neural.pattern.FeedForwardPattern;
 import org.encog.persist.EncogDirectoryPersistence;
 import org.encog.platformspecific.j2se.data.SQLNeuralDataSet;
 import org.encog.util.csv.CSVFormat;
-import org.encog.util.simple.EncogUtility;
+
 import org.encog.util.simple.TrainingSetUtil;
 import org.encog.util.Format;
 
@@ -105,8 +105,8 @@ public class ElmanLoto {
 		while ((!stop.shouldStop()) && (train_Error > desired_Error)) {
 			trainMain.iteration();
 			train_Error = trainMain.getError();
-			log.debug("Training " + what + ", Epoch #" + epoch + " Error= "
-					+ Format.formatDouble(train_Error, 4) + " Target Error= "
+			log.debug("Training " + what + ",  #" + epoch + " Err= "
+					+ Format.formatDouble(train_Error, 4) + " Target Err= "
 					+ str_TargetError);
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
 				log.debug("Saving " + what + ", Epoch #" + epoch);
@@ -168,10 +168,10 @@ public class ElmanLoto {
 		log.debug("Best error rate with Elman Network: " + elmanError);
 		// log.debug("Best error rate with Feedforward Network: "+
 		// feedforwardError);
-		log.debug("Elman should be able to get into the 10% range,"
-				+ "\nfeedforward should not go below 25%."
-				+ "\nThe recurrent Elment net can learn better in this case.");
-		log.debug("If your results are not as good, try rerunning, or perhaps training longer.");
+	//	log.debug("Elman should be able to get into the 10% range,"
+	//			+ "\nfeedforward should not go below 25%."
+	//			+ "\nThe recurrent Elment net can learn better in this case.");
+	//	log.debug("If your results are not as good, try rerunning, or perhaps training longer.");
 
 		return elmanNetwork;
 	}
@@ -231,10 +231,6 @@ public class ElmanLoto {
 		log.debug("Best error rate with Elman Network: " + elmanError);
 		// log.debug("Best error rate with Feedforward Network: "+
 		// feedforwardError);
-		log.debug("Elman should be able to get into the 10% range,"
-				+ "\nfeedforward should not go below 25%."
-				+ "\nThe recurrent Elment net can learn better in this case.");
-		log.debug("If your results are not as good, try rerunning, or perhaps training longer.");
 
 		return elmanNetwork;
 	}

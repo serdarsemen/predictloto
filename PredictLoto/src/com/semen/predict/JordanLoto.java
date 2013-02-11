@@ -28,7 +28,7 @@ import org.encog.platformspecific.j2se.data.SQLNeuralDataSet;
 import org.encog.persist.EncogDirectoryPersistence;
 import org.encog.util.Format;
 import org.encog.util.csv.CSVFormat;
-import org.encog.util.simple.EncogUtility;
+
 import org.encog.util.simple.TrainingSetUtil;
 
 import java.io.File;
@@ -106,8 +106,8 @@ public class JordanLoto {
 		while ((!stop.shouldStop()) && (train_Error > desired_Error)) {
 			trainMain.iteration();
 			train_Error = trainMain.getError();
-			log.debug("Training " + what + ", Epoch #" + epoch + " Error= "
-					+ Format.formatDouble(train_Error, 4) + " Target Error= "
+			log.debug("Training " + what + ", #" + epoch + " Err= "
+					+ Format.formatDouble(train_Error, 4) + " Target Err= "
 					+ str_TargetError);
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
 				log.debug("Saving " + what + ", Epoch #" + epoch);
@@ -169,8 +169,8 @@ public class JordanLoto {
 		log.debug("Best error rate with Jordan Network: " + jordanError);
 		// log.debug("Best error rate with Feedforward Network: " +
 		// feedforwardError);
-		log.debug("Jordan will perform only marginally better than feedforward."
-				+ "\nThe more output neurons, the better performance a Jordan will give.");
+	//	log.debug("Jordan will perform only marginally better than feedforward."
+		//		+ "\nThe more output neurons, the better performance a Jordan will give.");
 
 		return jordanNetwork;
 	}
@@ -229,8 +229,6 @@ public class JordanLoto {
 		log.debug("Best error rate with Jordan Network: " + jordanError);
 		// log.debug("Best error rate with Feedforward Network: " +
 		// feedforwardError);
-		log.debug("Jordan will perform only marginally better than feedforward."
-				+ "\nThe more output neurons, the better performance a Jordan will give.");
 
 		return jordanNetwork;
 	}

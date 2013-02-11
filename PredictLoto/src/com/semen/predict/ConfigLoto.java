@@ -2,24 +2,20 @@
  * */
 package com.semen.predict;
 
-import java.io.IOException;
+
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
+//import org.apache.log4j.Priority;
 import org.encog.ml.MLRegression;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
@@ -59,10 +55,10 @@ public final class ConfigLoto {
 	// Neat
 	public static int NEATPOPULATIONSIZE = 1000; // 1000
 	public static double NEATPOPULATIONDENSITY = 0.0; // 1.0
-	public static double NEATDESIREDERROR = 0.19; // 0.01 En çabuk 0.24 0.32
-													// olabiliyor 0.1071 0.1063
+	public static double NEATDESIREDERROR = 0.18; // 0.01 En çabuk 0.24 0.32
+													// olabiliyor 0.1071 0.1063 0.11 fail
 	public static double JORDANDESIREDERROR = 0.12;// 0.12; not success !!!
-	public static double ELMANDESIREDERROR = 0.09; // 0.107;
+	public static double ELMANDESIREDERROR = 0.06; // 0.107;
 	public static double FEEDFORWARDDESIREDERROR = 0.14;
 	public static int EPOCHSAVEINTERVAL = 1000; // 1000
 
@@ -99,7 +95,8 @@ public final class ConfigLoto {
 	public static final String ELMANFEEDFORWARD_FILENAME = basePathStr
 			+ "\\ElmanFeedForwardLoto.eg";
 
-	public final static int TRAIN_SIZE = 840; //
+	public final static int LO_WEEKNO = 500; // start week for train0 or 500 ?
+	public final static int HI_WEEKNO = 845; // end week for train TRAIN_SIZE
 
 	public final static String SELECTSQL = "SELECT `lotoresults`.`input1`,"
 			+ "`lotoresults`.`input2`," + "`lotoresults`.`input3`,"
@@ -153,10 +150,11 @@ public final class ConfigLoto {
 			+ "`lotoresults`.`ideal49` ";
 
 	public final static String TRAINSQL = SELECTSQL + " FROM lotoresults "
-			+ " WHERE weekid<=" + TRAIN_SIZE + " ORDER BY weekid";
+			+ " WHERE weekid<=" + HI_WEEKNO +
+			"AND weekid>=" + LO_WEEKNO + " ORDER BY weekid";
 
 	public final static String TESTSQL = SELECTSQL + " FROM lotoresults "
-			+ " WHERE weekid>" + TRAIN_SIZE + " ORDER BY weekid";
+			+ " WHERE weekid>" + HI_WEEKNO + " ORDER BY weekid";
 
 	public final static String SQL_DRIVER = "com.mysql.jdbc.Driver";
 	public final static String SQL_URL = "jdbc:mysql://localhost:3306/loto";
@@ -233,14 +231,14 @@ public final class ConfigLoto {
 	public static void evaluate(final MLRegression network,
 			final MLDataSet training) {
 		for (final MLDataPair pair : training) {
-			final MLData output = network.compute(pair.getInput());
+		//	final MLData output = network.compute(pair.getInput());
 			log.debug("Input= "
 					+ EncogUtility.formatNeuralData(pair.getInput()));
-			log.debug("Actual=" + EncogUtility.formatNeuralData(output));
+			log.debug("Actual=" + EncogUtility.formatNeuralData(network.compute(pair.getInput())));
 			log.debug("Ideal= "
 					+ EncogUtility.formatNeuralData(pair.getIdeal()));
 			log.debug("Success Report ---------");
-			calculateSuccess(output, pair.getIdeal());
+			calculateSuccess(network.compute(pair.getInput()), pair.getIdeal());
 		}
 	}
 
@@ -274,7 +272,7 @@ public final class ConfigLoto {
 		int counterTotalPredict = 0;
 		int counterLowTotalPredict = 0;
 
-		HashMap<Integer, Double> SortedMap = new HashMap<Integer, Double>();
+		SortedMap<Integer, Double> sortMap = new TreeMap<Integer, Double>();
 
 		PREDICTMAP.clear();
 		PREDICTMAPRESULT.clear();
@@ -297,19 +295,19 @@ public final class ConfigLoto {
 				counterLowTotalPredict++;
 				PREDICTLOWMAP.put(i + 1, round2(actual.getData(i)));
 			}
-			SortedMap.put(i + 1, round2(actual.getData(i)));
+			sortMap.put(i + 1, round2(actual.getData(i)));
 		}
 		log.debug("*****   HIGH  ************");
 		log.debug("Successfull Predict Count= " + counterSuccess);
-		log.debug("Result= " + PREDICTMAPRESULT);
-		log.debug("Prediction= " + PREDICTMAP);
+		log.debug("Result= " + PREDICTMAPRESULT); //sortHashMapByValues(
+		log.debug("Prediction= " + sortHashMapByValues(PREDICTMAP));
 		log.debug("Total Predict Count= " + counterTotalPredict);
-		log.debug("Sorted Actual= " + sortHashMapByValues(SortedMap));
+		log.debug("Sorted Actual= " + sortHashMapByValues(sortMap));
 		log.debug("*****   LOW  ************");
 		log.debug("Successfull Low Predict Count<  " + MINVALUE + " = "
 				+ counterLowSuccess);
-		log.debug("Low Result= " + PREDICTLOWMAPRESULT);
-		log.debug("Low Prediction= " + PREDICTLOWMAP);
+		log.debug("Low Result= " + PREDICTLOWMAPRESULT); //sortHashMapByValues(
+		log.debug("Low Prediction= " + sortHashMapByValues(PREDICTLOWMAP));
 		log.debug("Total Low Predict Count= " + counterLowTotalPredict);
 
 		log.debug("*************************************");
@@ -320,7 +318,7 @@ public final class ConfigLoto {
 	 */
 
 	public static LinkedHashMap<Integer, Double> sortHashMapByValues(
-			HashMap<Integer, Double> passedMap) {
+			SortedMap<Integer, Double> passedMap) {
 		List<Integer> mapKeys = new ArrayList<Integer>(passedMap.keySet());
 		List<Double> mapValues = new ArrayList<Double>(passedMap.values());
 		Collections.sort(mapValues,Collections.reverseOrder());
