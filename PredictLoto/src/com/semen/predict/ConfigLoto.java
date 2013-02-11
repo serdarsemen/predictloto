@@ -151,7 +151,7 @@ public final class ConfigLoto {
 
 	public final static String TRAINSQL = SELECTSQL + " FROM lotoresults "
 			+ " WHERE weekid<=" + HI_WEEKNO +
-			"AND weekid>=" + LO_WEEKNO + " ORDER BY weekid";
+			" AND weekid>=" + LO_WEEKNO + " ORDER BY weekid";
 
 	public final static String TESTSQL = SELECTSQL + " FROM lotoresults "
 			+ " WHERE weekid>" + HI_WEEKNO + " ORDER BY weekid";
