@@ -53,9 +53,10 @@ public final class ConfigLoto {
 	public static int DATASOURCECSV = 1;
 
 	// Neat
-	public static int NEATPOPULATIONSIZE = 1000; // 1000
+	// if population size is down much faster but target err rate is so slow
+	public static int NEATPOPULATIONSIZE = 9000; // 1000:8000 ideal  if decrease epoch and error increase
 	public static double NEATPOPULATIONDENSITY = 0.0; // 1.0
-	public static double NEATDESIREDERROR = 0.18; // 0.01 En çabuk 0.24 0.32
+	public static double NEATDESIREDERROR = 0.14; // 0.01 En çabuk 0.24 0.32
 													// olabiliyor 0.1071 0.1063 0.11 fail
 	public static double JORDANDESIREDERROR = 0.12;// 0.12; not success !!!
 	public static double ELMANDESIREDERROR = 0.06; // 0.107;
@@ -95,8 +96,8 @@ public final class ConfigLoto {
 	public static final String ELMANFEEDFORWARD_FILENAME = basePathStr
 			+ "\\ElmanFeedForwardLoto.eg";
 
-	public final static int LO_WEEKNO = 500; // start week for train0 or 500 ?
-	public final static int HI_WEEKNO = 845; // end week for train TRAIN_SIZE
+	public final static int LO_WEEKNO = 200; // start week for train0 or 500 ?
+	public final static int HI_WEEKNO = 844; // end week for train TRAIN_SIZE
 
 	public final static String SELECTSQL = "SELECT `lotoresults`.`input1`,"
 			+ "`lotoresults`.`input2`," + "`lotoresults`.`input3`,"
@@ -209,7 +210,7 @@ public final class ConfigLoto {
 		return instance;
 	}
 
-	public static double MINVALUE = 0.3; // 0.0009;
+	public static double MINVALUE = 0.4; // 0.0009;
 	public static double IDEALVALUE = 1.0;
 	public static int NUM_DIGITS = 1000;
 	public static SortedMap<Integer, Double> PREDICTMAPRESULT = new TreeMap<Integer, Double>();

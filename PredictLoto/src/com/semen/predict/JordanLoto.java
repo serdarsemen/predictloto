@@ -258,6 +258,7 @@ public class JordanLoto {
 	}
 
 	public static void main(String[] args) {
+		long startTime = System.nanoTime();   
 		try {
 			String arg1 = null;
 			if (args.length != 0) {
@@ -309,6 +310,8 @@ public class JordanLoto {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
+			long estimatedTime = (System.nanoTime() - startTime)/60;
+			log.debug("Elapsed Time (sec) = "+estimatedTime);
 			Encog.getInstance().shutdown();
 		}
 

@@ -67,20 +67,21 @@ public class NEATLoto {
 	 * @param error
 	 *            The desired error level.
 	 */
-	public static void trainToError(final NEATTraining train, final double error,
-			NEATPopulation pop) {
+	public static void trainToError(final NEATTraining train,
+			final double error, NEATPopulation pop) {
 
 		int epoch = 1;
 		double train_Error = 1.0;
 		String str_TargetError = Format.formatDouble(error, 4);
-		
+
 		log.debug("Beginning NEAT training...");
 		do {
 			train.iteration();
 			train_Error = train.getError();
-			log.debug("NEAT #= " + Format.formatInteger(epoch)
-					+ " Err= " + Format.formatDouble(train_Error, 4)
-					+ " Target Err= " + str_TargetError+", Species= " + train.getNEATPopulation().getSpecies().size());
+			log.debug("NEAT # " + Format.formatInteger(epoch) + " Err= "
+					+ Format.formatDouble(train_Error, 4) + " Target Err= "
+					+ str_TargetError + ", Species= "
+					+ train.getNEATPopulation().getSpecies().size());
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
 				log.debug("Saving NEAT POP / network  Epoch #" + epoch);
 
@@ -251,7 +252,10 @@ public class NEATLoto {
 	}
 
 	public static void main(String[] args) {
+		long startTime = System.nanoTime();   
 		try {
+			// ... the code being measured ...    
+			
 			String arg1 = null;
 			if (args.length != 0) {
 				arg1 = args[0]; // means load eg file
@@ -312,6 +316,8 @@ public class NEATLoto {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
+			long estimatedTime = (System.nanoTime() - startTime)/60;
+			log.debug("Elapsed Time (sec) = "+estimatedTime);
 			Encog.getInstance().shutdown();
 		}
 	}
