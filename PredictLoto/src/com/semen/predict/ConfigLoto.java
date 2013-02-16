@@ -54,12 +54,14 @@ public final class ConfigLoto {
 
 	// Neat
 	// if population size is down much faster but target err rate is so slow
-	public static int NEATPOPULATIONSIZE = 9000; // 1000:8000 ideal  if decrease epoch and error increase
+	public static int NEATPOPULATIONSIZE = 5000; // 1000:8000 ideal  if decrease epoch and error increase
 	public static double NEATPOPULATIONDENSITY = 0.0; // 1.0
-	public static double NEATDESIREDERROR = 0.14; // 0.01 En çabuk 0.24 0.32
+	public static double NEATDESIREDERROR = 0.15; // 15  te 12 predict pop= 7000 
+	// 0.14 te 9 Predict
+	//         0.01 En çabuk 0.24 0.32
 													// olabiliyor 0.1071 0.1063 0.11 fail
 	public static double JORDANDESIREDERROR = 0.12;// 0.12; not success !!!
-	public static double ELMANDESIREDERROR = 0.06; // 0.107;
+	public static double ELMANDESIREDERROR = 0.1059; // 0.1058;
 	public static double FEEDFORWARDDESIREDERROR = 0.14;
 	public static int EPOCHSAVEINTERVAL = 1000; // 1000
 

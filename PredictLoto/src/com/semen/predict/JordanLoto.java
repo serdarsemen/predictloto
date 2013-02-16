@@ -169,8 +169,9 @@ public class JordanLoto {
 		log.debug("Best error rate with Jordan Network: " + jordanError);
 		// log.debug("Best error rate with Feedforward Network: " +
 		// feedforwardError);
-	//	log.debug("Jordan will perform only marginally better than feedforward."
-		//		+ "\nThe more output neurons, the better performance a Jordan will give.");
+		// log.debug("Jordan will perform only marginally better than feedforward."
+		// +
+		// "\nThe more output neurons, the better performance a Jordan will give.");
 
 		return jordanNetwork;
 	}
@@ -202,34 +203,37 @@ public class JordanLoto {
 					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
 
-		double e = jordanNetwork.calculateError(trainingSet);
-		log.debug("Loaded Jordan network's error for previous train set is: "
-				+ e);
+		if (jordanNetwork != null) {
+			double e = jordanNetwork.calculateError(trainingSet);
+			log.debug("Loaded Jordan network's error for previous train set is: "
+					+ e);
 
-		final double jordanError = JordanLoto.trainNetwork("Jordan",
-				jordanNetwork, trainingSet);
+			final double jordanError = JordanLoto.trainNetwork("Jordan",
+					jordanNetwork, trainingSet);
 
-		// Save Jordan Network
-		EncogDirectoryPersistence.saveObject(new File(
-				ConfigLoto.JORDAN_FILENAME), jordanNetwork);
+			// Save Jordan Network
+			EncogDirectoryPersistence.saveObject(new File(
+					ConfigLoto.JORDAN_FILENAME), jordanNetwork);
 
-		// Backprop section
+			// Backprop section
 
-		// final BasicNetwork feedforwardNetwork =
-		// JordanLoto.createFeedforwardNetwork();
+			// final BasicNetwork feedforwardNetwork =
+			// JordanLoto.createFeedforwardNetwork();
 
-		// final double feedforwardError =
-		// JordanLoto.trainNetwork("Feedforward",feedforwardNetwork,
-		// trainingSet);
+			// final double feedforwardError =
+			// JordanLoto.trainNetwork("Feedforward",feedforwardNetwork,
+			// trainingSet);
 
-		// Save feedforward Network
-		// EncogDirectoryPersistence.saveObject(new
-		// File(Config.JORDANFEEDFORWARD_FILENAME), feedforwardNetwork);
+			// Save feedforward Network
+			// EncogDirectoryPersistence.saveObject(new
+			// File(Config.JORDANFEEDFORWARD_FILENAME), feedforwardNetwork);
 
-		log.debug("Best error rate with Jordan Network: " + jordanError);
-		// log.debug("Best error rate with Feedforward Network: " +
-		// feedforwardError);
-
+			log.debug("Best error rate with Jordan Network: " + jordanError);
+			// log.debug("Best error rate with Feedforward Network: " +
+			// feedforwardError);
+		} else {
+			log.debug("JORDAN network is NULL");
+		}
 		return jordanNetwork;
 	}
 
@@ -258,7 +262,7 @@ public class JordanLoto {
 	}
 
 	public static void main(String[] args) {
-		long startTime = System.nanoTime();   
+		long startTime = System.nanoTime();
 		try {
 			String arg1 = null;
 			if (args.length != 0) {
@@ -289,7 +293,8 @@ public class JordanLoto {
 						jordanNetwork = program
 								.trainAndSave(ConfigLoto.DATASOURCESQL);
 					} else {
-						jordanNetwork = program.loadAndContinueTrain(ConfigLoto.DATASOURCESQL,jordanNetwork);
+						jordanNetwork = program.loadAndContinueTrain(
+								ConfigLoto.DATASOURCESQL, jordanNetwork);
 					}
 
 				} catch (Throwable t) {
@@ -310,8 +315,8 @@ public class JordanLoto {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
-			long estimatedTime = (System.nanoTime() - startTime)/60;
-			log.debug("Elapsed Time (sec) = "+estimatedTime);
+			long estimatedTime = (System.nanoTime() - startTime) / 60;
+			log.debug("Elapsed Time (sec) = " + estimatedTime);
 			Encog.getInstance().shutdown();
 		}
 

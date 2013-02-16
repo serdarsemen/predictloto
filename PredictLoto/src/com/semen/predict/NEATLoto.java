@@ -143,14 +143,19 @@ public class NEATLoto {
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
 
 		CalculateScore score = new TrainingSetScore(trainingSet);
-
-		double e = network.calculateError(trainingSet);
-		log.debug("Loaded NEAT network's error for previous train set is: " + e);
-
+		if (network != null) {
+			double e = network.calculateError(trainingSet);
+			log.debug("Loaded NEAT network's error for previous train set is: "
+					+ e);
+		}
+		else
+		{
+			log.debug("NEAT network is NULL");
+		}
 		// train the neural network
 		final NEATTraining train = new NEATTraining(score, pop);
 
-		trainToError(train, ConfigLoto.NEATDESIREDERROR, pop);
+		NEATLoto.trainToError(train, ConfigLoto.NEATDESIREDERROR, pop);
 
 		network = (NEATNetwork) train.getMethod();
 
@@ -252,10 +257,10 @@ public class NEATLoto {
 	}
 
 	public static void main(String[] args) {
-		long startTime = System.nanoTime();   
+		long startTime = System.nanoTime();
 		try {
-			// ... the code being measured ...    
-			
+			// ... the code being measured ...
+
 			String arg1 = null;
 			if (args.length != 0) {
 				arg1 = args[0]; // means load eg file
@@ -272,7 +277,7 @@ public class NEATLoto {
 
 			NEATLoto program = new NEATLoto();
 
-			NEATPopulation pop=null;
+			NEATPopulation pop = null;
 			NEATNetwork neatNetwork = null;
 			File networkFile = null;
 			File networkSerFile = null;
@@ -292,10 +297,13 @@ public class NEATLoto {
 								.trainAndSave(ConfigLoto.DATASOURCESQL);
 
 					} else {/*
-						pop= (NEATPopulation) EncogDirectoryPersistence.loadObject(networkFile);
-						neatNetwork = (NEATNetwork) SerializeObject
-								.load(networkSerFile);*/
-						neatNetwork = program.loadAndContinueTrain(ConfigLoto.DATASOURCESQL,neatNetwork,pop);
+							 * pop= (NEATPopulation)
+							 * EncogDirectoryPersistence.loadObject
+							 * (networkFile); neatNetwork = (NEATNetwork)
+							 * SerializeObject .load(networkSerFile);
+							 */
+						neatNetwork = program.loadAndContinueTrain(
+								ConfigLoto.DATASOURCESQL, neatNetwork, pop);
 					}
 				} catch (Throwable t) {
 					t.printStackTrace();
@@ -316,8 +324,8 @@ public class NEATLoto {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
-			long estimatedTime = (System.nanoTime() - startTime)/60;
-			log.debug("Elapsed Time (sec) = "+estimatedTime);
+			long estimatedTime = (System.nanoTime() - startTime) / 60;
+			log.debug("Elapsed Time (sec) = " + estimatedTime);
 			Encog.getInstance().shutdown();
 		}
 	}

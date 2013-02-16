@@ -168,10 +168,10 @@ public class ElmanLoto {
 		log.debug("Best error rate with Elman Network: " + elmanError);
 		// log.debug("Best error rate with Feedforward Network: "+
 		// feedforwardError);
-	//	log.debug("Elman should be able to get into the 10% range,"
-	//			+ "\nfeedforward should not go below 25%."
-	//			+ "\nThe recurrent Elment net can learn better in this case.");
-	//	log.debug("If your results are not as good, try rerunning, or perhaps training longer.");
+		// log.debug("Elman should be able to get into the 10% range,"
+		// + "\nfeedforward should not go below 25%."
+		// + "\nThe recurrent Elment net can learn better in this case.");
+		// log.debug("If your results are not as good, try rerunning, or perhaps training longer.");
 
 		return elmanNetwork;
 	}
@@ -204,33 +204,37 @@ public class ElmanLoto {
 			trainingSet = TrainingSetUtil.loadCSVTOMemory(
 					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
+		if (elmanNetwork != null) {
+			double e = elmanNetwork.calculateError(trainingSet);
+			log.debug("Loaded Elman  network's error for previous train set is: "
+					+ e);
 
-		double e = elmanNetwork.calculateError(trainingSet);
-		log.debug("Loaded Elman  network's error for previous train set is: "
-				+ e);
+			final double elmanError = ElmanLoto.trainNetwork("Elman",
+					elmanNetwork, trainingSet);
 
-		final double elmanError = ElmanLoto.trainNetwork("Elman", elmanNetwork,
-				trainingSet);
+			// Save Elman Network
+			EncogDirectoryPersistence.saveObject(new File(
+					ConfigLoto.ELMAN_FILENAME), elmanNetwork);
 
-		// Save Elman Network
-		EncogDirectoryPersistence.saveObject(
-				new File(ConfigLoto.ELMAN_FILENAME), elmanNetwork);
+			// Backprop section
+			/*
+			 * final BasicNetwork feedforwardNetwork = ElmanLoto
+			 * .createFeedforwardNetwork();
+			 * 
+			 * final double feedforwardError =
+			 * ElmanLoto.trainNetwork("Feedforward", feedforwardNetwork,
+			 * trainingSet);
+			 */
+			// Save feedforward Network
+			// EncogDirectoryPersistence.saveObject(new File(
+			// ConfigLoto.ELMANFEEDFORWARD_FILENAME), feedforwardNetwork);
 
-		// Backprop section
-		/*
-		 * final BasicNetwork feedforwardNetwork = ElmanLoto
-		 * .createFeedforwardNetwork();
-		 * 
-		 * final double feedforwardError = ElmanLoto.trainNetwork("Feedforward",
-		 * feedforwardNetwork, trainingSet);
-		 */
-		// Save feedforward Network
-		// EncogDirectoryPersistence.saveObject(new File(
-		// ConfigLoto.ELMANFEEDFORWARD_FILENAME), feedforwardNetwork);
-
-		log.debug("Best error rate with Elman Network: " + elmanError);
-		// log.debug("Best error rate with Feedforward Network: "+
-		// feedforwardError);
+			log.debug("Best error rate with Elman Network: " + elmanError);
+			// log.debug("Best error rate with Feedforward Network: "+
+			// feedforwardError);
+		} else {
+			log.debug("ELMAN network is NULL");
+		}
 
 		return elmanNetwork;
 	}
@@ -260,7 +264,7 @@ public class ElmanLoto {
 	}
 
 	public static void main(String[] args) {
-		long startTime = System.nanoTime();   
+		long startTime = System.nanoTime();
 		try {
 			String arg1 = null;
 			if (args.length != 0) {
@@ -290,7 +294,8 @@ public class ElmanLoto {
 						elmanNetwork = program
 								.trainAndSave(ConfigLoto.DATASOURCESQL);
 					} else {
-						elmanNetwork = program.loadAndContinueTrain(ConfigLoto.DATASOURCESQL,elmanNetwork);
+						elmanNetwork = program.loadAndContinueTrain(
+								ConfigLoto.DATASOURCESQL, elmanNetwork);
 					}
 				} catch (Throwable t) {
 					t.printStackTrace();
@@ -302,7 +307,7 @@ public class ElmanLoto {
 					elmanNetwork = program
 							.trainAndSave(ConfigLoto.DATASOURCESQL);
 				}
-				
+
 				program.loadAndEvaluate(elmanNetwork);
 			} else {
 				elmanNetwork = program.trainAndSave(ConfigLoto.DATASOURCESQL);
@@ -311,8 +316,8 @@ public class ElmanLoto {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
-			long estimatedTime = (System.nanoTime() - startTime)/60;
-		    log.debug("Elapsed Time (sec) = "+estimatedTime);
+			long estimatedTime = (System.nanoTime() - startTime) / 60;
+			log.debug("Elapsed Time (sec) = " + estimatedTime);
 			Encog.getInstance().shutdown();
 		}
 	}
