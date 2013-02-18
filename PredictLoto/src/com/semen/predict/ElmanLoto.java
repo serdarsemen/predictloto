@@ -122,6 +122,8 @@ public class ElmanLoto {
 			epoch++;
 		}
 		trainMain.finishTraining();
+	    // not yet supported
+		//	trainMain.dump(new File(ConfigLoto.ELMAN_DUMPFILENAME));
 		return train_Error;
 	}
 
@@ -152,7 +154,8 @@ public class ElmanLoto {
 		// Save Elman Network
 		EncogDirectoryPersistence.saveObject(
 				new File(ConfigLoto.ELMAN_FILENAME), elmanNetwork);
-
+		
+		
 		// Backprop section
 		/*
 		 * final BasicNetwork feedforwardNetwork = ElmanLoto
@@ -316,8 +319,8 @@ public class ElmanLoto {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
-			long estimatedTime = (System.nanoTime() - startTime) / 60;
-			log.debug("Elapsed Time (sec) = " + estimatedTime);
+			double estimatedTimeMin = (System.nanoTime() - startTime) / 60000000000.0;
+			log.debug("Elapsed Time (min) = " + estimatedTimeMin);
 			Encog.getInstance().shutdown();
 		}
 	}

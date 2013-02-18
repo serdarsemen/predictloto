@@ -5,35 +5,26 @@ package com.semen.predict;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.encog.Encog;
 
-import org.encog.ml.data.MLData;
-import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
-import org.encog.ml.train.MLTrain;
-import org.encog.ml.train.strategy.Greedy;
-import org.encog.ml.train.strategy.HybridStrategy;
-import org.encog.ml.train.strategy.StopTrainingStrategy;
 
+import org.encog.neural.hyperneat.substrate.Substrate;
+import org.encog.neural.hyperneat.substrate.SubstrateFactory;
 import org.encog.neural.neat.NEATNetwork;
 import org.encog.neural.neat.NEATPopulation;
 import org.encog.neural.neat.training.NEATTraining;
+import org.encog.neural.neat.training.species.OriginalNEATSpeciation;
 import org.encog.ml.CalculateScore;
-import org.encog.ml.MLRegression;
-import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.training.TrainingSetScore;
-import org.encog.neural.networks.training.anneal.NeuralSimulatedAnnealing;
 
 import org.encog.persist.EncogDirectoryPersistence;
 import org.encog.platformspecific.j2se.data.SQLNeuralDataSet;
 import org.encog.util.Format;
 import org.encog.util.csv.CSVFormat;
 import org.encog.util.obj.SerializeObject;
-import org.encog.util.simple.EncogUtility;
 import org.encog.util.simple.TrainingSetUtil;
 
 /**
@@ -142,21 +133,42 @@ public class NEATLoto {
 					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
 
-		CalculateScore score = new TrainingSetScore(trainingSet);
+		
 		if (network != null) {
 			double e = network.calculateError(trainingSet);
 			log.debug("Loaded NEAT network's error for previous train set is: "
 					+ e);
-		}
-		else
-		{
+		} else {
 			log.debug("NEAT network is NULL");
 		}
+		
+		CalculateScore score = new TrainingSetScore(trainingSet);
+		
+		
 		// train the neural network
-		final NEATTraining train = new NEATTraining(score, pop);
+
+		NEATTraining train = null;
+
+		if (ConfigLoto.ISHYPERNEAT == 1) {
+
+			Substrate substrate = SubstrateFactory
+					.factorSandwichSubstrate(7, 7);
+			// BoxesScore score = new BoxesScore(11);
+			if (pop == null) {
+				pop = new NEATPopulation(substrate,
+						ConfigLoto.NEATPOPULATIONSIZE);
+				pop.setActivationCycles(4);
+				pop.reset();
+			}
+			train = new NEATTraining(score, pop);
+			OriginalNEATSpeciation speciation = new OriginalNEATSpeciation();
+			speciation.setCompatibilityThreshold(1);
+			train.setSpeciation(speciation);
+		} else {
+			new NEATTraining(score, pop);
+		}
 
 		NEATLoto.trainToError(train, ConfigLoto.NEATDESIREDERROR, pop);
-
 		network = (NEATNetwork) train.getMethod();
 
 		try {
@@ -174,9 +186,11 @@ public class NEATLoto {
 
 	public NEATNetwork trainAndSave(int sourceTrainData) {
 
+		NEATTraining train = null;
+		NEATPopulation pop = null;
 		MLDataSet trainingSet = null;
-		if (sourceTrainData == 0)
 
+		if (sourceTrainData == 0)
 			trainingSet = new SQLNeuralDataSet(ConfigLoto.TRAINSQL,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
 					ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL,
@@ -191,27 +205,44 @@ public class NEATLoto {
 					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
 
-		NEATPopulation pop = new NEATPopulation(ConfigLoto.INPUT_SIZE,
-				ConfigLoto.IDEAL_SIZE, ConfigLoto.NEATPOPULATIONSIZE);
-
-		// not required, but speeds training if added starts from 40 instead of
-		// 31
-		pop.setInitialConnectionDensity(ConfigLoto.NEATPOPULATIONDENSITY);
-		pop.reset();
-
 		CalculateScore score = new TrainingSetScore(trainingSet);
 
-		// train the neural network
-		final NEATTraining train = new NEATTraining(score, pop);
+		if (ConfigLoto.ISHYPERNEAT == 0) {
 
-		trainToError(train, ConfigLoto.NEATDESIREDERROR, pop);
+			pop = new NEATPopulation(ConfigLoto.INPUT_SIZE,
+					ConfigLoto.IDEAL_SIZE, ConfigLoto.NEATPOPULATIONSIZE);
 
+			// not required, but speeds training if added starts from 40 instead
+			// of
+			// 31
+			pop.setInitialConnectionDensity(ConfigLoto.NEATPOPULATIONDENSITY);
+			pop.reset();
+
+			// train the neural network
+			train = new NEATTraining(score, pop);
+		} else {
+			Substrate substrate = SubstrateFactory
+					.factorSandwichSubstrate(7, 7);
+			// BoxesScore score = new BoxesScore(11);
+			pop = new NEATPopulation(substrate, ConfigLoto.NEATPOPULATIONSIZE);
+			pop.setActivationCycles(4);
+			pop.reset();
+			train = new NEATTraining(score, pop);
+			OriginalNEATSpeciation speciation = new OriginalNEATSpeciation();
+			speciation.setCompatibilityThreshold(1);
+			train.setSpeciation(speciation);
+		}
+
+		NEATLoto.trainToError(train, ConfigLoto.NEATDESIREDERROR, pop);
 		NEATNetwork network = (NEATNetwork) train.getMethod();
-
 		try {
 			// Save pop
 			EncogDirectoryPersistence.saveObject(new File(
 					ConfigLoto.NEAT_FILENAME), pop);
+			
+			
+			train.dump(new File(ConfigLoto.NEAT_DUMPFILENAME));
+			
 			// Save NEAT Network
 			SerializeObject.save(new File(ConfigLoto.NEAT_SERIALFILENAME),
 					network);
@@ -280,12 +311,13 @@ public class NEATLoto {
 			NEATPopulation pop = null;
 			NEATNetwork neatNetwork = null;
 			File networkFile = null;
-			File networkSerFile = null;
+			// File networkSerFile = null;
 			if (arg1 != null) {
 				// use the previous saved eg file so no training
 				try {
 					networkFile = new File(ConfigLoto.NEAT_FILENAME);
-					networkSerFile = new File(ConfigLoto.NEAT_SERIALFILENAME);
+					// networkSerFile = new
+					// File(ConfigLoto.NEAT_SERIALFILENAME);
 					// neatNetwork = (NEATNetwork)
 					// EncogDirectoryPersistence.loadObject(new
 					// File(ConfigLoto.NEAT_FILENAME));
@@ -324,8 +356,8 @@ public class NEATLoto {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
-			long estimatedTime = (System.nanoTime() - startTime) / 60;
-			log.debug("Elapsed Time (sec) = " + estimatedTime);
+			double estimatedTimeMin = (System.nanoTime() - startTime) / 60000000000.0;
+			log.debug("Elapsed Time (min) = " + estimatedTimeMin);
 			Encog.getInstance().shutdown();
 		}
 	}

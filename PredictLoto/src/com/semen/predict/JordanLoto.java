@@ -123,7 +123,9 @@ public class JordanLoto {
 			epoch++;
 		}
 		trainMain.finishTraining();
-
+		// not yet supported
+		//	trainMain.dump(new File(ConfigLoto.JORDAN_DUMPFILENAME));
+				
 		return train_Error;
 	}
 
@@ -315,8 +317,8 @@ public class JordanLoto {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
-			long estimatedTime = (System.nanoTime() - startTime) / 60;
-			log.debug("Elapsed Time (sec) = " + estimatedTime);
+			double estimatedTimeMin = (System.nanoTime() - startTime) / 60000000000.0;
+			log.debug("Elapsed Time (min) = " + estimatedTimeMin);
 			Encog.getInstance().shutdown();
 		}
 

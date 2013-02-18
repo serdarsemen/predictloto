@@ -6,7 +6,6 @@ package com.semen.predict;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -51,12 +50,14 @@ public final class ConfigLoto {
 
 	public static int DATASOURCESQL = 0;
 	public static int DATASOURCECSV = 1;
+	
+	public static int ISHYPERNEAT = 1;
 
 	// Neat
 	// if population size is down much faster but target err rate is so slow
-	public static int NEATPOPULATIONSIZE = 5000; // 1000:8000 ideal  if decrease epoch and error increase
+	public static int NEATPOPULATIONSIZE = 700; // 1000:8000 ideal  if decrease epoch and error increase
 	public static double NEATPOPULATIONDENSITY = 0.0; // 1.0
-	public static double NEATDESIREDERROR = 0.15; // 15  te 12 predict pop= 7000 
+	public static double NEATDESIREDERROR = 0.18; // 15  te 12 predict pop= 7000 
 	// 0.14 te 9 Predict
 	//         0.01 En çabuk 0.24 0.32
 													// olabiliyor 0.1071 0.1063 0.11 fail
@@ -88,19 +89,42 @@ public final class ConfigLoto {
 
 	public static final String JORDAN_FILENAME = basePathStr
 			+ "\\JordanLoto.eg";
+	
+	public static final String JORDAN_DUMPFILENAME = basePathStr
+			+ "\\JordanLoto.txt";
 	public static final String JORDANFEEDFORWARD_FILENAME = basePathStr
 			+ "\\JordanFeedForwardLoto.eg";
+	
+	
 	public static final String NEAT_FILENAME = basePathStr + "\\NeatLoto.eg";
-	public static final String NEAT_SERIALFILENAME = basePathStr
-			+ "\\NeatLoto.ser";
+	public static final String NEAT_SERIALFILENAME = basePathStr+ "\\NeatLoto.ser";
+	public static final String NEAT_DUMPFILENAME = basePathStr+ "\\NeatDump.txt";
 
 	public static final String ELMAN_FILENAME = basePathStr + "\\ElmanLoto.eg";
+	public static final String ELMAN_DUMPFILENAME = basePathStr
+			+ "\\ElmanLoto.txt";
 	public static final String ELMANFEEDFORWARD_FILENAME = basePathStr
 			+ "\\ElmanFeedForwardLoto.eg";
 
 	public final static int LO_WEEKNO = 200; // start week for train0 or 500 ?
-	public final static int HI_WEEKNO = 844; // end week for train TRAIN_SIZE
+	public final static int HI_WEEKNO = 846; // end week for train TRAIN_SIZE
 
+	
+	public final static String MaxWeekResultSQL ="select * from lotoresults where " +
+			" weekid=(select max(weekid) from lotoresults) ";
+	
+	public final static String InnerSQL ="(select weekid from lotoresults where "
+	+"input1" 
+	+ "=1 )";
+
+	
+	public final static String RecurringSQL = "select lotoresults.weekid from lotoresults,"
+	+InnerSQL
+	+" as tbl"
+	+"where lotoresults.weekid= tbl.weekid-1"
+	+" and "
+	+"lotoresults.input1=1";
+	
 	public final static String SELECTSQL = "SELECT `lotoresults`.`input1`,"
 			+ "`lotoresults`.`input2`," + "`lotoresults`.`input3`,"
 			+ "`lotoresults`.`input4`," + "`lotoresults`.`input5`,"
@@ -212,7 +236,7 @@ public final class ConfigLoto {
 		return instance;
 	}
 
-	public static double MINVALUE = 0.4; // 0.0009;
+	public static double MINVALUE = 0.49; // 0.0009;
 	public static double IDEALVALUE = 1.0;
 	public static int NUM_DIGITS = 1000;
 	public static SortedMap<Integer, Double> PREDICTMAPRESULT = new TreeMap<Integer, Double>();
@@ -301,7 +325,7 @@ public final class ConfigLoto {
 			sortMap.put(i + 1, round2(actual.getData(i)));
 		}
 		log.debug("*****   HIGH  ************");
-		log.debug("Successfull Predict Count= " + counterSuccess);
+		log.debug("Successfull Predict Count= " + counterSuccess+ " <--- ");
 		log.debug("Result= " + PREDICTMAPRESULT); //sortHashMapByValues(
 		log.debug("Prediction= " + sortHashMapByValues(PREDICTMAP));
 		log.debug("Total Predict Count= " + counterTotalPredict);
