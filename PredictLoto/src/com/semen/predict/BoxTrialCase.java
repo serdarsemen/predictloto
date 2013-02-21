@@ -6,8 +6,8 @@ import org.encog.mathutil.IntPair;
 
 public class BoxTrialCase {
 
-	public static final int BASE_RESOLUTION = 11;
-	public static final int BOUNDS = BASE_RESOLUTION - 1;
+	
+	public static final int BOUNDS = ConfigLoto.BASE_RESOLUTION - 1;
 
 	private IntPair smallBoxTopLeft;
 	private IntPair largeBoxTopLeft;
@@ -27,8 +27,8 @@ public class BoxTrialCase {
 	}
 
 	public double getPixel(double x, double y) {
-		int pixelX = (int) (((x + 1.0) * BoxTrialCase.BASE_RESOLUTION) / 2.0);
-		int pixelY = (int) (((y + 1.0) * BoxTrialCase.BASE_RESOLUTION) / 2.0);
+		int pixelX = (int) (((x + 1.0) * ConfigLoto.BASE_RESOLUTION) / 2.0);
+		int pixelY = (int) (((y + 1.0) * ConfigLoto.BASE_RESOLUTION) / 2.0);
 
 		if (smallBoxTopLeft.getX() == pixelX
 				&& smallBoxTopLeft.getY() == pixelY) {
@@ -42,8 +42,8 @@ public class BoxTrialCase {
 	}
 
 	private IntPair[] generateRandomTestCase(int largeBoxRelativePos) {
-		IntPair smallBoxPos = new IntPair(rnd.nextInt(BoxTrialCase.BASE_RESOLUTION),
-				rnd.nextInt(BoxTrialCase.BASE_RESOLUTION));
+		IntPair smallBoxPos = new IntPair(rnd.nextInt(ConfigLoto.BASE_RESOLUTION),
+				rnd.nextInt(ConfigLoto.BASE_RESOLUTION));
 
 		IntPair largeBoxPos = (IntPair) smallBoxPos.clone();
 		switch (largeBoxRelativePos) {
@@ -63,7 +63,7 @@ public class BoxTrialCase {
 		}
 
 		if (largeBoxPos.getX() > BoxTrialCase.BOUNDS) {
-			largeBoxPos.addX(-BoxTrialCase.BASE_RESOLUTION);
+			largeBoxPos.addX(-ConfigLoto.BASE_RESOLUTION);
 
 			if (0 == largeBoxPos.getX()) {
 				largeBoxPos.add(1);
@@ -75,7 +75,7 @@ public class BoxTrialCase {
 		}
 
 		if (largeBoxPos.getY() > BoxTrialCase.BOUNDS) {
-			largeBoxPos.addY(-BoxTrialCase.BASE_RESOLUTION);
+			largeBoxPos.addY(-ConfigLoto.BASE_RESOLUTION);
 
 			if (0 == largeBoxPos.getY()) {
 				largeBoxPos.addY(1);

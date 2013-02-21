@@ -63,6 +63,10 @@ public final class ConfigLoto {
 	// 0.14 te 9 Predict
 	//         0.01 En çabuk 0.24 0.32
 													// olabiliyor 0.1071 0.1063 0.11 fail
+	
+	//HyperNEAT	
+	public static final int BASE_RESOLUTION = 7;
+	
 	public static double JORDANDESIREDERROR = 0.12;// 0.12; not success !!!
 	public static double ELMANDESIREDERROR = 0.1059; // 0.1058;
 	public static double FEEDFORWARDDESIREDERROR = 0.14;

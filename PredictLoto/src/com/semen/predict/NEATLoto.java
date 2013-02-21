@@ -143,29 +143,29 @@ public class NEATLoto {
 		}
 		
 		CalculateScore score = new TrainingSetScore(trainingSet);
-		
+		BoxesScore boxScore  = null;
 		
 		// train the neural network
 
 		NEATTraining train = null;
 
-		if (ConfigLoto.ISHYPERNEAT == 1) {
-
+		if (ConfigLoto.ISHYPERNEAT == 0) {
+			new NEATTraining(score, pop);
+			
+		} else {
 			Substrate substrate = SubstrateFactory
-					.factorSandwichSubstrate(7, 7);
-			// BoxesScore score = new BoxesScore(11);
+					.factorSandwichSubstrate(ConfigLoto.BASE_RESOLUTION,ConfigLoto.BASE_RESOLUTION);
+			boxScore = new BoxesScore(ConfigLoto.BASE_RESOLUTION);
 			if (pop == null) {
 				pop = new NEATPopulation(substrate,
 						ConfigLoto.NEATPOPULATIONSIZE);
 				pop.setActivationCycles(4);
 				pop.reset();
 			}
-			train = new NEATTraining(score, pop);
+			train = new NEATTraining(boxScore, pop);
 			OriginalNEATSpeciation speciation = new OriginalNEATSpeciation();
 			speciation.setCompatibilityThreshold(1);
 			train.setSpeciation(speciation);
-		} else {
-			new NEATTraining(score, pop);
 		}
 
 		NEATLoto.trainToError(train, ConfigLoto.NEATDESIREDERROR, pop);
@@ -206,7 +206,7 @@ public class NEATLoto {
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
 
 		CalculateScore score = new TrainingSetScore(trainingSet);
-
+		BoxesScore boxScore  = null;
 		if (ConfigLoto.ISHYPERNEAT == 0) {
 
 			pop = new NEATPopulation(ConfigLoto.INPUT_SIZE,
@@ -223,11 +223,11 @@ public class NEATLoto {
 		} else {
 			Substrate substrate = SubstrateFactory
 					.factorSandwichSubstrate(7, 7);
-			// BoxesScore score = new BoxesScore(11);
+		    boxScore = new BoxesScore(7);
 			pop = new NEATPopulation(substrate, ConfigLoto.NEATPOPULATIONSIZE);
 			pop.setActivationCycles(4);
 			pop.reset();
-			train = new NEATTraining(score, pop);
+			train = new NEATTraining(boxScore, pop);
 			OriginalNEATSpeciation speciation = new OriginalNEATSpeciation();
 			speciation.setCompatibilityThreshold(1);
 			train.setSpeciation(speciation);
