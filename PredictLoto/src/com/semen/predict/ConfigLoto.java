@@ -51,13 +51,15 @@ public final class ConfigLoto {
 	public static int DATASOURCESQL = 0;
 	public static int DATASOURCECSV = 1;
 	
-	public static int ISHYPERNEAT = 1;
+	public static int ISHYPERNEAT = 0;
+	public final static int LO_WEEKNO = 200; // start week for train0 or 500 ?
+	public final static int HI_WEEKNO = 846; // end week for train TRAIN_SIZE
 
 	// Neat
 	// if population size is down much faster but target err rate is so slow
-	public static int NEATPOPULATIONSIZE = 700; // 1000:8000 ideal  if decrease epoch and error increase
-	public static double NEATPOPULATIONDENSITY = 0.0; // 1.0
-	public static double NEATDESIREDERROR = 0.18; // 15  te 12 predict pop= 7000 
+	public static int NEATPOPULATIONSIZE = 1000; // 1000:8000 ideal  if decrease epoch and error increase
+	public static double NEATPOPULATIONDENSITY = 0.25; // 1.0
+	public static double NEATDESIREDERROR = 0.16; // 15  te 12 predict pop= 7000  0.109
 	// 0.14 te 9 Predict
 	//         0.01 En çabuk 0.24 0.32
 													// olabiliyor 0.1071 0.1063 0.11 fail
@@ -106,8 +108,6 @@ public final class ConfigLoto {
 	public static final String ELMANFEEDFORWARD_FILENAME = basePathStr
 			+ "\\ElmanFeedForwardLoto.eg";
 
-	public final static int LO_WEEKNO = 200; // start week for train0 or 500 ?
-	public final static int HI_WEEKNO = 846; // end week for train TRAIN_SIZE
 
 	
 	public final static String MaxWeekResultSQL ="select * from lotoresults where " +

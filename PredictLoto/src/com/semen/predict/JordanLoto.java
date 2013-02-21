@@ -318,7 +318,7 @@ public class JordanLoto {
 			t.printStackTrace();
 		} finally {
 			double estimatedTimeMin = (System.nanoTime() - startTime) / 60000000000.0;
-			log.debug("Elapsed Time (min) = " + estimatedTimeMin);
+			log.debug("Elapsed Time  = " + ConfigLoto.round2(estimatedTimeMin)+ " (min) ");
 			Encog.getInstance().shutdown();
 		}
 
