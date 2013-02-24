@@ -2,7 +2,6 @@
  * */
 package com.semen.predict;
 
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,23 +49,25 @@ public final class ConfigLoto {
 
 	public static int DATASOURCESQL = 0;
 	public static int DATASOURCECSV = 1;
-	
+
 	public static int ISHYPERNEAT = 0;
 	public final static int LO_WEEKNO = 200; // start week for train0 or 500 ?
 	public final static int HI_WEEKNO = 846; // end week for train TRAIN_SIZE
 
 	// Neat
 	// if population size is down much faster but target err rate is so slow
-	public static int NEATPOPULATIONSIZE = 1000; // 1000:8000 ideal  if decrease epoch and error increase
-	public static double NEATPOPULATIONDENSITY = 0.25; // 1.0
-	public static double NEATDESIREDERROR = 0.16; // 15  te 12 predict pop= 7000  0.109
+	public static int NEATPOPULATIONSIZE = 1200; // 1000:8000 ideal if decrease
+													// epoch and error increase
+	public static double NEATPOPULATIONDENSITY = 0.45; // 1.0
+	public static double NEATDESIREDERROR = 0.19; // 15 te 12 predict pop= 7000
+													// 0.109
 	// 0.14 te 9 Predict
-	//         0.01 En çabuk 0.24 0.32
-													// olabiliyor 0.1071 0.1063 0.11 fail
-	
-	//HyperNEAT	
-	public static final int BASE_RESOLUTION = 7;
-	
+	// 0.01 En çabuk 0.24 0.32
+	// olabiliyor 0.1071 0.1063 0.11 fail
+
+	// HyperNEAT
+	public static final int BASE_RESOLUTION = 14; //7
+
 	public static double JORDANDESIREDERROR = 0.12;// 0.12; not success !!!
 	public static double ELMANDESIREDERROR = 0.1059; // 0.1058;
 	public static double FEEDFORWARDDESIREDERROR = 0.14;
@@ -95,16 +96,17 @@ public final class ConfigLoto {
 
 	public static final String JORDAN_FILENAME = basePathStr
 			+ "\\JordanLoto.eg";
-	
+
 	public static final String JORDAN_DUMPFILENAME = basePathStr
 			+ "\\JordanLoto.txt";
 	public static final String JORDANFEEDFORWARD_FILENAME = basePathStr
 			+ "\\JordanFeedForwardLoto.eg";
-	
-	
+
 	public static final String NEAT_FILENAME = basePathStr + "\\NeatLoto.eg";
-	public static final String NEAT_SERIALFILENAME = basePathStr+ "\\NeatLoto.ser";
-	public static final String NEAT_DUMPFILENAME = basePathStr+ "\\NeatDump.txt";
+	public static final String NEAT_SERIALFILENAME = basePathStr
+			+ "\\NeatLoto.ser";
+	public static final String NEAT_DUMPFILENAME = basePathStr
+			+ "\\NeatDump.txt";
 
 	public static final String ELMAN_FILENAME = basePathStr + "\\ElmanLoto.eg";
 	public static final String ELMAN_DUMPFILENAME = basePathStr
@@ -112,23 +114,18 @@ public final class ConfigLoto {
 	public static final String ELMANFEEDFORWARD_FILENAME = basePathStr
 			+ "\\ElmanFeedForwardLoto.eg";
 
+	public final static String MaxWeekResultSQL = "select * from lotoresults where "
+			+ " weekid=(select max(weekid) from lotoresults) ";
 
-	
-	public final static String MaxWeekResultSQL ="select * from lotoresults where " +
-			" weekid=(select max(weekid) from lotoresults) ";
-	
-	public final static String InnerSQL ="(select weekid from lotoresults where "
-	+"input1" 
-	+ "=1 )";
+	public final static String InnerSQL = "(select weekid from lotoresults where "
+			+ "input1" + "=1 )";
 
-	
 	public final static String RecurringSQL = "select lotoresults.weekid from lotoresults,"
-	+InnerSQL
-	+" as tbl"
-	+"where lotoresults.weekid= tbl.weekid-1"
-	+" and "
-	+"lotoresults.input1=1";
-	
+			+ InnerSQL
+			+ " as tbl"
+			+ "where lotoresults.weekid= tbl.weekid-1"
+			+ " and " + "lotoresults.input1=1";
+
 	public final static String SELECTSQL = "SELECT `lotoresults`.`input1`,"
 			+ "`lotoresults`.`input2`," + "`lotoresults`.`input3`,"
 			+ "`lotoresults`.`input4`," + "`lotoresults`.`input5`,"
@@ -181,8 +178,8 @@ public final class ConfigLoto {
 			+ "`lotoresults`.`ideal49` ";
 
 	public final static String TRAINSQL = SELECTSQL + " FROM lotoresults "
-			+ " WHERE weekid<=" + HI_WEEKNO +
-			" AND weekid>=" + LO_WEEKNO + " ORDER BY weekid";
+			+ " WHERE weekid<=" + HI_WEEKNO + " AND weekid>=" + LO_WEEKNO
+			+ " ORDER BY weekid";
 
 	public final static String TESTSQL = SELECTSQL + " FROM lotoresults "
 			+ " WHERE weekid>" + HI_WEEKNO + " ORDER BY weekid";
@@ -262,10 +259,12 @@ public final class ConfigLoto {
 	public static void evaluate(final MLRegression network,
 			final MLDataSet training) {
 		for (final MLDataPair pair : training) {
-		//	final MLData output = network.compute(pair.getInput());
+			// final MLData output = network.compute(pair.getInput());
 			log.debug("Input= "
 					+ EncogUtility.formatNeuralData(pair.getInput()));
-			log.debug("Actual=" + EncogUtility.formatNeuralData(network.compute(pair.getInput())));
+			log.debug("Actual="
+					+ EncogUtility.formatNeuralData(network.compute(pair
+							.getInput())));
 			log.debug("Ideal= "
 					+ EncogUtility.formatNeuralData(pair.getIdeal()));
 			log.debug("Success Report ---------");
@@ -328,16 +327,18 @@ public final class ConfigLoto {
 			}
 			sortMap.put(i + 1, round2(actual.getData(i)));
 		}
+
+		
 		log.debug("*****   HIGH  ************");
-		log.debug("Successfull Predict Count= " + counterSuccess+ " <--- ");
-		log.debug("Result= " + PREDICTMAPRESULT); //sortHashMapByValues(
+		log.debug("Successfull Predict Count= " + counterSuccess + " <--- ");
+		log.debug("Result= " + PREDICTMAPRESULT); // sortHashMapByValues(
 		log.debug("Prediction= " + sortHashMapByValues(PREDICTMAP));
 		log.debug("Total Predict Count= " + counterTotalPredict);
 		log.debug("Sorted Actual= " + sortHashMapByValues(sortMap));
 		log.debug("*****   LOW  ************");
 		log.debug("Successfull Low Predict Count<  " + MINVALUE + " = "
 				+ counterLowSuccess);
-		log.debug("Low Result= " + PREDICTLOWMAPRESULT); //sortHashMapByValues(
+		log.debug("Low Result= " + PREDICTLOWMAPRESULT); // sortHashMapByValues(
 		log.debug("Low Prediction= " + sortHashMapByValues(PREDICTLOWMAP));
 		log.debug("Total Low Predict Count= " + counterLowTotalPredict);
 
@@ -352,8 +353,8 @@ public final class ConfigLoto {
 			SortedMap<Integer, Double> passedMap) {
 		List<Integer> mapKeys = new ArrayList<Integer>(passedMap.keySet());
 		List<Double> mapValues = new ArrayList<Double>(passedMap.values());
-		Collections.sort(mapValues,Collections.reverseOrder());
-		Collections.sort(mapKeys,Collections.reverseOrder());
+		Collections.sort(mapValues, Collections.reverseOrder());
+		Collections.sort(mapKeys, Collections.reverseOrder());
 
 		LinkedHashMap<Integer, Double> sortedMap = new LinkedHashMap<Integer, Double>();
 

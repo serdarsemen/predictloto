@@ -65,6 +65,9 @@ public class JordanLoto {
 		pattern.setInputNeurons(ConfigLoto.INPUT_SIZE);
 		pattern.addHiddenLayer(ConfigLoto.JORDANHIDDENNEURONSIZE);
 		pattern.setOutputNeurons(ConfigLoto.IDEAL_SIZE);
+		log.debug("LO_WEEKNO= " +ConfigLoto.LO_WEEKNO);
+		log.debug("HI_WEEKNO= " +ConfigLoto.HI_WEEKNO);
+
 		return (BasicNetwork) pattern.generate();
 	}
 
@@ -76,6 +79,9 @@ public class JordanLoto {
 		pattern.setInputNeurons(ConfigLoto.INPUT_SIZE);
 		pattern.addHiddenLayer(ConfigLoto.FEEDFORWARDHIDDENNEURONSIZE);
 		pattern.setOutputNeurons(ConfigLoto.IDEAL_SIZE);
+		log.debug("LO_WEEKNO= " +ConfigLoto.LO_WEEKNO);
+		log.debug("HI_WEEKNO= " +ConfigLoto.HI_WEEKNO);
+
 		return (BasicNetwork) pattern.generate();
 	}
 

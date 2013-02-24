@@ -64,6 +64,12 @@ public class NEATLoto {
 		int epoch = 1;
 		double train_Error = 1.0;
 		String str_TargetError = Format.formatDouble(error, 4);
+		log.debug("ISHYPERNEAT= " +ConfigLoto.ISHYPERNEAT);
+		log.debug("LO_WEEKNO= " +ConfigLoto.LO_WEEKNO);
+		log.debug("HI_WEEKNO= " +ConfigLoto.HI_WEEKNO);
+
+		log.debug("NEATPOPULATIONSIZE= " +ConfigLoto.NEATPOPULATIONSIZE);
+		log.debug("NEATPOPULATIONDENSITY= " +ConfigLoto.NEATPOPULATIONDENSITY);
 
 		log.debug("Beginning NEAT training...");
 		do {
