@@ -38,8 +38,34 @@ public final class ConfigLoto {
 	private static final long serialVersionUID = -447374783L;
 	public Properties props;
 
-	public final static int INPUT_SIZE = 49;
-	public final static int IDEAL_SIZE = 49;
+	public final static int SIZE49 = 49;
+	public final static int SIZE6 = 6;
+	public final static int SIZE = 5;
+	public final static int SIZE54 = 54;
+	public final static int SIZE10 = 10;
+
+	public static int INPUTSIZE = SIZE6; // <-- or SIZE49
+
+	public final static int INPUT_SIZE_SAY49 = 49;
+	public final static int IDEAL_SIZE_SAY49 = 49;
+
+	public final static int INPUT_SIZE_SAY6 = 6;
+	public final static int IDEAL_SIZE_SAY6 = 6;
+
+	public final static int INPUT_SIZE_SUPER54 = 54;
+	public final static int IDEAL_SIZE_SUPER54 = 54;
+
+	public final static int INPUT_SIZE_SUPER6 = 6;
+	public final static int IDEAL_SIZE_SUPER6 = 6;
+
+	public final static int INPUT_SIZE_10NO80 = 80;
+	public final static int IDEAL_SIZE_10NO80 = 80;
+
+	public final static int INPUT_SIZE_10NO22 = 22;
+	public final static int IDEAL_SIZE_10NO22 = 22;
+
+	public final static int INPUT_SIZE_10NO10 = 10;
+	public final static int IDEAL_SIZE_10NO10 = 10;
 
 	public static int JORDANHIDDENNEURONSIZE = 160;// 180 not success !!!
 	public static int ELMANHIDDENNEURONSIZE = 120; // 180
@@ -51,45 +77,90 @@ public final class ConfigLoto {
 	public static int DATASOURCECSV = 1;
 
 	public static int ISHYPERNEAT = 0;
-	public final static int LO_WEEKNO = 200; // start week for train0 or 500 ?
-	public final static int HI_WEEKNO = 846; // end week for train TRAIN_SIZE
+
+	/*
+	 * 
+	 * 10 Numara On Numara adı verilen bu oyunda; oyun kuponlarının üzerindeki
+	 * her bir kolonda yer alan 1 ile 80 arasındaki numaralardan, çekilişle
+	 * belirlenecek olan 22 adet numaradan; 10, 9, 8, 7 ve 6 numarayı doğru
+	 * tahmin edenler ile hiçbir numarayı doğru tahmin edemeyenler ikramiyeye
+	 * hak kazanmaktadır.
+	 * 
+	 * İştirakçiler, her bir kolonda, on adet numara işaretleyerek oyuna
+	 * katılabilmektedir. Oyuna istenilen sayıda kolonla katılmak mümkündür.
+	 * Çoklu çekiliş işaretlemek suretiyle aynı numaralar 2, 3 ve 4 çekiliş için
+	 * de oynanabilir. On Numara oyununa sen-seç ile de katılmak olanaklıdır.
+	 */
+	public final static int INPUT_SIZE_SANSTOPUSET1 = 34;
+	public final static int IDEAL_SIZE_SANSTOPUSET1 = 34;
+
+	public final static int INPUT_SIZE_SANSTOPUSET1_5 = 5;
+	public final static int IDEAL_SIZE_SANSTOPUSET1_5 = 5;
+
+	public final static int INPUT_SIZE_SANSTOPUSET2 = 14;
+	public final static int IDEAL_SIZE_SANSTOPUSET2 = 14;
+
+	public final static int INPUT_SIZE_SANSTOPUSET2_1 = 1;
+	public final static int IDEAL_SIZE_SANSTOPUSET2_1 = 1;
+
+	/*
+	 * ŞANS TOPU
+	 * 
+	 * 
+	 * Şans Topu (5+1) oyunu, iki farklı sayı kümesi içerisinden, belirlenen
+	 * sayıda numara seçilmesi esasına dayanan bir sayısal oyundur. İlk sayı
+	 * kümesi 
+	 * 1-34 numaradan, ikinci sayı kümesi ise 
+	 * 1-14 numaradan
+	 * oluşmaktadır. İştirakçiler, ilk sayı kümesinden 5 (beş) adet, ikinci sayı
+	 * kümesinden 1 (bir) adet numarayı seçerek oyuna katılabileceklerdir.
+	 */
+	public final static int LO_WEEKNO = 1; // start week for train0 or 500 ?
+	public final static int HI_WEEKNO = 847; // end week for train TRAIN_SIZE
 
 	// Neat
 	// if population size is down much faster but target err rate is so slow
-	public static int NEATPOPULATIONSIZE = 1200; // 1000:8000 ideal if decrease
-													// epoch and error increase
-	public static double NEATPOPULATIONDENSITY = 0.45; // 1.0
-	public static double NEATDESIREDERROR = 0.19; // 15 te 12 predict pop= 7000
+	public static int NEATPOPULATIONSIZE = 1000; // 1000:8000 ideal if decrease
+	// if increase time increase
+	// 1200
+	// epoch and error increase
+	public static double NEATPOPULATIONDENSITY = 0.4; // 1.0 0.45 0.35 0.3
+														// ideal?
+	// if increase time epoch decrease
+	public static double NEATDESIREDERROR = 0.14; // 15 te 12 predict pop= 7000
 													// 0.109
 	// 0.14 te 9 Predict
-	// 0.01 En �abuk 0.24 0.32
+	// 0.01 En çabuk 0.24 0.32
 	// olabiliyor 0.1071 0.1063 0.11 fail
 
 	// HyperNEAT
-	public static final int BASE_RESOLUTION = 14; //7
+	public static int BASE_RESOLUTION = 14; // 7
 
 	public static double JORDANDESIREDERROR = 0.12;// 0.12; not success !!!
 	public static double ELMANDESIREDERROR = 0.1059; // 0.1058;
 	public static double FEEDFORWARDDESIREDERROR = 0.14;
+
 	public static int EPOCHSAVEINTERVAL = 1000; // 1000
 
 	// Neural Simulated Annealing
-	public static double SIMANNEAL_STARTTEMP = 10.0; // The starting
-														// temperature.
-	public static double SIMANNEAL_STOPTEMP = 2.0; // 2.0 The ending
-													// temperature.
-	public static int SIMANNEAL_CYCLES = 150; // 100 The number of cycles in a
-												// training iteration. try 300?
+	public static final double SIMANNEAL_STARTTEMP = 10.0; // The starting
+															// temperature.
+	public static final double SIMANNEAL_STOPTEMP = 2.0; // 2.0 The ending
+	// temperature.
+	public static final int SIMANNEAL_CYCLES = 150; // 100 The number of cycles
+													// in a
+	// training iteration. try 300?
 	// Backpropagation
-	public static double BPROP_LEARNRATE = 0.00001; // The rate at which the
-													// weight matrix will be
-													// adjusted based on
-													// learning.
-	public static double BPROP_MOMENTUM = 0.05;// 0.0 The influence that
-												// previous
-												// iteration's training deltas
-												// will have on the current
-												// iteration.
+	public static final double BPROP_LEARNRATE = 0.00001; // The rate at which
+															// the
+	// weight matrix will be
+	// adjusted based on
+	// learning.
+	public static final double BPROP_MOMENTUM = 0.05;// 0.0 The influence that
+	// previous
+	// iteration's training deltas
+	// will have on the current
+	// iteration.
 
 	public static final String trainCSVFile = basePathStr + "\\inp49.csv";
 	public static final String testCSVFile = basePathStr + "\\test49.csv";
@@ -114,75 +185,65 @@ public final class ConfigLoto {
 	public static final String ELMANFEEDFORWARD_FILENAME = basePathStr
 			+ "\\ElmanFeedForwardLoto.eg";
 
-	public final static String MaxWeekResultSQL = "select * from lotoresults where "
+	public static final String MaxWeekResultSQL = "select * from lotoresults where "
 			+ " weekid=(select max(weekid) from lotoresults) ";
 
-	public final static String InnerSQL = "(select weekid from lotoresults where "
+	public static final String InnerSQL = "(select weekid from lotoresults where "
 			+ "input1" + "=1 )";
 
-	public final static String RecurringSQL = "select lotoresults.weekid from lotoresults,"
+	public static final String RecurringSQL = "select lotoresults.weekid from lotoresults,"
 			+ InnerSQL
 			+ " as tbl"
 			+ "where lotoresults.weekid= tbl.weekid-1"
 			+ " and " + "lotoresults.input1=1";
 
-	public final static String SELECTSQL = "SELECT `lotoresults`.`input1`,"
-			+ "`lotoresults`.`input2`," + "`lotoresults`.`input3`,"
-			+ "`lotoresults`.`input4`," + "`lotoresults`.`input5`,"
-			+ "`lotoresults`.`input6`," + "`lotoresults`.`input7`,"
-			+ "`lotoresults`.`input8`," + "`lotoresults`.`input9`,"
-			+ "`lotoresults`.`input10`," + "`lotoresults`.`input11`,"
-			+ "`lotoresults`.`input12`," + "`lotoresults`.`input13`,"
-			+ "`lotoresults`.`input14`," + "`lotoresults`.`input15`,"
-			+ "`lotoresults`.`input16`," + "`lotoresults`.`input17`,"
-			+ "`lotoresults`.`input18`," + "`lotoresults`.`input19`,"
-			+ "`lotoresults`.`input20`," + "`lotoresults`.`input21`,"
-			+ "`lotoresults`.`input22`," + "`lotoresults`.`input23`,"
-			+ "`lotoresults`.`input24`," + "`lotoresults`.`input25`,"
-			+ "`lotoresults`.`input26`," + "`lotoresults`.`input27`,"
-			+ "`lotoresults`.`input28`," + "`lotoresults`.`input29`,"
-			+ "`lotoresults`.`input30`," + "`lotoresults`.`input31`,"
-			+ "`lotoresults`.`input32`," + "`lotoresults`.`input33`,"
-			+ "`lotoresults`.`input34`," + "`lotoresults`.`input35`,"
-			+ "`lotoresults`.`input36`," + "`lotoresults`.`input37`,"
-			+ "`lotoresults`.`input38`," + "`lotoresults`.`input39`,"
-			+ "`lotoresults`.`input40`," + "`lotoresults`.`input41`,"
-			+ "`lotoresults`.`input42`," + "`lotoresults`.`input43`,"
-			+ "`lotoresults`.`input44`," + "`lotoresults`.`input45`,"
-			+ "`lotoresults`.`input46`," + "`lotoresults`.`input47`,"
-			+ "`lotoresults`.`input48`," + "`lotoresults`.`input49`,"
-			+ "`lotoresults`.`ideal1`," + "`lotoresults`.`ideal2`,"
-			+ "`lotoresults`.`ideal3`," + "`lotoresults`.`ideal4`,"
-			+ "`lotoresults`.`ideal5`," + "`lotoresults`.`ideal6`,"
-			+ "`lotoresults`.`ideal7`," + "`lotoresults`.`ideal8`,"
-			+ "`lotoresults`.`ideal9`," + "`lotoresults`.`ideal10`,"
-			+ "`lotoresults`.`ideal11`," + "`lotoresults`.`ideal12`,"
-			+ "`lotoresults`.`ideal13`," + "`lotoresults`.`ideal14`,"
-			+ "`lotoresults`.`ideal15`," + "`lotoresults`.`ideal16`,"
-			+ "`lotoresults`.`ideal17`," + "`lotoresults`.`ideal18`,"
-			+ "`lotoresults`.`ideal19`," + "`lotoresults`.`ideal20`,"
-			+ "`lotoresults`.`ideal21`," + "`lotoresults`.`ideal22`,"
-			+ "`lotoresults`.`ideal23`," + "`lotoresults`.`ideal24`,"
-			+ "`lotoresults`.`ideal25`," + "`lotoresults`.`ideal26`,"
-			+ "`lotoresults`.`ideal27`," + "`lotoresults`.`ideal28`,"
-			+ "`lotoresults`.`ideal29`," + "`lotoresults`.`ideal30`,"
-			+ "`lotoresults`.`ideal31`," + "`lotoresults`.`ideal32`,"
-			+ "`lotoresults`.`ideal33`," + "`lotoresults`.`ideal34`,"
-			+ "`lotoresults`.`ideal35`," + "`lotoresults`.`ideal36`,"
-			+ "`lotoresults`.`ideal37`," + "`lotoresults`.`ideal38`,"
-			+ "`lotoresults`.`ideal39`," + "`lotoresults`.`ideal40`,"
-			+ "`lotoresults`.`ideal41`," + "`lotoresults`.`ideal42`,"
-			+ "`lotoresults`.`ideal43`," + "`lotoresults`.`ideal44`,"
-			+ "`lotoresults`.`ideal45`," + "`lotoresults`.`ideal46`,"
-			+ "`lotoresults`.`ideal47`," + "`lotoresults`.`ideal48`,"
-			+ "`lotoresults`.`ideal49` ";
+	public final static String SELECTSAY49SQL = "SELECT  `input1`,"
+			+ " `input2`," + " `input3`," + " `input4`," + " `input5`,"
+			+ " `input6`," + " `input7`," + " `input8`," + " `input9`,"
+			+ " `input10`," + " `input11`," + " `input12`," + " `input13`,"
+			+ " `input14`," + " `input15`," + " `input16`," + " `input17`,"
+			+ " `input18`," + " `input19`," + " `input20`," + " `input21`,"
+			+ " `input22`," + " `input23`," + " `input24`," + " `input25`,"
+			+ " `input26`," + " `input27`," + " `input28`," + " `input29`,"
+			+ " `input30`," + " `input31`," + " `input32`," + " `input33`,"
+			+ " `input34`," + " `input35`," + " `input36`," + " `input37`,"
+			+ " `input38`," + " `input39`," + " `input40`," + " `input41`,"
+			+ " `input42`," + " `input43`," + " `input44`," + " `input45`,"
+			+ " `input46`," + " `input47`," + " `input48`," + " `input49`,"
+			+ " `ideal1`," + " `ideal2`," + " `ideal3`," + " `ideal4`,"
+			+ " `ideal5`," + " `ideal6`," + " `ideal7`," + " `ideal8`,"
+			+ " `ideal9`," + " `ideal10`," + " `ideal11`," + " `ideal12`,"
+			+ " `ideal13`," + " `ideal14`," + " `ideal15`," + " `ideal16`,"
+			+ " `ideal17`," + " `ideal18`," + " `ideal19`," + " `ideal20`,"
+			+ " `ideal21`," + " `ideal22`," + " `ideal23`," + " `ideal24`,"
+			+ " `ideal25`," + " `ideal26`," + " `ideal27`," + " `ideal28`,"
+			+ " `ideal29`," + " `ideal30`," + " `ideal31`," + " `ideal32`,"
+			+ " `ideal33`," + " `ideal34`," + " `ideal35`," + " `ideal36`,"
+			+ " `ideal37`," + " `ideal38`," + " `ideal39`," + " `ideal40`,"
+			+ " `ideal41`," + " `ideal42`," + " `ideal43`," + " `ideal44`,"
+			+ " `ideal45`," + " `ideal46`," + " `ideal47`," + " `ideal48`,"
+			+ " `ideal49` ";
 
-	public final static String TRAINSQL = SELECTSQL + " FROM lotoresults "
-			+ " WHERE weekid<=" + HI_WEEKNO + " AND weekid>=" + LO_WEEKNO
+	public final static String TRAINSAY49SQL = SELECTSAY49SQL
+			+ " FROM lotoresults " + " WHERE weekid<=" + HI_WEEKNO
+			+ " AND weekid>=" + LO_WEEKNO + " ORDER BY weekid";
+
+	public final static String TESTSAY49SQL = SELECTSAY49SQL
+			+ " FROM lotoresults " + " WHERE weekid>" + HI_WEEKNO
 			+ " ORDER BY weekid";
 
-	public final static String TESTSQL = SELECTSQL + " FROM lotoresults "
-			+ " WHERE weekid>" + HI_WEEKNO + " ORDER BY weekid";
+	public final static String SELECTSAY6SQL = "SELECT  `input1`,"
+			+ " `input2`," + " `input3`," + " `input4`," + " `input5`,"
+			+ " `input6`," + " `ideal1`," + " `ideal2`," + " `ideal3`,"
+			+ " `ideal4`," + " `ideal5`," + " `ideal6` ";
+
+	public final static String TRAINSAY6SQL = SELECTSAY6SQL
+			+ " FROM lotoresults6 " + " WHERE weekid<=" + HI_WEEKNO
+			+ " AND weekid>=" + LO_WEEKNO + " ORDER BY weekid";
+
+	public final static String TESTSAY6SQL = SELECTSAY6SQL
+			+ " FROM lotoresults6 " + " WHERE weekid>" + HI_WEEKNO
+			+ " ORDER BY weekid";
 
 	public final static String SQL_DRIVER = "com.mysql.jdbc.Driver";
 	public final static String SQL_URL = "jdbc:mysql://localhost:3306/loto";
@@ -229,17 +290,85 @@ public final class ConfigLoto {
 	// TODO: make it singleton
 	private static final ConfigLoto instance = new ConfigLoto();
 
+	public static String TRAINSQL;
+	public static String TESTSQL;
+	public static int INPUT_SIZE;
+	public static int IDEAL_SIZE;
+
 	private ConfigLoto() {
 		// call init
+		// decide to use binary 49 or 6 number dived by 49 syntax
+		if (INPUTSIZE == SIZE49) {
+			TRAINSQL = TRAINSAY49SQL; // SAY49 or SAY6
+			TESTSQL = TESTSAY49SQL; // SAY49 or SAY6
+			INPUT_SIZE = INPUT_SIZE_SAY49; // SAY49 or SAY6
+			IDEAL_SIZE = IDEAL_SIZE_SAY49; // SAY49 or SAY6
+
+			NEATPOPULATIONSIZE = 1000; // 1000:8000 ideal if decrease
+			// if increase time increase
+			// 1200
+			// epoch and error increase
+			NEATPOPULATIONDENSITY = 0.3; // 1.0 0.45 0.35 0.3
+											// ideal?
+			// if increase time epoch decrease
+			NEATDESIREDERROR = 0.14; // 15 te 12 predict pop= 7000
+
+			// HyperNEAT
+			BASE_RESOLUTION = 14; // 7
+
+			JORDANDESIREDERROR = 0.12;// 0.12; not success !!!
+			ELMANDESIREDERROR = 0.1059; // 0.1058;
+			FEEDFORWARDDESIREDERROR = 0.14;
+
+		} else if (INPUTSIZE == SIZE6) {
+			TRAINSQL = TRAINSAY6SQL; // SAY49 or SAY6
+			TESTSQL = TESTSAY6SQL; // SAY49 or SAY6
+			INPUT_SIZE = INPUT_SIZE_SAY6; // SAY49 or SAY6
+			IDEAL_SIZE = IDEAL_SIZE_SAY6; // SAY49 or SAY6
+
+			NEATPOPULATIONSIZE = 1000; // 1000:8000 ideal if decrease
+			// if increase time increase
+			// 1200
+			// epoch and error increase
+			NEATPOPULATIONDENSITY = 0.3; // 1.0 0.45 0.35 0.3
+											// ideal?
+			// if increase time epoch decrease
+			NEATDESIREDERROR = 0.07; // 15 te 12 predict pop= 7000
+
+			// HyperNEAT
+			BASE_RESOLUTION = 14; // 7
+
+			JORDANDESIREDERROR = 0.12;// 0.12; not success !!!
+			ELMANDESIREDERROR = 0.1059; // 0.1058;
+			FEEDFORWARDDESIREDERROR = 0.14;
+
+		}
 	}
 
 	public static ConfigLoto getInstance() {
 		return instance;
 	}
 
-	public static double MINVALUE = 0.49; // 0.0009;
-	public static double IDEALVALUE = 1.0;
-	public static int NUM_DIGITS = 1000;
+	public static final double SAYISALOTOMAX = 49.0;
+	public static final double SUPERLOTOMAX = 54.0;
+	public  static final double SANSTOPUSET1MAX = 34.0;
+	public  static final double SANSTOPUSET2MAX = 14.0;
+	public  static final double NUMARA10MAX = 80.0;
+	
+	
+	public static final double MINVALUE = 0.48; // 0.0009;
+	public static final double IDEALDIGITALONEVALUE = 1.0;
+
+	// range chack
+	public static final double ONEDIVSAYISAL = 1 / SAYISALOTOMAX;
+	public static final double ONEDIVSUPER = 1 / SUPERLOTOMAX;
+	public static final double ONEDIVSANSTOPUSET1 = 1 / SANSTOPUSET1MAX;
+	public static final double ONEDIVSANSTOPUSET2 = 1 / SANSTOPUSET2MAX;
+	public static final double ONEDIVNUMARA10 = 1 / NUMARA10MAX;
+	
+	
+	public static final int NUM_DIGITS = 1000;
+
 	public static SortedMap<Integer, Double> PREDICTMAPRESULT = new TreeMap<Integer, Double>();
 	public static SortedMap<Integer, Double> PREDICTMAP = new TreeMap<Integer, Double>();
 	public static SortedMap<Integer, Double> PREDICTLOWMAPRESULT = new TreeMap<Integer, Double>();
@@ -260,13 +389,15 @@ public final class ConfigLoto {
 			final MLDataSet training) {
 		for (final MLDataPair pair : training) {
 			// final MLData output = network.compute(pair.getInput());
-			log.debug("Input= "
+
+			log.debug("Input=  "
 					+ EncogUtility.formatNeuralData(pair.getInput()));
 			log.debug("Actual="
 					+ EncogUtility.formatNeuralData(network.compute(pair
 							.getInput())));
-			log.debug("Ideal= "
+			log.debug("Ideal=  "
 					+ EncogUtility.formatNeuralData(pair.getIdeal()));
+
 			log.debug("Success Report ---------");
 			calculateSuccess(network.compute(pair.getInput()), pair.getIdeal());
 		}
@@ -308,37 +439,67 @@ public final class ConfigLoto {
 		PREDICTMAPRESULT.clear();
 		PREDICTLOWMAP.clear();
 		PREDICTLOWMAPRESULT.clear();
-		for (int i = 0; i < actual.size(); i++) {
-			if (ideal.getData(i) == IDEALVALUE) // 1.0
+
+		if (INPUTSIZE == SIZE49) {
+			for (int i = 0; i < actual.size(); i++) {
+				if (ideal.getData(i) == IDEALDIGITALONEVALUE) // 1.0
+					if (actual.getData(i) > MINVALUE) {
+						counterSuccess++;
+						PREDICTMAPRESULT.put(i + 1, round2(actual.getData(i)));
+					} else {
+						counterLowSuccess++;
+						PREDICTLOWMAPRESULT.put(i + 1,
+								round2(actual.getData(i)));
+					}
+
 				if (actual.getData(i) > MINVALUE) {
-					counterSuccess++;
-					PREDICTMAPRESULT.put(i + 1, round2(actual.getData(i)));
+					counterTotalPredict++;
+					PREDICTMAP.put(i + 1, round2(actual.getData(i)));
 				} else {
-					counterLowSuccess++;
-					PREDICTLOWMAPRESULT.put(i + 1, round2(actual.getData(i)));
+					counterLowTotalPredict++;
+					PREDICTLOWMAP.put(i + 1, round2(actual.getData(i)));
 				}
-
-			if (actual.getData(i) > MINVALUE) {
-				counterTotalPredict++;
-				PREDICTMAP.put(i + 1, round2(actual.getData(i)));
-			} else {
-				counterLowTotalPredict++;
-				PREDICTLOWMAP.put(i + 1, round2(actual.getData(i)));
+				sortMap.put(i + 1, round2(actual.getData(i)));
 			}
-			sortMap.put(i + 1, round2(actual.getData(i)));
-		}
+		} else if (INPUTSIZE == SIZE6) {
+			for (int i = 0; i < actual.size(); i++) {
+				if (Math.abs(ideal.getData(i) -  actual.getData(i))< ONEDIVSAYISAL) 
+				    {
+						counterSuccess++;
+						PREDICTMAPRESULT.put(i + 1, round2(actual.getData(i)*SIZE49));
+					} else {
+						counterLowSuccess++;
+						PREDICTLOWMAPRESULT.put(i + 1,
+								round2(actual.getData(i)*SIZE49));
+					}
 
-		
+				if (actual.getData(i) > 0) {
+					counterTotalPredict++;
+					PREDICTMAP.put(i + 1, round2(actual.getData(i)*SIZE49));
+				} else {
+					counterLowTotalPredict++;
+					PREDICTLOWMAP.put(i + 1, round2(actual.getData(i)*SIZE49));
+				}
+				sortMap.put(i + 1, round2(actual.getData(i)*SIZE49));
+			}
+
+		}
 		log.debug("*****   HIGH  ************");
-		log.debug("Successfull Predict Count= " + counterSuccess + " <--- ");
-		log.debug("Result= " + PREDICTMAPRESULT); // sortHashMapByValues(
+
+		if (counterSuccess > 0) {
+			log.debug("Successfull Predict Count= " + counterSuccess
+					+ " <---********* > 0 ****************** ");
+		} else {
+			log.debug("Successfull Predict Count= " + counterSuccess + " <--- ");
+		}
+		log.debug("Result= " + sortHashMapByValues(PREDICTMAPRESULT)); // sortHashMapByValues(
 		log.debug("Prediction= " + sortHashMapByValues(PREDICTMAP));
 		log.debug("Total Predict Count= " + counterTotalPredict);
 		log.debug("Sorted Actual= " + sortHashMapByValues(sortMap));
 		log.debug("*****   LOW  ************");
 		log.debug("Successfull Low Predict Count<  " + MINVALUE + " = "
 				+ counterLowSuccess);
-		log.debug("Low Result= " + PREDICTLOWMAPRESULT); // sortHashMapByValues(
+		log.debug("Low Result= " + sortHashMapByValues(PREDICTLOWMAPRESULT)); // sortHashMapByValues(
 		log.debug("Low Prediction= " + sortHashMapByValues(PREDICTLOWMAP));
 		log.debug("Total Low Predict Count= " + counterLowTotalPredict);
 

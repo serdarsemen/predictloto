@@ -213,6 +213,7 @@ public class NEATLoto {
 
 		CalculateScore score = new TrainingSetScore(trainingSet);
 		BoxesScore boxScore  = null;
+		
 		if (ConfigLoto.ISHYPERNEAT == 0) {
 
 			pop = new NEATPopulation(ConfigLoto.INPUT_SIZE,
