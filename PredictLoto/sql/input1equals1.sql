@@ -1,0 +1,1 @@
+select * from lotoresults where input1=1
