@@ -1,0 +1,272 @@
+﻿sqlexplorer plugin eclipse
+mysql-connector java
+
+mysql kuruldu
+usr root
+pwd serdar
+MySQLWorkbench kuruldu
+
+read data from mysql
+
+jordan
+elman
+neat
+
+save network
+
+eclipse plugins eclipse marketplace popular  
+   findbugs
+
+
+test save read the same
+lotoconfig den okuma
+read data from csv
+log4j.properties
+log4j dosyaya timestamp
+
+log4j dosya name nereden   http://juliusdavies.ca/logging.html  Log4j Best Practices
+
+egit installed
+git repository set as
+d:\PredictLoto\git
+Name= PredictLoto
+
+
+Bain network nedir? research OliverColeman bain örnek kod github da
+
+
+
+sourceforge şirkette çalışmadı ama gitgub https çalıştı
+github usr serdarsemen pwd derince12  kullANIYORUM
+
+export local git to sourceforge usr serdarsemen pwd derince12 
+URI  ssh://serdarsemen@git.code.sf.net/p/predictloto/code
+gitbash komutları
+cd d:
+cd PredictLoto
+cd git
+cd predictloto
+git remote add origin ssh://serdarsemen@git.code.sf.net/p/predictloto/code
+git push origin master
+
+neatsave network problemli idi save serialize ile oldu
+
+install eclipse egit and mylyn first
+
+view task repository -> add task repository -> install more connectors button
+gerrit- code review
+hudson/jenkins- jenkins build server  JENKINS kullan
+
+http://wiki.opf-labs.org/display/SP/Connecting+GitHub+Issues+lists+to+Eclipse sayfasından linki
+menuye üste drop et
+github mylyn connector üstüne  issues
+
+
+NEATPopulation.java
+public NEATPopulation(final int inputCount, final int outputCount,
+			final int populationSize) {
+		super(populationSize, null);
+		this.inputCount = inputCount;
+		this.outputCount = outputCount;
+		
+		this.setNEATActivationFunction(new ActivationSteepenedSigmoid());
+
+		if (populationSize == 0) {
+			throw new NeuralNetworkError(
+					"Population must have more than zero genomes.");
+		}
+		reset();
+	}
+
++ alttaki constructor ın sonuna da reset()
+public NEATPopulation(Substrate theSubstrate, int populationSize) {
+		super(populationSize,new FactorHyperNEATGenome());
+		this.substrate = theSubstrate;
+		this.inputCount = 6;
+		this.outputCount = 2;
+		HyperNEATGenome.buildCPPNActivationFunctions(this.activationFunctions);
+		reset();
+	}
+
+
+neatlink.java
+	public int compareTo(NEATLink other) {
+		if ((other == null) || (this ==null))
+			return 0;
+		if (other.toNeuron == this.fromNeuron) 
+			return 0;
+		
+		if  (other.toNeuron > this.fromNeuron)
+			return 1;
+		 
+		if  (other.toNeuron < this.fromNeuron) 
+			return -1;
+		return 0;
+}
+
+
+EncogUtility değişti + CalculateSuccess eklendi************------------**********
+public static void evaluate(final MLRegression network,
+			final MLDataSet training) {
+		for (final MLDataPair pair : training) {
+			final MLData output = network.compute(pair.getInput());
+			System.out.println("\nInput ="
+					+ EncogUtility.formatNeuralData(pair.getInput())
+					+ ",\n\nActual=" + EncogUtility.formatNeuralData(output)
+					+ ",\nIdeal ="
+					+ EncogUtility.formatNeuralData(pair.getIdeal()));
+			System.out.println("\nSuccess Count="
+					+ CalculateSuccess(output, pair.getIdeal())); 
+		}
+	}
+
+	/**
+	 * Calculate success
+	 * 
+	 * @param data
+	 *            actual , ideal
+	 * @return The formatted success count
+	 */
+	public static String CalculateSuccess(final MLData actual,final MLData ideal) {
+		final StringBuilder result = new StringBuilder();
+		int counter =0;
+		for (int i = 0; i < ideal.size(); i++) {
+			
+			if (ideal.getData(i)==IDEALVALUE)
+			 if (actual.getData(i)>MINVALUE)
+				counter++;
+		}
+		result.append(counter);
+		
+		return result.toString();
+	}
+	
+	
+	
+	
+	/**
+	 * Format neural data as a list of numbers.
+	 * 
+	 * @param data
+	 *            The neural data to format.
+	 * @return The formatted neural data.
+	 */
+	public static String formatNeuralData(final MLData data) {
+		final StringBuilder result = new StringBuilder();
+		int counter =0;
+		
+		for (int i = 0; i < data.size(); i++) {
+			if (i != 0) {
+				result.append(',');
+			}
+			result.append(Format.formatDouble(data.getData(i), 4));
+			if (data.getData(i)>MINVALUE)
+				counter++;
+		}
+		result.append("\nCount>" +Format.formatDouble(MINVALUE,4)+"= "+counter);
+		
+		return result.toString();
+	}
+
+printler ve sonuç hesabı
+
+
+Son değer girme -----*************----------
+1- D:\sayisalAI\inp49 date.csv rename edilir, yedeklenir
+2-D:\sayisalAI\sayisal transformer\run_say_son_transformer.xls 
+son_hafta worksheet içine haftalar bazında
+son değerler insert edilir.
+view tabı--> view Macros dan açılan vba dan solda ki form seçilir ve 
+üstte run tuşundan macro veya form çalıştırılır . inp49 & current date .csv oluşur
+VEYA
+CTRL+SHIFT+L ile datainsert scripti çalıştırılır
+
+3- hedef worksheet inp49 date olur kontrol edilir ama save edilmez.
+4- inp49_currentdate_.csv de oluşmuş olur. Kontrol edilir.
+5- MYSQL workbench açılır. root/serdar Yeni sql açılır. loto scheması tıklanır.
+6- D:\sayisalAI\loto_scripts den drop table ve data load scriptleri kopyalanıp 
+(  FIELDS TERMINATED BY ',' veya  ';' kontrol edilir) çalıştırılır
+7- ilk tabdaki select * from ile insert kontrol edilir.
+Koddaki datasourcetype 0 ise sql 1 ise inp49.csv kullanılır
+
+
+
+run_say_son_transformer ın son sheet i MS SQL db ye bağlandı
+
+sql server ip : 89.19.29.245
+db : USR110924112152
+user : USR110924112152
+pwd : Bur99Alp04
+o DB'de cekilisler diye bir tablo var.
+_____
+Bu sql server sitede ve ben ORacle db dehesaplamaları 
+yaptıktan sonra bu db'ye her algoritma için ilk 30 sayıyı
+ insert ediyorum. Ekteki son rutin'leri çağırmadan önce DB
+ üzerinde birkaç saat süren başka procedure ile gerekli tabloları dolduruyorum.
+
+
+
+
+genetic neat details
+
+read from db and do normalization db de full data yok maalesef.!!!
+arg 0 Flag varsa file a train olmasın kaldığı yerden evaluate etsin; 
+
+call loadAndContinueTrain from main() dosya varsa okusun...kaldığı yerden train???
+
+Predictler sort edildi
+
+refs/heads/*   ----     HEAD
+refs/remotes/origin/*  ---  master
+
+singleton LotoConfig_
+
+pmd 
+eclipse checkstyle
+sonar
+
+diğer oyun tipleri için açıklma ve sabit değerler eklendi.
+---------------**************************
+----------------------
+
+M2_repo için c:\users da ayar
+
+.sql leri de git e gönder
+
+predictleri paramtre ile dbye yaz; parametre optimize et döngü ile search
+
+elman Jordan da sabit değer değil max lar predict edilsin.0.4 sabit olmasın
+
+read from text  properties
+
+
+1/49 6 input 6 output dene
+diğer loto oyunları için de dene
+
+
+
+mergeAdd recurring analiz
+select lotoresults.weekid from lotoresults 
+,
+(select weekid from lotoresults where 
+input1=1 
+) as tbl
+
+where lotoresults.weekid= tbl.weekid-1
+ and 
+lotoresults.input1=1
+exclude last week results
+
+Junit
+
+bainNN
+hyperneat
+
+***** çok gerekli değil threadler var *** İş te ancak birden fazla PCye dağıtabilinir
+Kodda zaten thread mantığı var!!!
+inceledim google da  eclipse ve project to  ile araştırınca 
+project to facets -> java + dynamic web module conversion --> tomcat
+
+gridgain
+
+hadoop tomcat
