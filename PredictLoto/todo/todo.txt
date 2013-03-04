@@ -226,12 +226,14 @@ eclipse checkstyle
 sonar
 
 diğer oyun tipleri için açıklma ve sabit değerler eklendi.
+
+.sql leri de git e gönder
 ---------------**************************
 ----------------------
 
 M2_repo için c:\users da ayar
 
-.sql leri de git e gönder
+1/49 6 input 6 output dene
 
 predictleri paramtre ile dbye yaz; parametre optimize et döngü ile search
 
@@ -240,7 +242,8 @@ elman Jordan da sabit değer değil max lar predict edilsin.0.4 sabit olmasın
 read from text  properties
 
 
-1/49 6 input 6 output dene
+
+
 diğer loto oyunları için de dene
 
 

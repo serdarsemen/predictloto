@@ -18,6 +18,7 @@ import org.encog.ml.MLRegression;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
+import org.encog.util.Format;
 import org.encog.util.simple.EncogUtility;
 
 /**
@@ -43,6 +44,23 @@ public final class ConfigLoto {
 	public final static int SIZE = 5;
 	public final static int SIZE54 = 54;
 	public final static int SIZE10 = 10;
+
+	// 0 : Sayısal Loto
+	// 1: Super Loto
+	// 2: Sans Topu
+	// 3: 10 Numara
+	
+	public static final int SAYISALLOTO = 0;
+	public static final int SUPERLOTO = 1;
+	public static final int SANSTOPU = 2;
+	public static final int ONNUMARA = 3;
+
+	public static int GAMETYPE = SAYISALLOTO; // default
+
+	
+	// 0 for all inputs 01 feeded or
+	// 1 1 DIV OUT possible values feeded
+	public static int DIGITALORVALUEINOUT = 0;
 
 	public static int INPUTSIZE = SIZE6; // <-- or SIZE49
 
@@ -109,9 +127,7 @@ public final class ConfigLoto {
 	 * 
 	 * Şans Topu (5+1) oyunu, iki farklı sayı kümesi içerisinden, belirlenen
 	 * sayıda numara seçilmesi esasına dayanan bir sayısal oyundur. İlk sayı
-	 * kümesi 
-	 * 1-34 numaradan, ikinci sayı kümesi ise 
-	 * 1-14 numaradan
+	 * kümesi 1-34 numaradan, ikinci sayı kümesi ise 1-14 numaradan
 	 * oluşmaktadır. İştirakçiler, ilk sayı kümesinden 5 (beş) adet, ikinci sayı
 	 * kümesinden 1 (bir) adet numarayı seçerek oyuna katılabileceklerdir.
 	 */
@@ -120,25 +136,25 @@ public final class ConfigLoto {
 
 	// Neat
 	// if population size is down much faster but target err rate is so slow
-	public static int NEATPOPULATIONSIZE = 1000; // 1000:8000 ideal if decrease
+	public static int NEATPOPULATIONSIZE; // 1000:8000 ideal if decrease
 	// if increase time increase
 	// 1200
 	// epoch and error increase
-	public static double NEATPOPULATIONDENSITY = 0.4; // 1.0 0.45 0.35 0.3
-														// ideal?
+	public static double NEATPOPULATIONDENSITY; // 1.0 0.45 0.35 0.3
+												// ideal?
 	// if increase time epoch decrease
-	public static double NEATDESIREDERROR = 0.14; // 15 te 12 predict pop= 7000
-													// 0.109
+	public static double NEATDESIREDERROR; // 15 te 12 predict pop= 7000
+											// 0.109
 	// 0.14 te 9 Predict
 	// 0.01 En çabuk 0.24 0.32
 	// olabiliyor 0.1071 0.1063 0.11 fail
 
 	// HyperNEAT
-	public static int BASE_RESOLUTION = 14; // 7
+	public static int BASE_RESOLUTION; // 7
 
-	public static double JORDANDESIREDERROR = 0.12;// 0.12; not success !!!
-	public static double ELMANDESIREDERROR = 0.1059; // 0.1058;
-	public static double FEEDFORWARDDESIREDERROR = 0.14;
+	public static double JORDANDESIREDERROR;// 0.12; not success !!!
+	public static double ELMANDESIREDERROR; // 0.1058;
+	public static double FEEDFORWARDDESIREDERROR;
 
 	public static int EPOCHSAVEINTERVAL = 1000; // 1000
 
@@ -263,29 +279,88 @@ public final class ConfigLoto {
 	public static final String PASSAGE_LENGTH = "fitness.function.tmaze.passage.length";
 	public static final String DOUBLE_TMAZE = "fitness.function.tmaze.double";
 
-	private boolean isDouble;
-	private int trialCount, rewardSwitchCount, passageLength;
-	private double rewardSwitchVariation;
-	private double rewardLow, rewardHigh, rewardCrash, rewardLowColour,
-			rewardHighColour;
-	private int[] rewardSwitchTrials, rewardIndexForSwitch;
-	private byte[][] map; // The map of the maze, consists of values from
-							// TYPE_*, format is [x][y].
-	private int startX, startY; // Initial location of agent in map.
-	private int[] rewardLocationsX, rewardLocationsY;
 	/*
-	 * public void init(Properties props) { super.init(props); isDouble =
-	 * props.getBooleanProperty(DOUBLE_TMAZE, false); trialCount =
-	 * props.getIntProperty(TRIAL_COUNT, 200); rewardSwitchCount =
-	 * props.getIntProperty(REWARD_SWITCH_COUNT, 3); rewardSwitchVariation =
-	 * props.getDoubleProperty(REWARD_SWITCH_VARIATION, 0.2); passageLength =
-	 * props.getIntProperty(PASSAGE_LENGTH, 3); rewardLow =
-	 * props.getDoubleProperty(REWARD_LOW, 0.1); rewardHigh =
-	 * props.getDoubleProperty(REWARD_HIGH, 1); rewardCrash =
-	 * props.getDoubleProperty(REWARD_CRASH, 0); rewardLowColour =
-	 * props.getDoubleProperty(REWARD_LOW_COLOUR, 0.2); rewardHighColour =
-	 * props.getDoubleProperty(REWARD_HIGH_COLOUR, 1); }
+	 * private boolean isDouble; private int trialCount, rewardSwitchCount,
+	 * passageLength; private double rewardSwitchVariation; private double
+	 * rewardLow, rewardHigh, rewardCrash, rewardLowColour, rewardHighColour;
+	 * private int[] rewardSwitchTrials, rewardIndexForSwitch; private byte[][]
+	 * map; // The map of the maze, consists of values from // TYPE_*, format is
+	 * [x][y]. private int startX, startY; // Initial location of agent in map.
+	 * private int[] rewardLocationsX, rewardLocationsY;
 	 */
+	public void init() {
+
+		/*
+		 * (Properties props) { isDouble = *
+		 * props.getBooleanProperty(DOUBLE_TMAZE, false); trialCount =
+		 * props.getIntProperty(TRIAL_COUNT, 200); rewardSwitchCount =
+		 * props.getIntProperty(REWARD_SWITCH_COUNT, 3); rewardSwitchVariation =
+		 * props.getDoubleProperty(REWARD_SWITCH_VARIATION, 0.2); passageLength
+		 * = props.getIntProperty(PASSAGE_LENGTH, 3); rewardLow =
+		 * props.getDoubleProperty(REWARD_LOW, 0.1); rewardHigh =
+		 * props.getDoubleProperty(REWARD_HIGH, 1); rewardCrash =
+		 * props.getDoubleProperty(REWARD_CRASH, 0); rewardLowColour =
+		 * props.getDoubleProperty(REWARD_LOW_COLOUR, 0.2); rewardHighColour =
+		 * props.getDoubleProperty(REWARD_HIGH_COLOUR, 1); }
+		 */
+		log.debug("ConfigLoto init called");
+
+		if (GAMETYPE == SAYISALLOTO) {
+			// decide to use binary 49 or 6 number dived by 49 syntax
+			if (INPUTSIZE == SIZE49) {
+				TRAINSQL = TRAINSAY49SQL; // SAY49 or SAY6
+				TESTSQL = TESTSAY49SQL; // SAY49 or SAY6
+				INPUT_SIZE = INPUT_SIZE_SAY49; // SAY49 or SAY6
+				IDEAL_SIZE = IDEAL_SIZE_SAY49; // SAY49 or SAY6
+
+				NEATPOPULATIONSIZE = 1000; // 1000:8000 ideal if decrease
+				// if increase time increase
+				// 1200
+				// epoch and error increase
+				NEATPOPULATIONDENSITY = 0.3; // 1.0 0.45 0.35 0.3
+												// ideal?
+				// if increase time epoch decrease
+				NEATDESIREDERROR = 0.14; // 15 te 12 predict pop= 7000
+
+				// HyperNEAT
+				BASE_RESOLUTION = 14; // 7
+
+				JORDANDESIREDERROR = 0.12;// 0.12; not success !!!
+				ELMANDESIREDERROR = 0.1059; // 0.1058;
+				FEEDFORWARDDESIREDERROR = 0.14;
+
+			} else if (INPUTSIZE == SIZE6) {
+				TRAINSQL = TRAINSAY6SQL; // SAY49 or SAY6
+				TESTSQL = TESTSAY6SQL; // SAY49 or SAY6
+
+				INPUT_SIZE = INPUT_SIZE_SAY6; // SAY49 or SAY6
+				IDEAL_SIZE = IDEAL_SIZE_SAY6; // SAY49 or SAY6
+
+				NEATPOPULATIONSIZE = 1000; // 1000:8000 ideal if decrease
+				// if increase time increase
+				// 1200
+				// epoch and error increase
+				NEATPOPULATIONDENSITY = 0.3; // 1.0 0.45 0.35 0.3
+												// ideal?
+				// if increase time epoch decrease
+				NEATDESIREDERROR = 0.07; // 15 te 12 predict pop= 7000
+
+				// HyperNEAT
+				BASE_RESOLUTION = 14; // 7
+
+				JORDANDESIREDERROR = 0.12;// 0.12; not success !!!
+				ELMANDESIREDERROR = 0.1059; // 0.1058;
+				FEEDFORWARDDESIREDERROR = 0.14;
+
+			}
+		} else if (GAMETYPE == SUPERLOTO) {
+
+		} else if (GAMETYPE == SANSTOPU) {
+
+		} else if (GAMETYPE == ONNUMARA) {
+
+		}
+	}
 
 	// TODO: make it singleton
 	private static final ConfigLoto instance = new ConfigLoto();
@@ -297,52 +372,8 @@ public final class ConfigLoto {
 
 	private ConfigLoto() {
 		// call init
-		// decide to use binary 49 or 6 number dived by 49 syntax
-		if (INPUTSIZE == SIZE49) {
-			TRAINSQL = TRAINSAY49SQL; // SAY49 or SAY6
-			TESTSQL = TESTSAY49SQL; // SAY49 or SAY6
-			INPUT_SIZE = INPUT_SIZE_SAY49; // SAY49 or SAY6
-			IDEAL_SIZE = IDEAL_SIZE_SAY49; // SAY49 or SAY6
+		init();
 
-			NEATPOPULATIONSIZE = 1000; // 1000:8000 ideal if decrease
-			// if increase time increase
-			// 1200
-			// epoch and error increase
-			NEATPOPULATIONDENSITY = 0.3; // 1.0 0.45 0.35 0.3
-											// ideal?
-			// if increase time epoch decrease
-			NEATDESIREDERROR = 0.14; // 15 te 12 predict pop= 7000
-
-			// HyperNEAT
-			BASE_RESOLUTION = 14; // 7
-
-			JORDANDESIREDERROR = 0.12;// 0.12; not success !!!
-			ELMANDESIREDERROR = 0.1059; // 0.1058;
-			FEEDFORWARDDESIREDERROR = 0.14;
-
-		} else if (INPUTSIZE == SIZE6) {
-			TRAINSQL = TRAINSAY6SQL; // SAY49 or SAY6
-			TESTSQL = TESTSAY6SQL; // SAY49 or SAY6
-			INPUT_SIZE = INPUT_SIZE_SAY6; // SAY49 or SAY6
-			IDEAL_SIZE = IDEAL_SIZE_SAY6; // SAY49 or SAY6
-
-			NEATPOPULATIONSIZE = 1000; // 1000:8000 ideal if decrease
-			// if increase time increase
-			// 1200
-			// epoch and error increase
-			NEATPOPULATIONDENSITY = 0.3; // 1.0 0.45 0.35 0.3
-											// ideal?
-			// if increase time epoch decrease
-			NEATDESIREDERROR = 0.07; // 15 te 12 predict pop= 7000
-
-			// HyperNEAT
-			BASE_RESOLUTION = 14; // 7
-
-			JORDANDESIREDERROR = 0.12;// 0.12; not success !!!
-			ELMANDESIREDERROR = 0.1059; // 0.1058;
-			FEEDFORWARDDESIREDERROR = 0.14;
-
-		}
 	}
 
 	public static ConfigLoto getInstance() {
@@ -351,11 +382,10 @@ public final class ConfigLoto {
 
 	public static final double SAYISALOTOMAX = 49.0;
 	public static final double SUPERLOTOMAX = 54.0;
-	public  static final double SANSTOPUSET1MAX = 34.0;
-	public  static final double SANSTOPUSET2MAX = 14.0;
-	public  static final double NUMARA10MAX = 80.0;
-	
-	
+	public static final double SANSTOPUSET1MAX = 34.0;
+	public static final double SANSTOPUSET2MAX = 14.0;
+	public static final double NUMARA10MAX = 80.0;
+
 	public static final double MINVALUE = 0.48; // 0.0009;
 	public static final double IDEALDIGITALONEVALUE = 1.0;
 
@@ -365,8 +395,7 @@ public final class ConfigLoto {
 	public static final double ONEDIVSANSTOPUSET1 = 1 / SANSTOPUSET1MAX;
 	public static final double ONEDIVSANSTOPUSET2 = 1 / SANSTOPUSET2MAX;
 	public static final double ONEDIVNUMARA10 = 1 / NUMARA10MAX;
-	
-	
+
 	public static final int NUM_DIGITS = 1000;
 
 	public static SortedMap<Integer, Double> PREDICTMAPRESULT = new TreeMap<Integer, Double>();
@@ -387,22 +416,47 @@ public final class ConfigLoto {
 	 */
 	public static void evaluate(final MLRegression network,
 			final MLDataSet training) {
+		int MULTIPLIER =1; //default;
+		if (INPUTSIZE == SIZE6) {
+			MULTIPLIER = SIZE49;
+		}
 		for (final MLDataPair pair : training) {
 			// final MLData output = network.compute(pair.getInput());
 
 			log.debug("Input=  "
-					+ EncogUtility.formatNeuralData(pair.getInput()));
+					+ formatData(pair.getInput(),MULTIPLIER));
 			log.debug("Actual="
-					+ EncogUtility.formatNeuralData(network.compute(pair
-							.getInput())));
+					+ formatData(network.compute(pair
+							.getInput()),MULTIPLIER));
 			log.debug("Ideal=  "
-					+ EncogUtility.formatNeuralData(pair.getIdeal()));
+					+ formatData(pair.getIdeal(),MULTIPLIER));
 
 			log.debug("Success Report ---------");
-			calculateSuccess(network.compute(pair.getInput()), pair.getIdeal());
+			ConfigLoto.calculateSuccess(network.compute(pair.getInput()), pair.getIdeal());
 		}
 	}
 
+	
+	/**
+	 * Format neural data as a list of numbers.
+	 * 
+	 * @param data
+	 *            The neural data to format.
+	 * @return The formatted neural data.
+	 */
+	public static String formatData(final MLData data,int multiplier) {
+		final StringBuilder result = new StringBuilder();
+		for (int i = 0; i < data.size(); i++) {
+			if (i != 0) {
+				result.append(',');
+			}
+			result.append(Format.formatDouble(data.getData(i)*multiplier, 4));
+		}
+		return result.toString();
+	}
+
+
+	
 	public static double round(double value) {
 		int decimalPlace = 2;
 		BigDecimal bd = new BigDecimal(value);
@@ -463,24 +517,25 @@ public final class ConfigLoto {
 			}
 		} else if (INPUTSIZE == SIZE6) {
 			for (int i = 0; i < actual.size(); i++) {
-				if (Math.abs(ideal.getData(i) -  actual.getData(i))< ONEDIVSAYISAL) 
-				    {
-						counterSuccess++;
-						PREDICTMAPRESULT.put(i + 1, round2(actual.getData(i)*SIZE49));
-					} else {
-						counterLowSuccess++;
-						PREDICTLOWMAPRESULT.put(i + 1,
-								round2(actual.getData(i)*SIZE49));
-					}
+				if (Math.abs(ideal.getData(i) - actual.getData(i)) < ONEDIVSAYISAL) {
+					counterSuccess++;
+					PREDICTMAPRESULT.put(i + 1, round2(actual.getData(i)
+							* SIZE49));
+				} else {
+					counterLowSuccess++;
+					PREDICTLOWMAPRESULT.put(i + 1, round2(actual.getData(i)
+							* SIZE49));
+				}
 
 				if (actual.getData(i) > 0) {
 					counterTotalPredict++;
-					PREDICTMAP.put(i + 1, round2(actual.getData(i)*SIZE49));
+					PREDICTMAP.put(i + 1, round2(actual.getData(i) * SIZE49));
 				} else {
 					counterLowTotalPredict++;
-					PREDICTLOWMAP.put(i + 1, round2(actual.getData(i)*SIZE49));
+					PREDICTLOWMAP
+							.put(i + 1, round2(actual.getData(i) * SIZE49));
 				}
-				sortMap.put(i + 1, round2(actual.getData(i)*SIZE49));
+				sortMap.put(i + 1, round2(actual.getData(i) * SIZE49));
 			}
 
 		}

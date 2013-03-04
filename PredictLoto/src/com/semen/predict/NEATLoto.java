@@ -59,11 +59,11 @@ public class NEATLoto {
 	 *            The desired error level.
 	 */
 	public static void trainToError(final NEATTraining train,
-			final double error, NEATPopulation pop) {
+			final double error) {
 
 		int epoch = 1;
-		double train_Error = 1.0;
-		String str_TargetError = Format.formatDouble(error, 4);
+		double trainError = 1.0;
+		String strTargetError = Format.formatDouble(error, 4);
 		log.debug("ISHYPERNEAT= " +ConfigLoto.ISHYPERNEAT);
 		log.debug("LO_WEEKNO= " +ConfigLoto.LO_WEEKNO);
 		log.debug("HI_WEEKNO= " +ConfigLoto.HI_WEEKNO);
@@ -74,17 +74,17 @@ public class NEATLoto {
 		log.debug("Beginning NEAT training...");
 		do {
 			train.iteration();
-			train_Error = train.getError();
+			trainError = train.getError();
 			log.debug("NEAT # " + Format.formatInteger(epoch) + " Err= "
-					+ Format.formatDouble(train_Error, 4) + " Target Err= "
-					+ str_TargetError + ", Species= "
+					+ Format.formatDouble(trainError, 4) + " Target Err= "
+					+ strTargetError + ", Species= "
 					+ train.getNEATPopulation().getSpecies().size());
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
 				log.debug("Saving NEAT POP / network  Epoch #" + epoch);
 
 				// Save NEAT pop
 				EncogDirectoryPersistence.saveObject(new File(
-						ConfigLoto.NEAT_FILENAME), pop);
+						ConfigLoto.NEAT_FILENAME), train.getNEATPopulation());
 
 				NEATNetwork network = (NEATNetwork) train.getMethod();
 				try {
@@ -104,8 +104,8 @@ public class NEATLoto {
 	/*
 	 * Continue training from the last saved network
 	 */
-	public NEATNetwork loadAndContinueTrain(int sourceTrainData,
-			NEATNetwork network, NEATPopulation pop) {
+	public NEATNetwork loadAndContinueTrain(final int sourceTrainData,
+			NEATNetwork network,  NEATPopulation pop) {
 		if (network == null) {
 			log.debug("Loading NEAT network");
 
@@ -174,7 +174,7 @@ public class NEATLoto {
 			train.setSpeciation(speciation);
 		}
 
-		NEATLoto.trainToError(train, ConfigLoto.NEATDESIREDERROR, pop);
+		NEATLoto.trainToError(train, ConfigLoto.NEATDESIREDERROR);
 		network = (NEATNetwork) train.getMethod();
 
 		try {
@@ -240,7 +240,7 @@ public class NEATLoto {
 			train.setSpeciation(speciation);
 		}
 
-		NEATLoto.trainToError(train, ConfigLoto.NEATDESIREDERROR, pop);
+		NEATLoto.trainToError(train, ConfigLoto.NEATDESIREDERROR);
 		NEATNetwork network = (NEATNetwork) train.getMethod();
 		try {
 			// Save pop
