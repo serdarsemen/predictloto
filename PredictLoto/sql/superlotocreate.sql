@@ -1,5 +1,4 @@
-delimiter $$
-
+DROP TABLE IF EXISTS superlotoresults;
 CREATE TABLE `superlotoresults` (
   `weekid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `input1` double NOT NULL,
