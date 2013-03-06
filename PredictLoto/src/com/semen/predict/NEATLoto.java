@@ -15,7 +15,8 @@ import org.encog.neural.hyperneat.substrate.Substrate;
 import org.encog.neural.hyperneat.substrate.SubstrateFactory;
 import org.encog.neural.neat.NEATNetwork;
 import org.encog.neural.neat.NEATPopulation;
-import org.encog.neural.neat.training.NEATTraining;
+import org.encog.ml.ea.train.EvolutionaryAlgorithm;
+import org.encog.neural.neat.NEATUtil;
 import org.encog.neural.neat.training.species.OriginalNEATSpeciation;
 import org.encog.ml.CalculateScore;
 import org.encog.neural.networks.training.TrainingSetScore;
@@ -58,18 +59,18 @@ public class NEATLoto {
 	 * @param error
 	 *            The desired error level.
 	 */
-	public static void trainToError(final NEATTraining train,
+	public static void trainToError(final EvolutionaryAlgorithm train,
 			final double error) {
 
 		int epoch = 1;
 		double trainError = 1.0;
 		String strTargetError = Format.formatDouble(error, 4);
-		log.debug("ISHYPERNEAT= " +ConfigLoto.ISHYPERNEAT);
-		log.debug("LO_WEEKNO= " +ConfigLoto.LO_WEEKNO);
-		log.debug("HI_WEEKNO= " +ConfigLoto.HI_WEEKNO);
+		log.debug("ISHYPERNEAT= " + ConfigLoto.ISHYPERNEAT);
+		log.debug("LO_WEEKNO= " + ConfigLoto.LO_WEEKNO);
+		log.debug("HI_WEEKNO= " + ConfigLoto.HI_WEEKNO);
 
-		log.debug("NEATPOPULATIONSIZE= " +ConfigLoto.NEATPOPULATIONSIZE);
-		log.debug("NEATPOPULATIONDENSITY= " +ConfigLoto.NEATPOPULATIONDENSITY);
+		log.debug("NEATPOPULATIONSIZE= " + ConfigLoto.NEATPOPULATIONSIZE);
+		log.debug("NEATPOPULATIONDENSITY= " + ConfigLoto.NEATPOPULATIONDENSITY);
 
 		log.debug("Beginning NEAT training...");
 		do {
@@ -78,15 +79,16 @@ public class NEATLoto {
 			log.debug("NEAT # " + Format.formatInteger(epoch) + " Err= "
 					+ Format.formatDouble(trainError, 4) + " Target Err= "
 					+ strTargetError + ", Species= "
-					+ train.getNEATPopulation().getSpecies().size());
+					+ train.getPopulation().getSpecies().size());
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
 				log.debug("Saving NEAT POP / network  Epoch #" + epoch);
 
 				// Save NEAT pop
 				EncogDirectoryPersistence.saveObject(new File(
-						ConfigLoto.NEAT_FILENAME), train.getNEATPopulation());
+						ConfigLoto.NEAT_FILENAME), train.getPopulation());
 
-				NEATNetwork network = (NEATNetwork) train.getMethod();
+				NEATNetwork network = (NEATNetwork) train.getCODEC().decode(
+						train.getBestGenome());
 				try {
 					// Save NEAT network
 					SerializeObject.save(new File(
@@ -97,7 +99,7 @@ public class NEATLoto {
 				}
 			}
 			epoch++;
-		} while ((train.getError() > error) && !train.isTrainingDone());
+		} while ((train.getError() > error));
 		train.finishTraining();
 	}
 
@@ -105,7 +107,7 @@ public class NEATLoto {
 	 * Continue training from the last saved network
 	 */
 	public NEATNetwork loadAndContinueTrain(final int sourceTrainData,
-			NEATNetwork network,  NEATPopulation pop) {
+			NEATNetwork network, NEATPopulation pop) {
 		if (network == null) {
 			log.debug("Loading NEAT network");
 
@@ -139,7 +141,6 @@ public class NEATLoto {
 					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
 
-		
 		if (network != null) {
 			double e = network.calculateError(trainingSet);
 			log.debug("Loaded NEAT network's error for previous train set is: "
@@ -147,20 +148,20 @@ public class NEATLoto {
 		} else {
 			log.debug("NEAT network is NULL");
 		}
-		
+
 		CalculateScore score = new TrainingSetScore(trainingSet);
-		BoxesScore boxScore  = null;
-		
+		BoxesScore boxScore = null;
+
 		// train the neural network
 
-		NEATTraining train = null;
+		EvolutionaryAlgorithm train = null;
 
 		if (ConfigLoto.ISHYPERNEAT == 0) {
-			new NEATTraining(score, pop);
-			
+			train = NEATUtil.constructNEATTrainer(pop, score);
+
 		} else {
-			Substrate substrate = SubstrateFactory
-					.factorSandwichSubstrate(ConfigLoto.BASE_RESOLUTION,ConfigLoto.BASE_RESOLUTION);
+			Substrate substrate = SubstrateFactory.factorSandwichSubstrate(
+					ConfigLoto.BASE_RESOLUTION, ConfigLoto.BASE_RESOLUTION);
 			boxScore = new BoxesScore(ConfigLoto.BASE_RESOLUTION);
 			if (pop == null) {
 				pop = new NEATPopulation(substrate,
@@ -168,14 +169,14 @@ public class NEATLoto {
 				pop.setActivationCycles(4);
 				pop.reset();
 			}
-			train = new NEATTraining(boxScore, pop);
+			train = NEATUtil.constructNEATTrainer(pop, boxScore);
 			OriginalNEATSpeciation speciation = new OriginalNEATSpeciation();
 			speciation.setCompatibilityThreshold(1);
 			train.setSpeciation(speciation);
 		}
 
 		NEATLoto.trainToError(train, ConfigLoto.NEATDESIREDERROR);
-		network = (NEATNetwork) train.getMethod();
+		network = (NEATNetwork) train.getCODEC().decode(train.getBestGenome());
 
 		try {
 			// Save pop
@@ -192,7 +193,7 @@ public class NEATLoto {
 
 	public NEATNetwork trainAndSave(int sourceTrainData) {
 
-		NEATTraining train = null;
+		EvolutionaryAlgorithm train = null;
 		NEATPopulation pop = null;
 		MLDataSet trainingSet = null;
 
@@ -212,8 +213,8 @@ public class NEATLoto {
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
 
 		CalculateScore score = new TrainingSetScore(trainingSet);
-		BoxesScore boxScore  = null;
-		
+		BoxesScore boxScore = null;
+
 		if (ConfigLoto.ISHYPERNEAT == 0) {
 
 			pop = new NEATPopulation(ConfigLoto.INPUT_SIZE,
@@ -226,30 +227,30 @@ public class NEATLoto {
 			pop.reset();
 
 			// train the neural network
-			train = new NEATTraining(score, pop);
+			train = NEATUtil.constructNEATTrainer(pop, score);
 		} else {
 			Substrate substrate = SubstrateFactory
 					.factorSandwichSubstrate(7, 7);
-		    boxScore = new BoxesScore(7);
+			boxScore = new BoxesScore(7);
 			pop = new NEATPopulation(substrate, ConfigLoto.NEATPOPULATIONSIZE);
 			pop.setActivationCycles(4);
 			pop.reset();
-			train = new NEATTraining(boxScore, pop);
+			train = NEATUtil.constructNEATTrainer(pop, boxScore);
 			OriginalNEATSpeciation speciation = new OriginalNEATSpeciation();
 			speciation.setCompatibilityThreshold(1);
 			train.setSpeciation(speciation);
 		}
 
 		NEATLoto.trainToError(train, ConfigLoto.NEATDESIREDERROR);
-		NEATNetwork network = (NEATNetwork) train.getMethod();
+		NEATNetwork network = (NEATNetwork) train.getCODEC().decode(
+				train.getBestGenome());
 		try {
 			// Save pop
 			EncogDirectoryPersistence.saveObject(new File(
 					ConfigLoto.NEAT_FILENAME), pop);
-			
-			
-			train.dump(new File(ConfigLoto.NEAT_DUMPFILENAME));
-			
+
+			// train.dump(new File(ConfigLoto.NEAT_DUMPFILENAME));
+
 			// Save NEAT Network
 			SerializeObject.save(new File(ConfigLoto.NEAT_SERIALFILENAME),
 					network);
@@ -297,8 +298,7 @@ public class NEATLoto {
 	public static void main(String[] args) {
 		long startTime = System.nanoTime();
 		try {
-			// ... the code being measured ...
-
+			
 			String arg1 = null;
 			if (args.length != 0) {
 				arg1 = args[0]; // means load eg file
@@ -364,7 +364,8 @@ public class NEATLoto {
 			t.printStackTrace();
 		} finally {
 			double estimatedTimeMin = (System.nanoTime() - startTime) / 60000000000.0;
-			log.debug("Elapsed Time = " + ConfigLoto.round2(estimatedTimeMin)+ " (min) ");
+			log.debug("Elapsed Time = " + ConfigLoto.round2(estimatedTimeMin)
+					+ " (min) ");
 			Encog.getInstance().shutdown();
 		}
 	}

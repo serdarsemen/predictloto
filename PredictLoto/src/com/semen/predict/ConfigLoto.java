@@ -19,7 +19,8 @@ import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
 import org.encog.util.Format;
-import org.encog.util.simple.EncogUtility;
+
+//import org.encog.util.simple.EncogUtility;
 
 /**
  * Basic config info for the Predict Loto.
@@ -41,28 +42,36 @@ public final class ConfigLoto {
 
 	public final static int SIZE49 = 49;
 	public final static int SIZE6 = 6;
-	public final static int SIZE = 5;
+	public final static int SIZE5 = 5;
 	public final static int SIZE54 = 54;
 	public final static int SIZE10 = 10;
+	public final static int SIZE1 = 1;
+	public final static int SIZE80 = 80;
+	public final static int SIZE22 = 22;
+	public final static int SIZE34 = 34;
+	public final static int SIZE14 = 14;
 
 	// 0 : Sayısal Loto
 	// 1: Super Loto
 	// 2: Sans Topu
 	// 3: 10 Numara
-	
+
 	public static final int SAYISALLOTO = 0;
 	public static final int SUPERLOTO = 1;
 	public static final int SANSTOPU = 2;
 	public static final int ONNUMARA = 3;
 
+	public static final int DIGITAL = 0; // 010100000...
+	public static final int RAWVALUE = 1; // 3 9 22 35 42 ...
+
 	public static int GAMETYPE = SAYISALLOTO; // default
 
-	
 	// 0 for all inputs 01 feeded or
 	// 1 1 DIV OUT possible values feeded
-	public static int DIGITALORVALUEINOUT = 0;
+	public static int INPUTVALUETYPE = RAWVALUE; // DIGITAL or RAWVALUE
 
-	public static int INPUTSIZE = SIZE6; // <-- or SIZE49
+	public static int INPUTSIZE;
+	public static int INPUTSIZE2; // for sanstopu second set of 1 / 14
 
 	public final static int INPUT_SIZE_SAY49 = 49;
 	public final static int IDEAL_SIZE_SAY49 = 49;
@@ -96,19 +105,6 @@ public final class ConfigLoto {
 
 	public static int ISHYPERNEAT = 0;
 
-	/*
-	 * 
-	 * 10 Numara On Numara adı verilen bu oyunda; oyun kuponlarının üzerindeki
-	 * her bir kolonda yer alan 1 ile 80 arasındaki numaralardan, çekilişle
-	 * belirlenecek olan 22 adet numaradan; 10, 9, 8, 7 ve 6 numarayı doğru
-	 * tahmin edenler ile hiçbir numarayı doğru tahmin edemeyenler ikramiyeye
-	 * hak kazanmaktadır.
-	 * 
-	 * İştirakçiler, her bir kolonda, on adet numara işaretleyerek oyuna
-	 * katılabilmektedir. Oyuna istenilen sayıda kolonla katılmak mümkündür.
-	 * Çoklu çekiliş işaretlemek suretiyle aynı numaralar 2, 3 ve 4 çekiliş için
-	 * de oynanabilir. On Numara oyununa sen-seç ile de katılmak olanaklıdır.
-	 */
 	public final static int INPUT_SIZE_SANSTOPUSET1 = 34;
 	public final static int IDEAL_SIZE_SANSTOPUSET1 = 34;
 
@@ -121,16 +117,6 @@ public final class ConfigLoto {
 	public final static int INPUT_SIZE_SANSTOPUSET2_1 = 1;
 	public final static int IDEAL_SIZE_SANSTOPUSET2_1 = 1;
 
-	/*
-	 * ŞANS TOPU
-	 * 
-	 * 
-	 * Şans Topu (5+1) oyunu, iki farklı sayı kümesi içerisinden, belirlenen
-	 * sayıda numara seçilmesi esasına dayanan bir sayısal oyundur. İlk sayı
-	 * kümesi 1-34 numaradan, ikinci sayı kümesi ise 1-14 numaradan
-	 * oluşmaktadır. İştirakçiler, ilk sayı kümesinden 5 (beş) adet, ikinci sayı
-	 * kümesinden 1 (bir) adet numarayı seçerek oyuna katılabileceklerdir.
-	 */
 	public final static int LO_WEEKNO = 1; // start week for train0 or 500 ?
 	public final static int HI_WEEKNO = 847; // end week for train TRAIN_SIZE
 
@@ -157,6 +143,9 @@ public final class ConfigLoto {
 	public static double FEEDFORWARDDESIREDERROR;
 
 	public static int EPOCHSAVEINTERVAL = 1000; // 1000
+
+	public static int MULTIPLIER = 1; // default
+	public static int PRECISION = 2;
 
 	// Neural Simulated Annealing
 	public static final double SIMANNEAL_STARTTEMP = 10.0; // The starting
@@ -266,6 +255,36 @@ public final class ConfigLoto {
 	public final static String SQL_UID = "root";
 	public final static String SQL_PWD = "serdar";
 
+	public static String TRAINSQL;
+	public static String TESTSQL;
+	public static int INPUT_SIZE;
+	public static int IDEAL_SIZE;
+
+	public static final double SAYISALOTOMAX = 49.0;
+	public static final double SUPERLOTOMAX = 54.0;
+	public static final double SANSTOPUSET1MAX = 34.0;
+	public static final double SANSTOPUSET2MAX = 14.0;
+	public static final double NUMARA10MAX = 80.0;
+
+	public static final double MINVALUE = 0.48; // 0.0009;
+	public static final double IDEALDIGITALONEVALUE = 1.0;
+
+	// range check
+	public static final double ONEDIVSAYISAL = 1 / SAYISALOTOMAX;
+	public static final double ONEDIVSUPER = 1 / SUPERLOTOMAX;
+	public static final double ONEDIVSANSTOPUSET1 = 1 / SANSTOPUSET1MAX;
+	public static final double ONEDIVSANSTOPUSET2 = 1 / SANSTOPUSET2MAX;
+	public static final double ONEDIVNUMARA10 = 1 / NUMARA10MAX;
+
+	public static final int NUM_DIGITS = 1000;
+
+	public static SortedMap<Integer, Double> PREDICTMAPRESULT = new TreeMap<Integer, Double>();
+	public static SortedMap<Integer, Double> PREDICTMAP = new TreeMap<Integer, Double>();
+	public static SortedMap<Integer, Double> PREDICTLOWMAPRESULT = new TreeMap<Integer, Double>();
+	public static SortedMap<Integer, Double> PREDICTLOWMAP = new TreeMap<Integer, Double>();
+
+	public static String str_doubleFormat = "#.##";
+
 	//
 
 	public static final String TRIAL_COUNT = "fitness.function.tmaze.trial.count";
@@ -304,8 +323,16 @@ public final class ConfigLoto {
 		 * props.getDoubleProperty(REWARD_HIGH_COLOUR, 1); }
 		 */
 		log.debug("ConfigLoto init called");
+		// 0 for all inputs 01 feeded or
+		// 1 1 DIV OUT possible values feeded
 
-		if (GAMETYPE == SAYISALLOTO) {
+		switch (GAMETYPE) {
+		case SAYISALLOTO: {
+			if (INPUTVALUETYPE == DIGITAL) {
+				INPUTSIZE = SIZE49;
+			} else if (INPUTVALUETYPE == RAWVALUE) {
+				INPUTSIZE = SIZE6;
+			}
 			// decide to use binary 49 or 6 number dived by 49 syntax
 			if (INPUTSIZE == SIZE49) {
 				TRAINSQL = TRAINSAY49SQL; // SAY49 or SAY6
@@ -329,6 +356,9 @@ public final class ConfigLoto {
 				ELMANDESIREDERROR = 0.1059; // 0.1058;
 				FEEDFORWARDDESIREDERROR = 0.14;
 
+				MULTIPLIER = 1;
+				PRECISION = 2;
+
 			} else if (INPUTSIZE == SIZE6) {
 				TRAINSQL = TRAINSAY6SQL; // SAY49 or SAY6
 				TESTSQL = TESTSAY6SQL; // SAY49 or SAY6
@@ -343,7 +373,7 @@ public final class ConfigLoto {
 				NEATPOPULATIONDENSITY = 0.3; // 1.0 0.45 0.35 0.3
 												// ideal?
 				// if increase time epoch decrease
-				NEATDESIREDERROR = 0.07; // 15 te 12 predict pop= 7000
+				NEATDESIREDERROR = 0.027;//0.024; 
 
 				// HyperNEAT
 				BASE_RESOLUTION = 14; // 7
@@ -352,23 +382,48 @@ public final class ConfigLoto {
 				ELMANDESIREDERROR = 0.1059; // 0.1058;
 				FEEDFORWARDDESIREDERROR = 0.14;
 
+				MULTIPLIER = SIZE49;
+				PRECISION = 0;
 			}
-		} else if (GAMETYPE == SUPERLOTO) {
 
-		} else if (GAMETYPE == SANSTOPU) {
-
-		} else if (GAMETYPE == ONNUMARA) {
-
+			break;
 		}
+		case SUPERLOTO: {
+			if (INPUTVALUETYPE == DIGITAL) {
+				INPUTSIZE = SIZE54;
+			} else if (INPUTVALUETYPE == RAWVALUE) {
+				INPUTSIZE = SIZE6;
+			}
+
+			break;
+		}
+		case SANSTOPU: {
+			if (INPUTVALUETYPE == DIGITAL) {
+				INPUTSIZE = SIZE34;
+				INPUTSIZE2 = SIZE14;
+			} else if (INPUTVALUETYPE == RAWVALUE) {
+				INPUTSIZE = SIZE5;
+				INPUTSIZE2 = SIZE1;
+			}
+
+			break;
+		}
+		case ONNUMARA: {
+			if (INPUTVALUETYPE == DIGITAL) {
+				INPUTSIZE = SIZE80;
+			} else if (INPUTVALUETYPE == RAWVALUE) {
+				INPUTSIZE = SIZE22;
+			}
+			break;
+		}
+		default: {
+			break;
+		}
+		}
+
 	}
 
-	// TODO: make it singleton
 	private static final ConfigLoto instance = new ConfigLoto();
-
-	public static String TRAINSQL;
-	public static String TESTSQL;
-	public static int INPUT_SIZE;
-	public static int IDEAL_SIZE;
 
 	private ConfigLoto() {
 		// call init
@@ -380,31 +435,6 @@ public final class ConfigLoto {
 		return instance;
 	}
 
-	public static final double SAYISALOTOMAX = 49.0;
-	public static final double SUPERLOTOMAX = 54.0;
-	public static final double SANSTOPUSET1MAX = 34.0;
-	public static final double SANSTOPUSET2MAX = 14.0;
-	public static final double NUMARA10MAX = 80.0;
-
-	public static final double MINVALUE = 0.48; // 0.0009;
-	public static final double IDEALDIGITALONEVALUE = 1.0;
-
-	// range chack
-	public static final double ONEDIVSAYISAL = 1 / SAYISALOTOMAX;
-	public static final double ONEDIVSUPER = 1 / SUPERLOTOMAX;
-	public static final double ONEDIVSANSTOPUSET1 = 1 / SANSTOPUSET1MAX;
-	public static final double ONEDIVSANSTOPUSET2 = 1 / SANSTOPUSET2MAX;
-	public static final double ONEDIVNUMARA10 = 1 / NUMARA10MAX;
-
-	public static final int NUM_DIGITS = 1000;
-
-	public static SortedMap<Integer, Double> PREDICTMAPRESULT = new TreeMap<Integer, Double>();
-	public static SortedMap<Integer, Double> PREDICTMAP = new TreeMap<Integer, Double>();
-	public static SortedMap<Integer, Double> PREDICTLOWMAPRESULT = new TreeMap<Integer, Double>();
-	public static SortedMap<Integer, Double> PREDICTLOWMAP = new TreeMap<Integer, Double>();
-
-	public static String str_doubleFormat = "#.##";
-
 	/**
 	 * Evaluate the network and display (to the logger) the output for every
 	 * value in the training set. Displays ideal and actual.
@@ -414,64 +444,23 @@ public final class ConfigLoto {
 	 * @param training
 	 *            The training set to evaluate.
 	 */
-	public static void evaluate(final MLRegression network,
-			final MLDataSet training) {
-		int MULTIPLIER =1; //default;
-		if (INPUTSIZE == SIZE6) {
-			MULTIPLIER = SIZE49;
-		}
+	public static void evaluate(final MLRegression network,	final MLDataSet training) {
 		for (final MLDataPair pair : training) {
-			// final MLData output = network.compute(pair.getInput());
+			 MLData calculatedOutput = network.compute(pair.getInput());
 
 			log.debug("Input=  "
-					+ formatData(pair.getInput(),MULTIPLIER));
+					+ ConfigLoto.formatData(pair.getInput(), MULTIPLIER, PRECISION));
 			log.debug("Actual="
-					+ formatData(network.compute(pair
-							.getInput()),MULTIPLIER));
+					+ ConfigLoto.formatData(calculatedOutput, MULTIPLIER,PRECISION+2));
 			log.debug("Ideal=  "
-					+ formatData(pair.getIdeal(),MULTIPLIER));
+					+ ConfigLoto.formatData(pair.getIdeal(), MULTIPLIER, PRECISION));
 
 			log.debug("Success Report ---------");
-			ConfigLoto.calculateSuccess(network.compute(pair.getInput()), pair.getIdeal());
+			ConfigLoto.calculateSuccess(calculatedOutput,pair.getIdeal());
 		}
 	}
 
-	
-	/**
-	 * Format neural data as a list of numbers.
-	 * 
-	 * @param data
-	 *            The neural data to format.
-	 * @return The formatted neural data.
-	 */
-	public static String formatData(final MLData data,int multiplier) {
-		final StringBuilder result = new StringBuilder();
-		for (int i = 0; i < data.size(); i++) {
-			if (i != 0) {
-				result.append(',');
-			}
-			result.append(Format.formatDouble(data.getData(i)*multiplier, 4));
-		}
-		return result.toString();
-	}
-
-
-	
-	public static double round(double value) {
-		int decimalPlace = 2;
-		BigDecimal bd = new BigDecimal(value);
-		bd = bd.setScale(decimalPlace, BigDecimal.ROUND_UP);
-		return bd.doubleValue();
-	}
-
-	public static double round2(double num) {
-		double result = num * NUM_DIGITS;
-		result = Math.round(result);
-		result = result / NUM_DIGITS;
-		return result;
-	}
-
-	/**
+		/**
 	 * Calculate success
 	 * 
 	 * @param actual
@@ -494,77 +483,146 @@ public final class ConfigLoto {
 		PREDICTLOWMAP.clear();
 		PREDICTLOWMAPRESULT.clear();
 
-		if (INPUTSIZE == SIZE49) {
-			for (int i = 0; i < actual.size(); i++) {
-				if (ideal.getData(i) == IDEALDIGITALONEVALUE) // 1.0
+		switch (GAMETYPE) {
+			case SAYISALLOTO: {
+			if (INPUTSIZE == SIZE49) {
+				for (int i = 0; i < actual.size(); i++) {
+					if (ideal.getData(i) == IDEALDIGITALONEVALUE) // 1.0
+						if (actual.getData(i) > MINVALUE) {
+							counterSuccess++;
+							PREDICTMAPRESULT.put(i + 1,
+									round2(actual.getData(i)));
+						} else {
+							counterLowSuccess++;
+							PREDICTLOWMAPRESULT.put(i + 1,
+									round2(actual.getData(i)));
+						}
+
 					if (actual.getData(i) > MINVALUE) {
-						counterSuccess++;
-						PREDICTMAPRESULT.put(i + 1, round2(actual.getData(i)));
+						counterTotalPredict++;
+						PREDICTMAP.put(i + 1, round2(actual.getData(i)));
 					} else {
-						counterLowSuccess++;
-						PREDICTLOWMAPRESULT.put(i + 1,
-								round2(actual.getData(i)));
+						counterLowTotalPredict++;
+						PREDICTLOWMAP.put(i + 1, round2(actual.getData(i)));
 					}
-
-				if (actual.getData(i) > MINVALUE) {
-					counterTotalPredict++;
-					PREDICTMAP.put(i + 1, round2(actual.getData(i)));
-				} else {
-					counterLowTotalPredict++;
-					PREDICTLOWMAP.put(i + 1, round2(actual.getData(i)));
-				}
-				sortMap.put(i + 1, round2(actual.getData(i)));
-			}
-		} else if (INPUTSIZE == SIZE6) {
-			for (int i = 0; i < actual.size(); i++) {
-				if (Math.abs(ideal.getData(i) - actual.getData(i)) < ONEDIVSAYISAL) {
-					counterSuccess++;
-					PREDICTMAPRESULT.put(i + 1, round2(actual.getData(i)
-							* SIZE49));
-				} else {
-					counterLowSuccess++;
-					PREDICTLOWMAPRESULT.put(i + 1, round2(actual.getData(i)
-							* SIZE49));
+					sortMap.put(i + 1, round2(actual.getData(i)));
 				}
 
-				if (actual.getData(i) > 0) {
-					counterTotalPredict++;
-					PREDICTMAP.put(i + 1, round2(actual.getData(i) * SIZE49));
-				} else {
-					counterLowTotalPredict++;
-					PREDICTLOWMAP
-							.put(i + 1, round2(actual.getData(i) * SIZE49));
+				log.debug("*****   HIGH  ************");
+
+				String str = "Successfull Predict Count= " + counterSuccess;
+				if (counterSuccess > 0) {
+					str+="-*-  >0   *-*-*-*-*-*-*-*-*-*-";
 				}
-				sortMap.put(i + 1, round2(actual.getData(i) * SIZE49));
+				log.debug(str);
+				log.debug("Result= " + sortHashMapByValues(PREDICTMAPRESULT)); // sortHashMapByValues(
+				log.debug("Prediction= " + sortHashMapByValues(PREDICTMAP));
+				log.debug("Total Predict Count= " + counterTotalPredict);
+				log.debug("Sorted Actual= " + sortHashMapByValues(sortMap));
+
+				log.debug("*****   LOW  ************");
+				log.debug("Successfull Low Predict Count<  " + MINVALUE + " = "
+						+ counterLowSuccess);
+				log.debug("Low Result= "
+						+ sortHashMapByValues(PREDICTLOWMAPRESULT)); 
+				log.debug("Low Prediction= "
+						+ sortHashMapByValues(PREDICTLOWMAP));
+				log.debug("Total Low Predict Count= " + counterLowTotalPredict);
+
+				log.debug("*************************************");
+
+			} else if (INPUTSIZE == SIZE6) {
+				for (int i = 0; i < actual.size(); i++) {
+					for (int j = 0; j < ideal.size(); j++) {
+						if (Math.abs(ideal.getData(j) - actual.getData(i)) < (ONEDIVSAYISAL/2)) {
+							 //int y = (int)Math.round(x);
+						/*
+							log.debug(ideal.getData(j)* SIZE49);
+							log.debug(ideal.getData(j));
+							log.debug(actual.getData(i));
+							log.debug(ideal.getData(j)-actual.getData(i));
+							*/
+							
+							PREDICTMAPRESULT.put((int) Math.round (ideal.getData(j) * SIZE49), 
+									round2(actual.getData(i) * SIZE49));
+						}
+					}
+					int predictNum =(int) Math.round (actual.getData(i) * SIZE49);
+					PREDICTMAP.put(predictNum, round2(actual.getData(i) * SIZE49));
+				}
+				counterSuccess = PREDICTMAPRESULT.size();
+				String str = "Successfull Predict Count= " + counterSuccess;
+				if (counterSuccess > 0) {
+					str+="-*-*-*-*-*-*-*-*-*-*-*-";
+				}
+				log.debug(str);
+				log.debug("Result= " + PREDICTMAPRESULT); 
+				log.debug("Prediction= " + PREDICTMAP);
+				log.debug("*************************************");
 			}
+			break;
+		}
+
+		case SUPERLOTO: {
+
+			break;
+		}
+		case SANSTOPU: {
+
+			break;
+		}
+		case ONNUMARA: {
+
+			break;
+		}
+		default: {
+
+			break;
+		}
 
 		}
-		log.debug("*****   HIGH  ************");
-
-		if (counterSuccess > 0) {
-			log.debug("Successfull Predict Count= " + counterSuccess
-					+ " <---********* > 0 ****************** ");
-		} else {
-			log.debug("Successfull Predict Count= " + counterSuccess + " <--- ");
-		}
-		log.debug("Result= " + sortHashMapByValues(PREDICTMAPRESULT)); // sortHashMapByValues(
-		log.debug("Prediction= " + sortHashMapByValues(PREDICTMAP));
-		log.debug("Total Predict Count= " + counterTotalPredict);
-		log.debug("Sorted Actual= " + sortHashMapByValues(sortMap));
-		log.debug("*****   LOW  ************");
-		log.debug("Successfull Low Predict Count<  " + MINVALUE + " = "
-				+ counterLowSuccess);
-		log.debug("Low Result= " + sortHashMapByValues(PREDICTLOWMAPRESULT)); // sortHashMapByValues(
-		log.debug("Low Prediction= " + sortHashMapByValues(PREDICTLOWMAP));
-		log.debug("Total Low Predict Count= " + counterLowTotalPredict);
-
-		log.debug("*************************************");
 	}
 
+	
+	/**
+	 * Format neural data as a list of numbers.
+	 * 
+	 * @param data
+	 *            The neural data to format.
+	 * @return The formatted neural data.
+	 */
+	public static String formatData(final MLData data, int multiplier,
+			int precision) {
+		final StringBuilder result = new StringBuilder();
+		for (int i = 0; i < data.size(); i++) {
+			if (i != 0) {
+				result.append("; ");
+			}
+			String str = Format.formatDouble(data.getData(i) * multiplier,precision);
+			result.append(str);
+		}
+		return result.toString();
+	}
+
+	public static double round(double value) {
+		int decimalPlace = 2;
+		BigDecimal bd = new BigDecimal(value);
+		bd = bd.setScale(decimalPlace, BigDecimal.ROUND_UP);
+		return bd.doubleValue();
+	}
+
+	public static double round2(double num) {
+		double result = num * NUM_DIGITS;
+		result = Math.round(result);
+		result = result / NUM_DIGITS;
+		return result;
+	}
+
+
+	
 	/*
 	 * Sort Hashmap by Value
 	 */
-
 	public static LinkedHashMap<Integer, Double> sortHashMapByValues(
 			SortedMap<Integer, Double> passedMap) {
 		List<Integer> mapKeys = new ArrayList<Integer>(passedMap.keySet());
@@ -590,7 +648,6 @@ public final class ConfigLoto {
 					sortedMap.put((Integer) key, (Double) val);
 					break;
 				}
-
 			}
 		}
 		return (LinkedHashMap<Integer, Double>) sortedMap;
@@ -599,5 +656,4 @@ public final class ConfigLoto {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-
 }
