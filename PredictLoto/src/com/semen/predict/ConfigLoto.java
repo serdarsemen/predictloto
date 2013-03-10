@@ -384,7 +384,7 @@ public final class ConfigLoto {
 				NEATPOPULATIONDENSITY = 0.3; // 1.0 0.45 0.35 0.3
 												// ideal?
 				// if increase time epoch decrease
-				NEATDESIREDERROR = 0.021;// 0.024;
+				NEATDESIREDERROR = 0.024;// 0.024;
 
 				// HyperNEAT
 				BASE_RESOLUTION = 14; // 7
@@ -520,7 +520,7 @@ public final class ConfigLoto {
 					sortMap.put(i + 1, round2(actual.getData(i)));
 				}
 
-				log.debug("*****   HIGH  ************");
+				log.debug("*****   HIGH  "+SAYISALMAXSETVALUE49+"************");
 
 				String str = "Successfull Predict Count= " + counterSuccess;
 				if (counterSuccess > 0) {
@@ -547,7 +547,8 @@ public final class ConfigLoto {
 			} else if (INPUTSIZE == SIZE6) {
 				for (int i = 0; i < actual.size(); i++) {
 					for (int j = 0; j < ideal.size(); j++) {
-						if (ConfigLoto.denormalizeMapminmax(ideal.getData(j)) == Math
+						if ((int)Math
+								.round(ConfigLoto.denormalizeMapminmax(ideal.getData(j))) == (int)Math
 								.round(ConfigLoto.denormalizeMapminmax(actual
 										.getData(i)))) {
 							// int y = (int)Math.round(x);

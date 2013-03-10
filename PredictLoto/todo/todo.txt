@@ -277,6 +277,7 @@ mapminmax
 ----------------------
 
 normalize and denormalize call
+reult ve success count ta sorun var
 
 predictleri paramtre ile dbye yaz; parametre optimize et döngü ile search
 
