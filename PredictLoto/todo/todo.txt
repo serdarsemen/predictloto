@@ -256,16 +256,32 @@ sonar
 diğer oyun tipleri için açıklma ve sabit değerler eklendi.
 
 .sql leri de git e gönder
----------------**************************
-----------------------
-
-M2_repo için c:\users da ayar
 
 6 lı için high low bilme mantığı sete düşmesi kontrol et
 
+
+normalize 1 49 to 0 ..1 or 0.1 and 0.9 as heaton says
+
+
+formula is
+mapminmax
+
+(mapmax 0.9 (or 1)   - mapmin 0.1(or 0)) * (valuetobe mapped- minsetvalue 1)
+----------------------------------------------  + mapmin 0.1 (or 0)
+(maxsetvalue 49 -  minsetvalue 1)
+
+
 1/49 6 input 6 output dene
 
+---------------**************************
+----------------------
+
+normalize and denormalize call
+
 predictleri paramtre ile dbye yaz; parametre optimize et döngü ile search
+
+M2_repo için c:\users da ayar
+
 
 pnn araştır (probabilistic neural net)
 
