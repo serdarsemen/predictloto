@@ -78,7 +78,7 @@ public final class ConfigLoto {
 
 	// 0 for all inputs 01 feeded or
 	// 1 1 DIV OUT possible values feeded
-	public static int INPUTVALUETYPE = RAWVALUE; // DIGITAL or RAWVALUE
+	public static int INPUTVALUETYPE = DIGITAL; // DIGITAL or RAWVALUE
 
 	// ****************************
 	public static int INPUTSIZE;
@@ -142,6 +142,9 @@ public final class ConfigLoto {
 	// if increase time epoch decrease
 	public static double NEATDESIREDERROR; // 15 te 12 predict pop= 7000
 											// 0.109
+	// exit training if error does not decrease
+	public static int NEATEPOCHEXITCOUNTER = 1500;
+	public static int ERRPRECISION = 10000;
 	// 0.14 te 9 Predict
 	// 0.01 En çabuk 0.24 0.32
 	// olabiliyor 0.1071 0.1063 0.11 fail
@@ -384,13 +387,13 @@ public final class ConfigLoto {
 				NEATPOPULATIONDENSITY = 0.3; // 1.0 0.45 0.35 0.3
 												// ideal?
 				// if increase time epoch decrease
-				NEATDESIREDERROR = 0.024;// 0.024;
+				NEATDESIREDERROR = 0.024;// 0.024; possible 0.0218 0.0215 733 dak
 
 				// HyperNEAT
 				BASE_RESOLUTION = 14; // 7
 
 				JORDANDESIREDERROR = 0.12;// 0.12; not success !!!
-				ELMANDESIREDERROR = 0.1059; // 0.1058;
+				ELMANDESIREDERROR = 0.011; // 0.1058;
 				FEEDFORWARDDESIREDERROR = 0.14;
 
 				// MULTIPLIER = SAYISALMAXSETVALUE49;

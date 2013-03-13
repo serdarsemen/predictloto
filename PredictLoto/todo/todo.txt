@@ -273,16 +273,21 @@ mapminmax
 
 1/49 6 input 6 output dene
 
+normalize and denormalize call
+reult ve success count ta sorun var
+NEAT döngüde n döngüde ilerlemezse exit while
+
 ---------------**************************
 ----------------------
 
-normalize and denormalize call
-reult ve success count ta sorun var
 
 predictleri paramtre ile dbye yaz; parametre optimize et döngü ile search
+week algoname paramters in out predict success_count success_predict
+
 
 M2_repo için c:\users da ayar
-
+learn ahni
+apply hyperneat to rawvalue
 
 pnn araştır (probabilistic neural net)
 

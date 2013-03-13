@@ -106,14 +106,24 @@ public class JordanLoto {
 		// EncogUtility.trainToError(trainMain, ConfigLoto.JORDANDESIREDERROR);
 
 		int epoch = 1;
-		double train_Error = 1.0;
+		double trainError = 1.0;
+		double prevtrainError = 1.0;
+		double sameErrorCount = 0;
+		
 		double desired_Error = ConfigLoto.JORDANDESIREDERROR;
 		String str_TargetError = Format.formatDouble(desired_Error, 4);
-		while ((!stop.shouldStop()) && (train_Error > desired_Error)) {
+		while ((!stop.shouldStop()) && (trainError > desired_Error)&& (sameErrorCount < ConfigLoto.NEATEPOCHEXITCOUNTER)) {
+			if ((int) prevtrainError*ConfigLoto.ERRPRECISION ==(int) trainError*ConfigLoto.ERRPRECISION) {
+				sameErrorCount++;
+			} else {
+				log.debug("SameErrorCount now 0");
+				sameErrorCount = 0;
+			}
+			prevtrainError = trainError;
 			trainMain.iteration();
-			train_Error = trainMain.getError();
-			log.debug("Training " + what + ", #" + epoch + " Err= "
-					+ Format.formatDouble(train_Error, 4) + " Target Err= "
+			trainError = trainMain.getError();
+			log.debug( what + " #" + epoch + " Err= "
+					+ Format.formatDouble(trainError, 4) + " Target Err= "
 					+ str_TargetError);
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
 				log.debug("Saving " + what + ", Epoch #" + epoch);
@@ -132,7 +142,7 @@ public class JordanLoto {
 		// not yet supported
 		//	trainMain.dump(new File(ConfigLoto.JORDAN_DUMPFILENAME));
 				
-		return train_Error;
+		return trainError;
 	}
 
 	public BasicNetwork trainAndSave(int sourceTrainData) {

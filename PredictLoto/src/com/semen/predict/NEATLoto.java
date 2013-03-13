@@ -38,7 +38,7 @@ import org.encog.util.simple.TrainingSetUtil;
 public class NEATLoto {
 	/* Get actual class name to be printed on */
 	public static final Logger log = Logger.getLogger(NEATLoto.class); // .getName());
-	// private static final long serialVersionUID = 3L;
+	private static final long serialVersionUID = -3656587890L;
 	private static Properties prop = new Properties();
 
 	// For each file, you'll need a separate Logger.
@@ -64,6 +64,9 @@ public class NEATLoto {
 
 		int epoch = 1;
 		double trainError = 1.0;
+		double prevtrainError = 1.0;
+		double sameErrorCount = 0;
+		
 		String strTargetError = Format.formatDouble(error, 4);
 		log.debug("ISHYPERNEAT= " + ConfigLoto.ISHYPERNEAT);
 		log.debug("LO_WEEKNO= " + ConfigLoto.LO_WEEKNO);
@@ -74,12 +77,15 @@ public class NEATLoto {
 
 		log.debug("Beginning NEAT training...");
 		do {
+			prevtrainError = trainError;
 			train.iteration();
 			trainError = train.getError();
 			log.debug("NEAT # " + Format.formatInteger(epoch) + " Err= "
 					+ Format.formatDouble(trainError, 4) + " Target Err= "
 					+ strTargetError + ", Species= "
 					+ train.getPopulation().getSpecies().size());
+
+			// Save error
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
 				log.debug("Saving NEAT POP / network  Epoch #" + epoch);
 
@@ -99,7 +105,15 @@ public class NEATLoto {
 				}
 			}
 			epoch++;
-		} while ((train.getError() > error));
+			if ( prevtrainError== trainError) {
+				sameErrorCount++;
+				log.debug("SameErrorCount="+sameErrorCount+"preverr "+ prevtrainError+"trainerr "+trainError);
+			} else {
+			//	log.debug("SameErrorCount=0"+"preverr "+ prevtrainError+"trainerr "+ trainError);
+				sameErrorCount = 0;
+			}
+		} while ((train.getError() > error)
+				&& (sameErrorCount < ConfigLoto.NEATEPOCHEXITCOUNTER));
 		train.finishTraining();
 	}
 
@@ -298,7 +312,7 @@ public class NEATLoto {
 	public static void main(String[] args) {
 		long startTime = System.nanoTime();
 		try {
-			
+
 			String arg1 = null;
 			if (args.length != 0) {
 				arg1 = args[0]; // means load eg file
@@ -368,5 +382,9 @@ public class NEATLoto {
 					+ " (min) ");
 			Encog.getInstance().shutdown();
 		}
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 }
