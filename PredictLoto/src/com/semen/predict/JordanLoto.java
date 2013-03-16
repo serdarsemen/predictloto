@@ -65,8 +65,8 @@ public class JordanLoto {
 		pattern.setInputNeurons(ConfigLoto.INPUT_SIZE);
 		pattern.addHiddenLayer(ConfigLoto.JORDANHIDDENNEURONSIZE);
 		pattern.setOutputNeurons(ConfigLoto.IDEAL_SIZE);
-		log.debug("LO_WEEKNO= " +ConfigLoto.LO_WEEKNO);
-		log.debug("HI_WEEKNO= " +ConfigLoto.HI_WEEKNO);
+		log.debug("LO_WEEKNO= " + ConfigLoto.LO_WEEKNO);
+		log.debug("HI_WEEKNO= " + ConfigLoto.HI_WEEKNO);
 
 		return (BasicNetwork) pattern.generate();
 	}
@@ -79,8 +79,8 @@ public class JordanLoto {
 		pattern.setInputNeurons(ConfigLoto.INPUT_SIZE);
 		pattern.addHiddenLayer(ConfigLoto.FEEDFORWARDHIDDENNEURONSIZE);
 		pattern.setOutputNeurons(ConfigLoto.IDEAL_SIZE);
-		log.debug("LO_WEEKNO= " +ConfigLoto.LO_WEEKNO);
-		log.debug("HI_WEEKNO= " +ConfigLoto.HI_WEEKNO);
+		log.debug("LO_WEEKNO= " + ConfigLoto.LO_WEEKNO);
+		log.debug("HI_WEEKNO= " + ConfigLoto.HI_WEEKNO);
 
 		return (BasicNetwork) pattern.generate();
 	}
@@ -109,20 +109,21 @@ public class JordanLoto {
 		double trainError = 1.0;
 		double prevtrainError = 1.0;
 		double sameErrorCount = 0;
-		
+
 		double desired_Error = ConfigLoto.JORDANDESIREDERROR;
 		String str_TargetError = Format.formatDouble(desired_Error, 4);
-		while ((!stop.shouldStop()) && (trainError > desired_Error)&& (sameErrorCount < ConfigLoto.NEATEPOCHEXITCOUNTER)) {
-			if ((int) prevtrainError*ConfigLoto.ERRPRECISION ==(int) trainError*ConfigLoto.ERRPRECISION) {
+		while ((!stop.shouldStop()) && (trainError > desired_Error)
+				&& (sameErrorCount < ConfigLoto.NEATEPOCHEXITCOUNTER)) {
+			if (prevtrainError == trainError) {
 				sameErrorCount++;
 			} else {
-				log.debug("SameErrorCount now 0");
+				//log.debug("SameErrorCount=0");
 				sameErrorCount = 0;
 			}
 			prevtrainError = trainError;
 			trainMain.iteration();
 			trainError = trainMain.getError();
-			log.debug( what + " #" + epoch + " Err= "
+			log.debug(what + " #" + epoch + " Err= "
 					+ Format.formatDouble(trainError, 4) + " Target Err= "
 					+ str_TargetError);
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
@@ -140,20 +141,20 @@ public class JordanLoto {
 		}
 		trainMain.finishTraining();
 		// not yet supported
-		//	trainMain.dump(new File(ConfigLoto.JORDAN_DUMPFILENAME));
-				
+		// trainMain.dump(new File(ConfigLoto.JORDAN_DUMPFILENAME));
+
 		return trainError;
 	}
 
 	public BasicNetwork trainAndSave(int sourceTrainData) {
 
 		MLDataSet trainingSet = null;
-		if (sourceTrainData == 0)
+		if (sourceTrainData == ConfigLoto.DATASOURCESQL)
 			trainingSet = new SQLNeuralDataSet(ConfigLoto.TRAINSQL,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
 					ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL,
 					ConfigLoto.SQL_UID, ConfigLoto.SQL_PWD);
-		else if (sourceTrainData == 1)
+		else if (sourceTrainData == ConfigLoto.DATASOURCECSV)
 			trainingSet = TrainingSetUtil.loadCSVTOMemory(
 					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
@@ -207,12 +208,12 @@ public class JordanLoto {
 		}
 
 		MLDataSet trainingSet = null;
-		if (sourceTrainData == 0)
+		if (sourceTrainData == ConfigLoto.DATASOURCESQL)
 			trainingSet = new SQLNeuralDataSet(ConfigLoto.TRAINSQL,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
 					ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL,
 					ConfigLoto.SQL_UID, ConfigLoto.SQL_PWD);
-		else if (sourceTrainData == 1)
+		else if (sourceTrainData == ConfigLoto.DATASOURCECSV)
 			trainingSet = TrainingSetUtil.loadCSVTOMemory(
 					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
@@ -334,7 +335,8 @@ public class JordanLoto {
 			t.printStackTrace();
 		} finally {
 			double estimatedTimeMin = (System.nanoTime() - startTime) / 60000000000.0;
-			log.debug("Elapsed Time  = " + ConfigLoto.round2(estimatedTimeMin)+ " (min) ");
+			log.debug("Elapsed Time  = " + ConfigLoto.round2(estimatedTimeMin)
+					+ " (min) ");
 			Encog.getInstance().shutdown();
 		}
 

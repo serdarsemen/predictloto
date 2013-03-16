@@ -66,7 +66,7 @@ public class NEATLoto {
 		double trainError = 1.0;
 		double prevtrainError = 1.0;
 		double sameErrorCount = 0;
-		
+
 		String strTargetError = Format.formatDouble(error, 4);
 		log.debug("ISHYPERNEAT= " + ConfigLoto.ISHYPERNEAT);
 		log.debug("LO_WEEKNO= " + ConfigLoto.LO_WEEKNO);
@@ -105,11 +105,13 @@ public class NEATLoto {
 				}
 			}
 			epoch++;
-			if ( prevtrainError== trainError) {
+			if (prevtrainError == trainError) {
 				sameErrorCount++;
-				log.debug("SameErrorCount="+sameErrorCount+"preverr "+ prevtrainError+"trainerr "+trainError);
+				//log.debug("SameErrorCount=" + sameErrorCount + "preverr "
+					//	+ prevtrainError + "trainerr " + trainError);
 			} else {
-			//	log.debug("SameErrorCount=0"+"preverr "+ prevtrainError+"trainerr "+ trainError);
+				// log.debug("SameErrorCount=0"+"preverr "+
+				// prevtrainError+"trainerr "+ trainError);
 				sameErrorCount = 0;
 			}
 		} while ((train.getError() > error)
@@ -141,12 +143,12 @@ public class NEATLoto {
 		}
 
 		MLDataSet trainingSet = null;
-		if (sourceTrainData == 0)
+		if (sourceTrainData == ConfigLoto.DATASOURCESQL)
 			trainingSet = new SQLNeuralDataSet(ConfigLoto.TRAINSQL,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
 					ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL,
 					ConfigLoto.SQL_UID, ConfigLoto.SQL_PWD);
-		else if (sourceTrainData == 1)
+		else if (sourceTrainData == ConfigLoto.DATASOURCECSV)
 			trainingSet = TrainingSetUtil.loadCSVTOMemory(
 					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);
@@ -211,13 +213,13 @@ public class NEATLoto {
 		NEATPopulation pop = null;
 		MLDataSet trainingSet = null;
 
-		if (sourceTrainData == 0)
+		if (sourceTrainData == ConfigLoto.DATASOURCESQL)
 			trainingSet = new SQLNeuralDataSet(ConfigLoto.TRAINSQL,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
 					ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL,
 					ConfigLoto.SQL_UID, ConfigLoto.SQL_PWD);
 
-		else if (sourceTrainData == 1)
+		else if (sourceTrainData == ConfigLoto.DATASOURCECSV)
 			trainingSet = TrainingSetUtil.loadCSVTOMemory(
 					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE);

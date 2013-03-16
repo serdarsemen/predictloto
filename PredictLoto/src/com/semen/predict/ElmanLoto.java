@@ -65,8 +65,8 @@ public class ElmanLoto {
 		pattern.setInputNeurons(ConfigLoto.INPUT_SIZE);
 		pattern.addHiddenLayer(ConfigLoto.ELMANHIDDENNEURONSIZE);
 		pattern.setOutputNeurons(ConfigLoto.IDEAL_SIZE);
-		log.debug("LO_WEEKNO= " +ConfigLoto.LO_WEEKNO);
-		log.debug("HI_WEEKNO= " +ConfigLoto.HI_WEEKNO);
+		log.debug("LO_WEEKNO= " + ConfigLoto.LO_WEEKNO);
+		log.debug("HI_WEEKNO= " + ConfigLoto.HI_WEEKNO);
 
 		return (BasicNetwork) pattern.generate();
 	}
@@ -79,8 +79,8 @@ public class ElmanLoto {
 		pattern.setInputNeurons(ConfigLoto.INPUT_SIZE);
 		pattern.addHiddenLayer(ConfigLoto.FEEDFORWARDHIDDENNEURONSIZE);
 		pattern.setOutputNeurons(ConfigLoto.IDEAL_SIZE);
-		log.debug("LO_WEEKNO= " +ConfigLoto.LO_WEEKNO);
-		log.debug("HI_WEEKNO= " +ConfigLoto.HI_WEEKNO);
+		log.debug("LO_WEEKNO= " + ConfigLoto.LO_WEEKNO);
+		log.debug("HI_WEEKNO= " + ConfigLoto.HI_WEEKNO);
 
 		return (BasicNetwork) pattern.generate();
 	}
@@ -108,14 +108,15 @@ public class ElmanLoto {
 		double trainError = 1.0;
 		double prevtrainError = 1.0;
 		double sameErrorCount = 0;
-		
+
 		double desired_Error = ConfigLoto.ELMANDESIREDERROR;
 		String str_TargetError = Format.formatDouble(desired_Error, 4);
-		while ((!stop.shouldStop()) && (trainError > desired_Error)&& (sameErrorCount < ConfigLoto.NEATEPOCHEXITCOUNTER)) {
-			if ((int) prevtrainError*ConfigLoto.ERRPRECISION ==(int) trainError*ConfigLoto.ERRPRECISION) {
+		while ((!stop.shouldStop()) && (trainError > desired_Error)
+				&& (sameErrorCount < ConfigLoto.NEATEPOCHEXITCOUNTER)) {
+			if (prevtrainError == trainError) {
 				sameErrorCount++;
 			} else {
-				log.debug("SameErrorCount now 0");
+			//	log.debug("SameErrorCount=0");
 				sameErrorCount = 0;
 			}
 			prevtrainError = trainError;
@@ -138,8 +139,8 @@ public class ElmanLoto {
 			epoch++;
 		}
 		trainMain.finishTraining();
-	    // not yet supported
-		//	trainMain.dump(new File(ConfigLoto.ELMAN_DUMPFILENAME));
+		// not yet supported
+		// trainMain.dump(new File(ConfigLoto.ELMAN_DUMPFILENAME));
 		return trainError;
 	}
 
@@ -170,8 +171,7 @@ public class ElmanLoto {
 		// Save Elman Network
 		EncogDirectoryPersistence.saveObject(
 				new File(ConfigLoto.ELMAN_FILENAME), elmanNetwork);
-		
-		
+
 		// Backprop section
 		/*
 		 * final BasicNetwork feedforwardNetwork = ElmanLoto
@@ -336,7 +336,8 @@ public class ElmanLoto {
 			t.printStackTrace();
 		} finally {
 			double estimatedTimeMin = (System.nanoTime() - startTime) / 60000000000.0;
-			log.debug("Elapsed Time  = " + ConfigLoto.round2(estimatedTimeMin)+ " (min) ");
+			log.debug("Elapsed Time  = " + ConfigLoto.round2(estimatedTimeMin)
+					+ " (min) ");
 			Encog.getInstance().shutdown();
 		}
 	}

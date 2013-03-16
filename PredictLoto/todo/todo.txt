@@ -22,6 +22,14 @@
 	 * kümesi 1-34 numaradan, ikinci sayı kümesi ise 1-14 numaradan
 	 * oluşmaktadır. İştirakçiler, ilk sayı kümesinden 5 (beş) adet, ikinci sayı
 	 * kümesinden 1 (bir) adet numarayı seçerek oyuna katılabileceklerdir.
+	 
+	 SUPER LOTO
+	 6 54
+	 
+	 SAYISAL LOTO
+	 6 48
+	 
+	 
 	 */
 
 
@@ -285,6 +293,7 @@ predictleri paramtre ile dbye yaz; parametre optimize et döngü ile search
 week algoname paramters in out predict success_count success_predict
 
 
+search.yahooapis.com YahooSearch.java -->  google 
 M2_repo için c:\users da ayar
 learn ahni
 apply hyperneat to rawvalue

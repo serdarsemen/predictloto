@@ -143,8 +143,8 @@ public final class ConfigLoto {
 	public static double NEATDESIREDERROR; // 15 te 12 predict pop= 7000
 											// 0.109
 	// exit training if error does not decrease
-	public static int NEATEPOCHEXITCOUNTER = 1500;
-	public static int ERRPRECISION = 10000;
+	public static int NEATEPOCHEXITCOUNTER = 50;
+	// public static int ERRPRECISION = 10000;
 	// 0.14 te 9 Predict
 	// 0.01 En çabuk 0.24 0.32
 	// olabiliyor 0.1071 0.1063 0.11 fail
@@ -269,6 +269,8 @@ public final class ConfigLoto {
 	public final static String SQL_UID = "root";
 	public final static String SQL_PWD = "serdar";
 
+	public final static String INSERTSAYISALPREDICT = "INSERT INTO SAYISALPREDICT VALUES ("; 
+	
 	public static String TRAINSQL;
 	public static String TESTSQL;
 	public static int INPUT_SIZE;
@@ -358,10 +360,10 @@ public final class ConfigLoto {
 				// if increase time increase
 				// 1200
 				// epoch and error increase
-				NEATPOPULATIONDENSITY = 0.3; // 1.0 0.45 0.35 0.3
+				NEATPOPULATIONDENSITY = 0.2; // 1.0 0.45 0.35 0.3
 												// ideal?
 				// if increase time epoch decrease
-				NEATDESIREDERROR = 0.14; // 15 te 12 predict pop= 7000
+				NEATDESIREDERROR = 0.13; // 15 te 12 predict pop= 7000
 
 				// HyperNEAT
 				BASE_RESOLUTION = 14; // 7
@@ -384,13 +386,14 @@ public final class ConfigLoto {
 				// if increase time increase
 				// 1200
 				// epoch and error increase
-				NEATPOPULATIONDENSITY = 0.3; // 1.0 0.45 0.35 0.3
+				NEATPOPULATIONDENSITY = 0.2; // 1.0 0.45 0.35 0.3
 												// ideal?
 				// if increase time epoch decrease
-				NEATDESIREDERROR = 0.024;// 0.024; possible 0.0218 0.0215 733 dak
+				NEATDESIREDERROR = 0.024;// 0.024; possible 0.0218 0.0215 733
+											// dak 0.0215 951.66 (min) 
 
 				// HyperNEAT
-				BASE_RESOLUTION = 14; // 7
+				BASE_RESOLUTION = 12; // 6 X 2 ??
 
 				JORDANDESIREDERROR = 0.12;// 0.12; not success !!!
 				ELMANDESIREDERROR = 0.011; // 0.1058;
@@ -523,7 +526,8 @@ public final class ConfigLoto {
 					sortMap.put(i + 1, round2(actual.getData(i)));
 				}
 
-				log.debug("*****   HIGH  "+SAYISALMAXSETVALUE49+"************");
+				log.debug("*****   HIGH  " + SAYISALMAXSETVALUE49
+						+ "************");
 
 				String str = "Successfull Predict Count= " + counterSuccess;
 				if (counterSuccess > 0) {
@@ -550,8 +554,8 @@ public final class ConfigLoto {
 			} else if (INPUTSIZE == SIZE6) {
 				for (int i = 0; i < actual.size(); i++) {
 					for (int j = 0; j < ideal.size(); j++) {
-						if ((int)Math
-								.round(ConfigLoto.denormalizeMapminmax(ideal.getData(j))) == (int)Math
+						if ((int) Math.round(ConfigLoto
+								.denormalizeMapminmax(ideal.getData(j))) == (int) Math
 								.round(ConfigLoto.denormalizeMapminmax(actual
 										.getData(i)))) {
 							// int y = (int)Math.round(x);
