@@ -20,6 +20,14 @@ import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
 import org.encog.util.Format;
 
+import java.sql.Connection;
+import java.sql.Statement;
+
+
+import org.encog.platformspecific.j2se.data.SQLNeuralDataSet;
+import com.semen.predict.MySQLUtil;
+
+
 //import org.encog.util.simple.EncogUtility;
 
 /**
@@ -741,6 +749,29 @@ public final class ConfigLoto {
 		return (LinkedHashMap<Integer, Double>) sortedMap;
 	}
 
+	
+	public void ExecuteSQLCommand() throws Exception
+	{
+		MySQLUtil.loadDriver();
+		
+		Connection conn = MySQLUtil.getConnection();
+		
+		conn.setAutoCommit(true);
+
+		Statement s = conn.createStatement();
+
+		// We create a table...
+		StringBuilder sql = new StringBuilder();
+		sql.append("CREATE TABLE \"XOR\" (");
+		
+		sql.append(" )");
+		s.execute(sql.toString());
+		
+		s.execute("INSERT INTO xor(in1,in2,ideal1) VALUES(0,0,0)");
+				MySQLUtil.shutdown();
+		//DerbyUtil.cleanup();
+
+	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
