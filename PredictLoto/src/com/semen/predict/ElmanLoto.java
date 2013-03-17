@@ -32,6 +32,7 @@ import org.encog.persist.EncogDirectoryPersistence;
 import org.encog.platformspecific.j2se.data.SQLNeuralDataSet;
 import org.encog.util.csv.CSVFormat;
 
+import com.semen.util.MySQLUtil;
 import org.encog.util.simple.TrainingSetUtil;
 import org.encog.util.Format;
 
@@ -151,8 +152,8 @@ public class ElmanLoto {
 
 			trainingSet = new SQLNeuralDataSet(ConfigLoto.TRAINSQL,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
-					ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL,
-					ConfigLoto.SQL_UID, ConfigLoto.SQL_PWD);
+					MySQLUtil.SQL_DRIVER, MySQLUtil.SQL_URL,
+					MySQLUtil.SQL_UID, MySQLUtil.SQL_PWD);
 
 		else if (sourceTrainData == ConfigLoto.DATASOURCECSV)
 			trainingSet = TrainingSetUtil.loadCSVTOMemory(
@@ -212,8 +213,8 @@ public class ElmanLoto {
 
 			trainingSet = new SQLNeuralDataSet(ConfigLoto.TRAINSQL,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
-					ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL,
-					ConfigLoto.SQL_UID, ConfigLoto.SQL_PWD);
+					MySQLUtil.SQL_DRIVER, MySQLUtil.SQL_URL,
+					MySQLUtil.SQL_UID, MySQLUtil.SQL_PWD);
 
 		else if (sourceTrainData == ConfigLoto.DATASOURCECSV)
 			trainingSet = TrainingSetUtil.loadCSVTOMemory(
@@ -268,8 +269,8 @@ public class ElmanLoto {
 
 		final MLDataSet testSet = new SQLNeuralDataSet(ConfigLoto.TESTSQL,
 				ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
-				ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL, ConfigLoto.SQL_UID,
-				ConfigLoto.SQL_PWD);
+				MySQLUtil.SQL_DRIVER, MySQLUtil.SQL_URL, MySQLUtil.SQL_UID,
+				MySQLUtil.SQL_PWD);
 		if (testSet.size() > 0) {
 			double e = elmanNetwork.calculateError(testSet);
 			log.debug("Loaded Elman network's error for test set is: " + e);

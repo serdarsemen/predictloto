@@ -20,16 +20,6 @@ import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
 import org.encog.util.Format;
 
-import java.sql.Connection;
-import java.sql.Statement;
-
-
-import org.encog.platformspecific.j2se.data.SQLNeuralDataSet;
-import com.semen.predict.MySQLUtil;
-
-
-//import org.encog.util.simple.EncogUtility;
-
 /**
  * Basic config info for the Predict Loto.
  * 
@@ -137,7 +127,7 @@ public final class ConfigLoto {
 	public final static int IDEAL_SIZE_SANSTOPUSET2_1 = 1;
 
 	public final static int LO_WEEKNO = 1; // start week for train0 or 500 ?
-	public final static int HI_WEEKNO = 847; // end week for train TRAIN_SIZE
+	public final static int HI_WEEKNO = 850; // end week for train TRAIN_SIZE
 
 	// Neat
 	// if population size is down much faster but target err rate is so slow
@@ -272,12 +262,8 @@ public final class ConfigLoto {
 			+ " FROM lotoresults6 " + " WHERE weekid>" + HI_WEEKNO
 			+ " ORDER BY weekid";
 
-	public final static String SQL_DRIVER = "com.mysql.jdbc.Driver";
-	public final static String SQL_URL = "jdbc:mysql://localhost:3306/loto";
-	public final static String SQL_UID = "root";
-	public final static String SQL_PWD = "serdar";
 
-	public final static String INSERTSAYISALPREDICT = "INSERT INTO SAYISALPREDICT VALUES ("; 
+	public  static String INSERTSAYISALPREDICT = "INSERT INTO SAYISALPREDICT VALUES ("; 
 	
 	public static String TRAINSQL;
 	public static String TESTSQL;
@@ -471,14 +457,15 @@ public final class ConfigLoto {
 	 */
 	public static void evaluate(final MLRegression network,
 			final MLDataSet training) {
+		int weekNo= ConfigLoto.HI_WEEKNO+2;
 		for (final MLDataPair pair : training) {
 			MLData calculatedOutput = network.compute(pair.getInput());
-
-			log.debug("Input=   "
+			log.debug("Predict WeekNo=  "+ weekNo++);
+			log.debug("Input=      "
 					+ ConfigLoto.formatData(pair.getInput(), PRECISION));
-			log.debug("Predict= " // actual
+			log.debug("Predict=    " // actual
 					+ ConfigLoto.formatData(calculatedOutput, PRECISION + 2));
-			log.debug("Output=  " // ideal
+			log.debug("RealOutput= " // ideal
 					+ ConfigLoto.formatData(pair.getIdeal(), PRECISION));
 
 			log.debug("Success Report ---------");
@@ -750,28 +737,6 @@ public final class ConfigLoto {
 	}
 
 	
-	public void ExecuteSQLCommand() throws Exception
-	{
-		MySQLUtil.loadDriver();
-		
-		Connection conn = MySQLUtil.getConnection();
-		
-		conn.setAutoCommit(true);
-
-		Statement s = conn.createStatement();
-
-		// We create a table...
-		StringBuilder sql = new StringBuilder();
-		sql.append("CREATE TABLE \"XOR\" (");
-		
-		sql.append(" )");
-		s.execute(sql.toString());
-		
-		s.execute("INSERT INTO xor(in1,in2,ideal1) VALUES(0,0,0)");
-				MySQLUtil.shutdown();
-		//DerbyUtil.cleanup();
-
-	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}

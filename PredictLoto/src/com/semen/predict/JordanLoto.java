@@ -30,7 +30,7 @@ import org.encog.util.Format;
 import org.encog.util.csv.CSVFormat;
 
 import org.encog.util.simple.TrainingSetUtil;
-
+import com.semen.util.MySQLUtil;
 import java.io.File;
 import java.util.Properties;
 
@@ -152,8 +152,8 @@ public class JordanLoto {
 		if (sourceTrainData == ConfigLoto.DATASOURCESQL)
 			trainingSet = new SQLNeuralDataSet(ConfigLoto.TRAINSQL,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
-					ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL,
-					ConfigLoto.SQL_UID, ConfigLoto.SQL_PWD);
+					MySQLUtil.SQL_DRIVER, MySQLUtil.SQL_URL,
+					MySQLUtil.SQL_UID, MySQLUtil.SQL_PWD);
 		else if (sourceTrainData == ConfigLoto.DATASOURCECSV)
 			trainingSet = TrainingSetUtil.loadCSVTOMemory(
 					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
@@ -211,8 +211,8 @@ public class JordanLoto {
 		if (sourceTrainData == ConfigLoto.DATASOURCESQL)
 			trainingSet = new SQLNeuralDataSet(ConfigLoto.TRAINSQL,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
-					ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL,
-					ConfigLoto.SQL_UID, ConfigLoto.SQL_PWD);
+					MySQLUtil.SQL_DRIVER, MySQLUtil.SQL_URL,
+					MySQLUtil.SQL_UID, MySQLUtil.SQL_PWD);
 		else if (sourceTrainData == ConfigLoto.DATASOURCECSV)
 			trainingSet = TrainingSetUtil.loadCSVTOMemory(
 					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
@@ -266,8 +266,8 @@ public class JordanLoto {
 
 		final MLDataSet testSet = new SQLNeuralDataSet(ConfigLoto.TESTSQL,
 				ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
-				ConfigLoto.SQL_DRIVER, ConfigLoto.SQL_URL, ConfigLoto.SQL_UID,
-				ConfigLoto.SQL_PWD);
+				MySQLUtil.SQL_DRIVER, MySQLUtil.SQL_URL, MySQLUtil.SQL_UID,
+				MySQLUtil.SQL_PWD);
 		if (testSet.size() > 0) {
 			double e = jordanNetwork.calculateError(testSet);
 			log.debug("Loaded Jordan network's error for test set is: " + e);
