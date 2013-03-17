@@ -85,7 +85,10 @@ public class NEATLoto {
 					+ Format.formatDouble(trainError, 4) + " Target Err= "
 					+ strTargetError + ", Species= "
 					+ train.getPopulation().getSpecies().size());
-
+			
+			
+			ConfigLoto.INSERTSAYISALPREDICT=ConfigLoto.INSERTSAYISALPREDICT+"NEAT"+ strTargetError+
+					ConfigLoto.NEATPOPULATIONSIZE+ConfigLoto.NEATPOPULATIONDENSITY;
 			// Save error
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
 				log.debug("Saving NEAT POP / network  Epoch #" + epoch);
@@ -118,6 +121,10 @@ public class NEATLoto {
 		} while ((train.getError() > error)
 				&& (sameErrorCount < ConfigLoto.NEATEPOCHEXITCOUNTER));
 		train.finishTraining();
+
+		ConfigLoto.INSERTSAYISALPREDICT=ConfigLoto.INSERTSAYISALPREDICT+"NEAT,"+ strTargetError+","+
+				ConfigLoto.NEATPOPULATIONSIZE+","+ConfigLoto.NEATPOPULATIONDENSITY+",";
+
 	}
 
 	/*
@@ -194,6 +201,7 @@ public class NEATLoto {
 
 		NEATLoto.trainToError(train, ConfigLoto.NEATDESIREDERROR);
 		network = (NEATNetwork) train.getCODEC().decode(train.getBestGenome());
+		
 
 		try {
 			// Save pop

@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-import com.semen.predict.ConfigLoto;
+
 
 /**
  * Utilities for using the My SQL (MySQL) engine.
@@ -76,7 +76,7 @@ public final class MySQLUtil {
 
 	}
 
-	public void ExecuteSQLCommand(String sqlStr) throws Exception {
+	public static void ExecuteSQLCommand(String sqlStr) throws Exception {
 		MySQLUtil.loadDriver();
 
 		Connection conn = MySQLUtil.getConnection();

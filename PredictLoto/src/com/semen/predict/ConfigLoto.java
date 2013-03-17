@@ -20,6 +20,8 @@ import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
 import org.encog.util.Format;
 
+import com.semen.util.MySQLUtil;
+
 /**
  * Basic config info for the Predict Loto.
  * 
@@ -76,7 +78,7 @@ public final class ConfigLoto {
 
 	// 0 for all inputs 01 feeded or
 	// 1 1 DIV OUT possible values feeded
-	public static int INPUTVALUETYPE = DIGITAL; // DIGITAL or RAWVALUE
+	public static int INPUTVALUETYPE = RAWVALUE; // DIGITAL or RAWVALUE
 
 	// ****************************
 	public static int INPUTSIZE;
@@ -127,7 +129,7 @@ public final class ConfigLoto {
 	public final static int IDEAL_SIZE_SANSTOPUSET2_1 = 1;
 
 	public final static int LO_WEEKNO = 1; // start week for train0 or 500 ?
-	public final static int HI_WEEKNO = 850; // end week for train TRAIN_SIZE
+	public final static int HI_WEEKNO = 849; // end week for train TRAIN_SIZE
 
 	// Neat
 	// if population size is down much faster but target err rate is so slow
@@ -262,9 +264,15 @@ public final class ConfigLoto {
 			+ " FROM lotoresults6 " + " WHERE weekid>" + HI_WEEKNO
 			+ " ORDER BY weekid";
 
-
-	public  static String INSERTSAYISALPREDICT = "INSERT INTO SAYISALPREDICT VALUES ("; 
+	public static String INSERTSAYISALPREDICT = "INSERT INTO SAYISALPREDICT VALUES (";
+	// algorithmethod
+	// train error
+	// week
+	// successful predict no
+	// Predict
+	// result
 	
+
 	public static String TRAINSQL;
 	public static String TESTSQL;
 	public static int INPUT_SIZE;
@@ -384,7 +392,7 @@ public final class ConfigLoto {
 												// ideal?
 				// if increase time epoch decrease
 				NEATDESIREDERROR = 0.024;// 0.024; possible 0.0218 0.0215 733
-											// dak 0.0215 951.66 (min) 
+											// dak 0.0215 951.66 (min)
 
 				// HyperNEAT
 				BASE_RESOLUTION = 12; // 6 X 2 ??
@@ -457,13 +465,14 @@ public final class ConfigLoto {
 	 */
 	public static void evaluate(final MLRegression network,
 			final MLDataSet training) {
-		int weekNo= ConfigLoto.HI_WEEKNO+2;
+		int weekNo = ConfigLoto.HI_WEEKNO + 2;
 		for (final MLDataPair pair : training) {
 			MLData calculatedOutput = network.compute(pair.getInput());
-			log.debug("Predict WeekNo=  "+ weekNo++);
-			log.debug("Input=      "
+			INSERTSAYISALPREDICT = INSERTSAYISALPREDICT + weekNo + ",";
+			log.debug("Predict WeekNo=  " + weekNo++);
+			log.debug("Input=         "
 					+ ConfigLoto.formatData(pair.getInput(), PRECISION));
-			log.debug("Predict=    " // actual
+			log.debug("Predict=      " // actual
 					+ ConfigLoto.formatData(calculatedOutput, PRECISION + 2));
 			log.debug("RealOutput= " // ideal
 					+ ConfigLoto.formatData(pair.getIdeal(), PRECISION));
@@ -578,10 +587,20 @@ public final class ConfigLoto {
 				if (counterSuccess > 0) {
 					str += "-*-*-*-*-*-*-*-*-*-*-*-";
 				}
+
 				log.debug(str);
 				log.debug("Result= " + PREDICTMAPRESULT);
 				log.debug("Prediction= " + PREDICTMAP);
 				log.debug("*************************************");
+			}
+
+			INSERTSAYISALPREDICT = INSERTSAYISALPREDICT + counterSuccess + ",\""
+					+ PREDICTMAPRESULT + "\",\"" + PREDICTMAP + "\")";
+			try {
+				MySQLUtil.ExecuteSQLCommand(INSERTSAYISALPREDICT);
+			} catch (Throwable t) {
+				t.printStackTrace();
+			} finally {
 			}
 			break;
 		}
@@ -736,7 +755,6 @@ public final class ConfigLoto {
 		return (LinkedHashMap<Integer, Double>) sortedMap;
 	}
 
-	
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
