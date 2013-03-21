@@ -264,13 +264,20 @@ public final class ConfigLoto {
 			+ " FROM lotoresults6 " + " WHERE weekid>" + HI_WEEKNO
 			+ " ORDER BY weekid";
 
-	public static String INSERTSAYISALPREDICT = "INSERT INTO SAYISALPREDICT VALUES (";
-	// algorithmethod
+	public static String INSERTSAYISALPREDICT="" ;
+	
+	public static String INSERTSAYISALPREDICTPART1="" ;
+	
+	
+	// algorithmethod NEAT
 	// train error
+	//NEATPOPULATIONSIZE
+	//NEATPOPULATIONDENSITY
 	// week
-	// successful predict no
+	// Realoutput
+	// successfulpredictcount
+	// SuccessfullPredict
 	// Predict
-	// result
 	
 
 	public static String TRAINSQL;
@@ -466,9 +473,13 @@ public final class ConfigLoto {
 	public static void evaluate(final MLRegression network,
 			final MLDataSet training) {
 		int weekNo = ConfigLoto.HI_WEEKNO + 2;
+		
 		for (final MLDataPair pair : training) {
 			MLData calculatedOutput = network.compute(pair.getInput());
-			INSERTSAYISALPREDICT = INSERTSAYISALPREDICT + weekNo + ",";
+			INSERTSAYISALPREDICT= "INSERT INTO SAYISALPREDICT (`algo`,  `targeterr` ,  `populationsize` ,  `populationdensity` ,"+
+			"`weekid` ,  `realoutput` ,  `successfulpredictcount`,  `successfulpredict` ,  `predict`)  VALUES (";
+			INSERTSAYISALPREDICT = INSERTSAYISALPREDICT + INSERTSAYISALPREDICTPART1 +weekNo + ",\""+ 
+			ConfigLoto.formatData(pair.getIdeal(), PRECISION)+"\",";
 			log.debug("Predict WeekNo=  " + weekNo++);
 			log.debug("Input=         "
 					+ ConfigLoto.formatData(pair.getInput(), PRECISION));
