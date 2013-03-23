@@ -89,6 +89,7 @@ public class ElmanLoto {
 	public static double trainNetwork(final String what,
 			final BasicNetwork network, final MLDataSet trainingSet) {
 		// train the neural network
+		log.debug("Train " + what + " Network");
 		CalculateScore score = new TrainingSetScore(trainingSet);
 		final MLTrain trainAlt = new NeuralSimulatedAnnealing(network, score,
 				ConfigLoto.SIMANNEAL_STARTTEMP, ConfigLoto.SIMANNEAL_STOPTEMP,
@@ -112,7 +113,8 @@ public class ElmanLoto {
 
 		double desired_Error = ConfigLoto.ELMANDESIREDERROR;
 		String str_TargetError = Format.formatDouble(desired_Error, 4);
-		while ((!stop.shouldStop()) && (trainError > desired_Error)
+		while (   //(!stop.shouldStop())	&& 
+				(trainError > desired_Error)
 				&& (sameErrorCount < ConfigLoto.NEATEPOCHEXITCOUNTER)) {
 			if (prevtrainError == trainError) {
 				sameErrorCount++;
@@ -140,6 +142,9 @@ public class ElmanLoto {
 			epoch++;
 		}
 		trainMain.finishTraining();
+		
+		ConfigLoto.INSERTSAYISALPREDICTPART1 = "\"Elman\"," + desired_Error + ",0,0,";
+				
 		// not yet supported
 		// trainMain.dump(new File(ConfigLoto.ELMAN_DUMPFILENAME));
 		return trainError;

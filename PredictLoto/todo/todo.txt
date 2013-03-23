@@ -285,15 +285,19 @@ normalize and denormalize call
 reult ve success count ta sorun var
 NEAT döngüde n döngüde ilerlemezse exit while
 
+
+
+predictleri paramtre ile dbye yaz; parametre optimize et döngü ile search
+
 ---------------**************************
 ----------------------
 
 
-predictleri paramtre ile dbye yaz; parametre optimize et döngü ile search
 week algoname paramters in out predict success_count success_predict
 
 
 search.yahooapis.com YahooSearch.java -->  google 
+
 M2_repo için c:\users da ayar
 learn ahni
 apply hyperneat to rawvalue

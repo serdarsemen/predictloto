@@ -115,6 +115,9 @@ public final class ConfigLoto {
 	public static int DATASOURCECSV = 1;
 
 	public static int ISHYPERNEAT = 0;
+	public static int NEATMODE = 0;
+	public static int HYPERNEATMODE = 1;
+	
 
 	public final static int INPUT_SIZE_SANSTOPUSET1 = 34;
 	public final static int IDEAL_SIZE_SANSTOPUSET1 = 34;
@@ -264,21 +267,19 @@ public final class ConfigLoto {
 			+ " FROM lotoresults6 " + " WHERE weekid>" + HI_WEEKNO
 			+ " ORDER BY weekid";
 
-	public static String INSERTSAYISALPREDICT="" ;
-	
-	public static String INSERTSAYISALPREDICTPART1="" ;
-	
-	
+	public static String INSERTSAYISALPREDICT = "";
+
+	public static String INSERTSAYISALPREDICTPART1 = "";
+
 	// algorithmethod NEAT
 	// train error
-	//NEATPOPULATIONSIZE
-	//NEATPOPULATIONDENSITY
+	// NEATPOPULATIONSIZE
+	// NEATPOPULATIONDENSITY
 	// week
 	// Realoutput
 	// successfulpredictcount
 	// SuccessfullPredict
 	// Predict
-	
 
 	public static String TRAINSQL;
 	public static String TESTSQL;
@@ -398,7 +399,7 @@ public final class ConfigLoto {
 				NEATPOPULATIONDENSITY = 0.2; // 1.0 0.45 0.35 0.3
 												// ideal?
 				// if increase time epoch decrease
-				NEATDESIREDERROR = 0.024;// 0.024; possible 0.0218 0.0215 733
+				NEATDESIREDERROR = 0.022;// 0.024; possible 0.0218 0.0215 733
 											// dak 0.0215 951.66 (min)
 
 				// HyperNEAT
@@ -473,13 +474,14 @@ public final class ConfigLoto {
 	public static void evaluate(final MLRegression network,
 			final MLDataSet training) {
 		int weekNo = ConfigLoto.HI_WEEKNO + 2;
-		
+
 		for (final MLDataPair pair : training) {
 			MLData calculatedOutput = network.compute(pair.getInput());
-			INSERTSAYISALPREDICT= "INSERT INTO SAYISALPREDICT (`algo`,  `targeterr` ,  `populationsize` ,  `populationdensity` ,"+
-			"`weekid` ,  `realoutput` ,  `successfulpredictcount`,  `successfulpredict` ,  `predict`)  VALUES (";
-			INSERTSAYISALPREDICT = INSERTSAYISALPREDICT + INSERTSAYISALPREDICTPART1 +weekNo + ",\""+ 
-			ConfigLoto.formatData(pair.getIdeal(), PRECISION)+"\",";
+			INSERTSAYISALPREDICT = "INSERT INTO SAYISALPREDICT (`algo`,  `targeterr` ,  `populationsize` ,  `populationdensity` ,"
+					+ "`weekid` ,  `realoutput` ,  `successfulpredictcount`,  `successfulpredict` ,  `predict`)  VALUES (";
+			INSERTSAYISALPREDICT = INSERTSAYISALPREDICT
+					+ INSERTSAYISALPREDICTPART1 + weekNo + ",\""
+					+ ConfigLoto.formatData(pair.getIdeal(), PRECISION) + "\",";
 			log.debug("Predict WeekNo=  " + weekNo++);
 			log.debug("Input=         "
 					+ ConfigLoto.formatData(pair.getInput(), PRECISION));
@@ -546,7 +548,7 @@ public final class ConfigLoto {
 
 				String str = "Successfull Predict Count= " + counterSuccess;
 				if (counterSuccess > 0) {
-					str += "-*-  >0   *-*-*-*-*-*-*-*-*-*-";
+					str += "-*-  >0   *-*-*-*-*-*-*-*-*-*-**************************************";
 				}
 				log.debug(str);
 				log.debug("Result= " + sortHashMapByValues(PREDICTMAPRESULT)); // sortHashMapByValues(
@@ -596,7 +598,7 @@ public final class ConfigLoto {
 				counterSuccess = PREDICTMAPRESULT.size();
 				String str = "Successfull Predict Count= " + counterSuccess;
 				if (counterSuccess > 0) {
-					str += "-*-*-*-*-*-*-*-*-*-*-*-";
+					str += "-*-*-*-*-*-*-*-*-*-*-*-*************************************************";
 				}
 
 				log.debug(str);
@@ -605,8 +607,8 @@ public final class ConfigLoto {
 				log.debug("*************************************");
 			}
 
-			INSERTSAYISALPREDICT = INSERTSAYISALPREDICT + counterSuccess + ",\""
-					+ PREDICTMAPRESULT + "\",\"" + PREDICTMAP + "\")";
+			INSERTSAYISALPREDICT = INSERTSAYISALPREDICT + counterSuccess
+					+ ",\"" + PREDICTMAPRESULT + "\",\"" + PREDICTMAP + "\")";
 			try {
 				MySQLUtil.ExecuteSQLCommand(INSERTSAYISALPREDICT);
 			} catch (Throwable t) {

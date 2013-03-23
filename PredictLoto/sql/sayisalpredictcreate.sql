@@ -2,15 +2,15 @@ DROP TABLE IF EXISTS SAYISALPREDICT;
 CREATE TABLE `SAYISALPREDICT` 
 (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `algo` varchar(10) NOT NULL,
+  `algo` varchar(30) NOT NULL,
   `targeterr` double NOT NULL,
   `populationsize` double NOT NULL,
   `populationdensity` double NOT NULL,
   `weekid` int(10) NOT NULL,
-  `realoutput` varchar(150) NOT NULL,
+  `realoutput` varchar(400) NOT NULL,
   `successfulpredictcount` int(10) NOT NULL,
-  `successfulpredict` varchar(150) NOT NULL,
-  `predict` varchar(150) NOT NULL,
+  `successfulpredict` varchar(250) NOT NULL,
+  `predict` varchar(250) NOT NULL,
  PRIMARY KEY (`id`)
 ) ;
 

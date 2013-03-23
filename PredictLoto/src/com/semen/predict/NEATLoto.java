@@ -60,15 +60,15 @@ public class NEATLoto {
 	 * @param error
 	 *            The desired error level.
 	 */
-	public static void trainToError(final EvolutionaryAlgorithm train,
-			final double error) {
+	public static void trainNetwork(final EvolutionaryAlgorithm train,
+			final double desired_Error) {
 
 		int epoch = 1;
 		double trainError = 1.0;
 		double prevtrainError = 1.0;
 		double sameErrorCount = 0;
 
-		String strTargetError = Format.formatDouble(error, 4);
+		String strTargetError = Format.formatDouble(desired_Error, 4);
 		log.debug("ISHYPERNEAT= " + ConfigLoto.ISHYPERNEAT);
 		log.debug("LO_WEEKNO= " + ConfigLoto.LO_WEEKNO);
 		log.debug("HI_WEEKNO= " + ConfigLoto.HI_WEEKNO);
@@ -85,8 +85,6 @@ public class NEATLoto {
 					+ Format.formatDouble(trainError, 4) + " Target Err= "
 					+ strTargetError + ", Species= "
 					+ train.getPopulation().getSpecies().size());
-			
-
 
 			// Save error
 			if ((epoch % ConfigLoto.EPOCHSAVEINTERVAL) == 0) {
@@ -110,20 +108,30 @@ public class NEATLoto {
 			epoch++;
 			if (prevtrainError == trainError) {
 				sameErrorCount++;
-				//log.debug("SameErrorCount=" + sameErrorCount + "preverr "
-					//	+ prevtrainError + "trainerr " + trainError);
+				// log.debug("SameErrorCount=" + sameErrorCount + "preverr "
+				// + prevtrainError + "trainerr " + trainError);
 			} else {
 				// log.debug("SameErrorCount=0"+"preverr "+
 				// prevtrainError+"trainerr "+ trainError);
 				sameErrorCount = 0;
 			}
-		} while ((train.getError() > error)
+		} while ((train.getError() > desired_Error)
 				&& (sameErrorCount < ConfigLoto.NEATEPOCHEXITCOUNTER));
 		train.finishTraining();
 
-		ConfigLoto.INSERTSAYISALPREDICTPART1="\"NEAT\","+ error+","+
-				ConfigLoto.NEATPOPULATIONSIZE+","+ConfigLoto.NEATPOPULATIONDENSITY+",";
-
+		if (ConfigLoto.ISHYPERNEAT == ConfigLoto.NEATMODE) {
+			ConfigLoto.INSERTSAYISALPREDICTPART1 = "\"NEAT\"," + desired_Error + ","
+					+ ConfigLoto.NEATPOPULATIONSIZE + ","
+					+ ConfigLoto.NEATPOPULATIONDENSITY + ",";
+		} else if (ConfigLoto.ISHYPERNEAT == ConfigLoto.HYPERNEATMODE) {
+			ConfigLoto.INSERTSAYISALPREDICTPART1 = "\"HYPERNEAT\"," + desired_Error
+					+ "," + ConfigLoto.NEATPOPULATIONSIZE + ","
+					+ ConfigLoto.NEATPOPULATIONDENSITY + ",";
+		} else {
+			ConfigLoto.INSERTSAYISALPREDICTPART1 = "\"NEAT\"," + desired_Error + ","
+					+ ConfigLoto.NEATPOPULATIONSIZE + ","
+					+ ConfigLoto.NEATPOPULATIONDENSITY + ",";
+		}
 	}
 
 	/*
@@ -153,8 +161,8 @@ public class NEATLoto {
 		if (sourceTrainData == ConfigLoto.DATASOURCESQL)
 			trainingSet = new SQLNeuralDataSet(ConfigLoto.TRAINSQL,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
-					MySQLUtil.SQL_DRIVER, MySQLUtil.SQL_URL,
-					MySQLUtil.SQL_UID, MySQLUtil.SQL_PWD);
+					MySQLUtil.SQL_DRIVER, MySQLUtil.SQL_URL, MySQLUtil.SQL_UID,
+					MySQLUtil.SQL_PWD);
 		else if (sourceTrainData == ConfigLoto.DATASOURCECSV)
 			trainingSet = TrainingSetUtil.loadCSVTOMemory(
 					CSVFormat.DECIMAL_COMMA, ConfigLoto.trainCSVFile, true,
@@ -179,10 +187,10 @@ public class NEATLoto {
 
 		EvolutionaryAlgorithm train = null;
 
-		if (ConfigLoto.ISHYPERNEAT == 0) {
+		if (ConfigLoto.ISHYPERNEAT == ConfigLoto.NEATMODE) {
 			train = NEATUtil.constructNEATTrainer(pop, score);
 
-		} else {
+		} else if (ConfigLoto.ISHYPERNEAT == ConfigLoto.HYPERNEATMODE) {
 			Substrate substrate = SubstrateFactory.factorSandwichSubstrate(
 					ConfigLoto.BASE_RESOLUTION, ConfigLoto.BASE_RESOLUTION);
 			boxScore = new BoxesScore(ConfigLoto.BASE_RESOLUTION);
@@ -198,9 +206,8 @@ public class NEATLoto {
 			train.setSpeciation(speciation);
 		}
 
-		NEATLoto.trainToError(train, ConfigLoto.NEATDESIREDERROR);
+		NEATLoto.trainNetwork(train, ConfigLoto.NEATDESIREDERROR);
 		network = (NEATNetwork) train.getCODEC().decode(train.getBestGenome());
-		
 
 		try {
 			// Save pop
@@ -224,8 +231,8 @@ public class NEATLoto {
 		if (sourceTrainData == ConfigLoto.DATASOURCESQL)
 			trainingSet = new SQLNeuralDataSet(ConfigLoto.TRAINSQL,
 					ConfigLoto.INPUT_SIZE, ConfigLoto.IDEAL_SIZE,
-					MySQLUtil.SQL_DRIVER, MySQLUtil.SQL_URL,
-					MySQLUtil.SQL_UID, MySQLUtil.SQL_PWD);
+					MySQLUtil.SQL_DRIVER, MySQLUtil.SQL_URL, MySQLUtil.SQL_UID,
+					MySQLUtil.SQL_PWD);
 
 		else if (sourceTrainData == ConfigLoto.DATASOURCECSV)
 			trainingSet = TrainingSetUtil.loadCSVTOMemory(
@@ -239,7 +246,7 @@ public class NEATLoto {
 		CalculateScore score = new TrainingSetScore(trainingSet);
 		BoxesScore boxScore = null;
 
-		if (ConfigLoto.ISHYPERNEAT == 0) {
+		if (ConfigLoto.ISHYPERNEAT == ConfigLoto.NEATMODE) {
 
 			pop = new NEATPopulation(ConfigLoto.INPUT_SIZE,
 					ConfigLoto.IDEAL_SIZE, ConfigLoto.NEATPOPULATIONSIZE);
@@ -252,7 +259,9 @@ public class NEATLoto {
 
 			// train the neural network
 			train = NEATUtil.constructNEATTrainer(pop, score);
-		} else {
+		} else if (ConfigLoto.ISHYPERNEAT == ConfigLoto.HYPERNEATMODE)
+
+		{
 			Substrate substrate = SubstrateFactory
 					.factorSandwichSubstrate(7, 7);
 			boxScore = new BoxesScore(7);
@@ -265,7 +274,7 @@ public class NEATLoto {
 			train.setSpeciation(speciation);
 		}
 
-		NEATLoto.trainToError(train, ConfigLoto.NEATDESIREDERROR);
+		NEATLoto.trainNetwork(train, ConfigLoto.NEATDESIREDERROR);
 		NEATNetwork network = (NEATNetwork) train.getCODEC().decode(
 				train.getBestGenome());
 		try {

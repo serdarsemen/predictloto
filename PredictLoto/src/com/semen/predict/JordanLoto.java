@@ -112,7 +112,8 @@ public class JordanLoto {
 
 		double desired_Error = ConfigLoto.JORDANDESIREDERROR;
 		String str_TargetError = Format.formatDouble(desired_Error, 4);
-		while ((!stop.shouldStop()) && (trainError > desired_Error)
+		while (  //(!stop.shouldStop()) &&
+				(trainError > desired_Error)
 				&& (sameErrorCount < ConfigLoto.NEATEPOCHEXITCOUNTER)) {
 			if (prevtrainError == trainError) {
 				sameErrorCount++;
@@ -140,6 +141,10 @@ public class JordanLoto {
 			epoch++;
 		}
 		trainMain.finishTraining();
+		
+		ConfigLoto.INSERTSAYISALPREDICTPART1 = "\"Jordan\"," + desired_Error + ",0,0,";
+		
+		
 		// not yet supported
 		// trainMain.dump(new File(ConfigLoto.JORDAN_DUMPFILENAME));
 
