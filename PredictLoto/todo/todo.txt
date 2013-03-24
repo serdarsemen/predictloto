@@ -288,15 +288,18 @@ NEAT döngüde n döngüde ilerlemezse exit while
 
 
 predictleri paramtre ile dbye yaz; parametre optimize et döngü ile search
+week algoname paramters in out predict success_count success_predict
+
+
+sonra bak
+data için 
+search.yahooapis.com YahooSearch.java -->  google 
 
 ---------------**************************
 ----------------------
 
+output sayisini 12 ye çıkar excel ok. code + db
 
-week algoname paramters in out predict success_count success_predict
-
-
-search.yahooapis.com YahooSearch.java -->  google 
 
 M2_repo için c:\users da ayar
 learn ahni
