@@ -254,11 +254,55 @@ public final class ConfigLoto {
 			+ " FROM lotoresults " + " WHERE weekid>" + HI_WEEKNO
 			+ " ORDER BY weekid";
 
+
+	public final static String SELECTSAY49_12SQL = "SELECT  `input1`,"
+			+ " `input2`," + " `input3`," + " `input4`," + " `input5`,"
+			+ " `input6`," + " `input7`," + " `input8`," + " `input9`,"
+			+ " `input10`," + " `input11`," + " `input12`," + " `input13`,"
+			+ " `input14`," + " `input15`," + " `input16`," + " `input17`,"
+			+ " `input18`," + " `input19`," + " `input20`," + " `input21`,"
+			+ " `input22`," + " `input23`," + " `input24`," + " `input25`,"
+			+ " `input26`," + " `input27`," + " `input28`," + " `input29`,"
+			+ " `input30`," + " `input31`," + " `input32`," + " `input33`,"
+			+ " `input34`," + " `input35`," + " `input36`," + " `input37`,"
+			+ " `input38`," + " `input39`," + " `input40`," + " `input41`,"
+			+ " `input42`," + " `input43`," + " `input44`," + " `input45`,"
+			+ " `input46`," + " `input47`," + " `input48`," + " `input49`,"
+			+ " `ideal1`," + " `ideal2`," + " `ideal3`," + " `ideal4`,"
+			+ " `ideal5`," + " `ideal6`," + " `ideal7`," + " `ideal8`,"
+			+ " `ideal9`," + " `ideal10`," + " `ideal11`," + " `ideal12`,"
+			+ " `ideal13`," + " `ideal14`," + " `ideal15`," + " `ideal16`,"
+			+ " `ideal17`," + " `ideal18`," + " `ideal19`," + " `ideal20`,"
+			+ " `ideal21`," + " `ideal22`," + " `ideal23`," + " `ideal24`,"
+			+ " `ideal25`," + " `ideal26`," + " `ideal27`," + " `ideal28`,"
+			+ " `ideal29`," + " `ideal30`," + " `ideal31`," + " `ideal32`,"
+			+ " `ideal33`," + " `ideal34`," + " `ideal35`," + " `ideal36`,"
+			+ " `ideal37`," + " `ideal38`," + " `ideal39`," + " `ideal40`,"
+			+ " `ideal41`," + " `ideal42`," + " `ideal43`," + " `ideal44`,"
+			+ " `ideal45`," + " `ideal46`," + " `ideal47`," + " `ideal48`,"
+			+ " `ideal49` ";
+
+	public final static String TRAINSAY49_12SQL = SELECTSAY49_12SQL
+			+ " FROM lotoresults_12 " + " WHERE weekid<=" + HI_WEEKNO
+			+ " AND weekid>=" + LO_WEEKNO + " ORDER BY weekid";
+
+	public final static String TESTSAY49_12SQL = SELECTSAY49_12SQL
+			+ " FROM lotoresults_12 " + " WHERE weekid>" + HI_WEEKNO
+			+ " ORDER BY weekid";
+	
 	public final static String SELECTSAY6SQL = "SELECT  `input1`,"
 			+ " `input2`," + " `input3`," + " `input4`," + " `input5`,"
 			+ " `input6`," + " `ideal1`," + " `ideal2`," + " `ideal3`,"
 			+ " `ideal4`," + " `ideal5`," + " `ideal6` ";
 
+	public final static String SELECTSAY6_12SQL = "SELECT  `input1`,"
+			+ " `input2`," + " `input3`," + " `input4`," + " `input5`,"
+			+ " `input6`," + " `ideal1`," + " `ideal2`," + " `ideal3`,"
+			+ " `ideal4`," + " `ideal5`," + " `ideal6`, "
+			+ " `ideal7`," + " `ideal8`," + " `ideal9`,"
+			+ " `ideal10`," + " `ideal11`," + " `ideal12` ";
+	
+	
 	public final static String TRAINSAY6SQL = SELECTSAY6SQL
 			+ " FROM lotoresults6 " + " WHERE weekid<=" + HI_WEEKNO
 			+ " AND weekid>=" + LO_WEEKNO + " ORDER BY weekid";

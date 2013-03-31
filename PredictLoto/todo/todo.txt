@@ -294,12 +294,15 @@ week algoname paramters in out predict success_count success_predict
 sonra bak
 data için 
 search.yahooapis.com YahooSearch.java -->  google 
-
+output sayisini 12 ye çıkar excel ok. db ok
 ---------------**************************
 ----------------------
 
-output sayisini 12 ye çıkar excel ok. code + db
-
+output sayisini 12 ye çıkar
+code 12 output için?
+IDEAL_SIZE 12
+TRAINSQL TESTSQL if içine
+ TRAINCSV deferred
 
 M2_repo için c:\users da ayar
 learn ahni
