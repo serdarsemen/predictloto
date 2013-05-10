@@ -295,14 +295,22 @@ sonra bak
 data için 
 search.yahooapis.com YahooSearch.java -->  google 
 output sayisini 12 ye çıkar excel ok. db ok
----------------**************************
-----------------------
+
+
 
 output sayisini 12 ye çıkar
 code 12 output için?
 IDEAL_SIZE 12
 TRAINSQL TESTSQL if içine
  TRAINCSV deferred
+
+
+log.debug("	insert into neat values ("+weekNo+","+predictNum+");");
+eklendi
+ayrı log dosyası neatpredictions.txt kullanıldı içinde Ercan için insert into var
+---------------**************************
+----------------------
+propertiden okur hale getirmek?
 
 M2_repo için c:\users da ayar
 learn ahni

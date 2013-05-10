@@ -37,6 +37,10 @@ public final class ConfigLoto {
 
 	/* Get actual class name to be printed on */
 	public static final Logger log = Logger.getLogger(ConfigLoto.class);// .getName());
+
+	public static final Logger logNEATPredictions = Logger
+			.getLogger("NEATPredictions." + ConfigLoto.class.getName());
+	
 	private static final long serialVersionUID = -447374783L;
 	public Properties props;
 
@@ -52,6 +56,7 @@ public final class ConfigLoto {
 	 * (maxsetvalue 49 - minsetvalue 1)
 	 */
 	public final static int SIZE6 = 6;
+	public final static int SIZE12 = 12;
 	public final static int SIZE5 = 5;
 	public final static int SIZE54 = 54;
 	public final static int SIZE10 = 10;
@@ -74,21 +79,40 @@ public final class ConfigLoto {
 	public static final int DIGITAL = 0; // 010100000...
 	public static final int RAWVALUE = 1; // 3 9 22 35 42 ...
 	// ********************
-	public static int GAMETYPE = SAYISALLOTO; // default
 
 	// 0 for all inputs 01 feeded or
 	// 1 1 DIV OUT possible values feeded
 	public static int INPUTVALUETYPE = RAWVALUE; // DIGITAL or RAWVALUE
 
+	public static int GAMETYPE = SAYISALLOTO; // default
+
+	public static final int SET6 = 0; // inputta ve outputta  original 6 rakam var...
+	public static final int SET12 = 1; // inputta ve outputta  original 12 rakam var......
+	// ********************
+
+	// 0 for inputs and outputs 6 lı set
+	// 1 or inputs and outputs 12 lı set
+	public static int OUTPUTVALUETYPE = SET12; // SET6 or SET12
+
 	// ****************************
 	public static int INPUTSIZE;
+	
 	public static int INPUTSIZE2; // for sanstopu second set of 1 / 14
 
+	public static int OUTPUTSIZE;
+	
+	
 	public final static int INPUT_SIZE_SAY49 = 49;
 	public final static int IDEAL_SIZE_SAY49 = 49;
+	
+	public final static int INPUT_SIZE_SAY49_12 = 49;
+	public final static int IDEAL_SIZE_SAY49_12 = 49;
 
 	public final static int INPUT_SIZE_SAY6 = 6;
 	public final static int IDEAL_SIZE_SAY6 = 6;
+	
+	public final static int INPUT_SIZE_SAY6_12 = 6;
+	public final static int IDEAL_SIZE_SAY6_12 = 12;
 
 	public final static int INPUT_SIZE_SUPER54 = 54;
 	public final static int IDEAL_SIZE_SUPER54 = 54;
@@ -115,9 +139,9 @@ public final class ConfigLoto {
 	public static int DATASOURCECSV = 1;
 
 	public static int ISHYPERNEAT = 0;
+	
 	public static int NEATMODE = 0;
 	public static int HYPERNEATMODE = 1;
-	
 
 	public final static int INPUT_SIZE_SANSTOPUSET1 = 34;
 	public final static int IDEAL_SIZE_SANSTOPUSET1 = 34;
@@ -131,8 +155,9 @@ public final class ConfigLoto {
 	public final static int INPUT_SIZE_SANSTOPUSET2_1 = 1;
 	public final static int IDEAL_SIZE_SANSTOPUSET2_1 = 1;
 
-	public final static int LO_WEEKNO = 1; // start week for train0 or 500 ?
-	public final static int HI_WEEKNO = 849; // end week for train TRAIN_SIZE
+	public final static int LO_WEEKNO = 150; // 1 start week for train0 or 500 ?
+	public final static int HI_WEEKNO = 857; // end week for train TRAIN_SIZE
+												// 650
 
 	// Neat
 	// if population size is down much faster but target err rate is so slow
@@ -146,7 +171,7 @@ public final class ConfigLoto {
 	public static double NEATDESIREDERROR; // 15 te 12 predict pop= 7000
 											// 0.109
 	// exit training if error does not decrease
-	public static int NEATEPOCHEXITCOUNTER = 50;
+	public static int NEATEPOCHEXITCOUNTER = 100;
 	// public static int ERRPRECISION = 10000;
 	// 0.14 te 9 Predict
 	// 0.01 En çabuk 0.24 0.32
@@ -254,7 +279,6 @@ public final class ConfigLoto {
 			+ " FROM lotoresults " + " WHERE weekid>" + HI_WEEKNO
 			+ " ORDER BY weekid";
 
-
 	public final static String SELECTSAY49_12SQL = "SELECT  `input1`,"
 			+ " `input2`," + " `input3`," + " `input4`," + " `input5`,"
 			+ " `input6`," + " `input7`," + " `input8`," + " `input9`,"
@@ -289,26 +313,33 @@ public final class ConfigLoto {
 	public final static String TESTSAY49_12SQL = SELECTSAY49_12SQL
 			+ " FROM lotoresults_12 " + " WHERE weekid>" + HI_WEEKNO
 			+ " ORDER BY weekid";
-	
+
 	public final static String SELECTSAY6SQL = "SELECT  `input1`,"
 			+ " `input2`," + " `input3`," + " `input4`," + " `input5`,"
 			+ " `input6`," + " `ideal1`," + " `ideal2`," + " `ideal3`,"
 			+ " `ideal4`," + " `ideal5`," + " `ideal6` ";
 
-	public final static String SELECTSAY6_12SQL = "SELECT  `input1`,"
-			+ " `input2`," + " `input3`," + " `input4`," + " `input5`,"
-			+ " `input6`," + " `ideal1`," + " `ideal2`," + " `ideal3`,"
-			+ " `ideal4`," + " `ideal5`," + " `ideal6`, "
-			+ " `ideal7`," + " `ideal8`," + " `ideal9`,"
-			+ " `ideal10`," + " `ideal11`," + " `ideal12` ";
-	
-	
 	public final static String TRAINSAY6SQL = SELECTSAY6SQL
 			+ " FROM lotoresults6 " + " WHERE weekid<=" + HI_WEEKNO
 			+ " AND weekid>=" + LO_WEEKNO + " ORDER BY weekid";
 
 	public final static String TESTSAY6SQL = SELECTSAY6SQL
 			+ " FROM lotoresults6 " + " WHERE weekid>" + HI_WEEKNO
+			+ " ORDER BY weekid";
+
+	public final static String SELECTSAY6_12SQL = "SELECT  `input1`,"
+			+ " `input2`," + " `input3`," + " `input4`," + " `input5`,"
+			+ " `input6`," + " `ideal1`," + " `ideal2`," + " `ideal3`,"
+			+ " `ideal4`," + " `ideal5`," + " `ideal6`, " + " `ideal7`,"
+			+ " `ideal8`," + " `ideal9`," + " `ideal10`," + " `ideal11`,"
+			+ " `ideal12` ";
+
+	public final static String TRAINSAY6_12SQL = SELECTSAY6_12SQL
+			+ " FROM lotoresults6_12 " + " WHERE weekid<=" + HI_WEEKNO
+			+ " AND weekid>=" + LO_WEEKNO + " ORDER BY weekid";
+
+	public final static String TESTSAY6_12SQL = SELECTSAY6_12SQL
+			+ " FROM lotoresults6_12 " + " WHERE weekid>" + HI_WEEKNO
 			+ " ORDER BY weekid";
 
 	public static String INSERTSAYISALPREDICT = "";
@@ -324,11 +355,6 @@ public final class ConfigLoto {
 	// successfulpredictcount
 	// SuccessfullPredict
 	// Predict
-
-	public static String TRAINSQL;
-	public static String TESTSQL;
-	public static int INPUT_SIZE;
-	public static int IDEAL_SIZE;
 
 	public static final double SAYISALOTOMAX = 49.0;
 	public static final double SUPERLOTOMAX = 54.0;
@@ -355,60 +381,56 @@ public final class ConfigLoto {
 
 	public static String str_doubleFormat = "#.##";
 
-	//
 
-	public static final String TRIAL_COUNT = "fitness.function.tmaze.trial.count";
-	public static final String REWARD_SWITCH_COUNT = "fitness.function.tmaze.reward.switch.count";
-	public static final String REWARD_SWITCH_VARIATION = "fitness.function.tmaze.reward.switch.variation";
-	public static final String REWARD_LOW = "fitness.function.tmaze.reward.low";
-	public static final String REWARD_HIGH = "fitness.function.tmaze.reward.high";
-	public static final String REWARD_LOW_COLOUR = "fitness.function.tmaze.reward.low.colour";
-	public static final String REWARD_HIGH_COLOUR = "fitness.function.tmaze.reward.high.colour";
-	public static final String REWARD_CRASH = "fitness.function.tmaze.reward.crash";
-	public static final String PASSAGE_LENGTH = "fitness.function.tmaze.passage.length";
-	public static final String DOUBLE_TMAZE = "fitness.function.tmaze.double";
+	public static String TRAINSQL;
+	public static String TESTSQL;
 
-	/*
-	 * private boolean isDouble; private int trialCount, rewardSwitchCount,
-	 * passageLength; private double rewardSwitchVariation; private double
-	 * rewardLow, rewardHigh, rewardCrash, rewardLowColour, rewardHighColour;
-	 * private int[] rewardSwitchTrials, rewardIndexForSwitch; private byte[][]
-	 * map; // The map of the maze, consists of values from // TYPE_*, format is
-	 * [x][y]. private int startX, startY; // Initial location of agent in map.
-	 * private int[] rewardLocationsX, rewardLocationsY;
-	 */
+	public static int INPUT_SIZE;
+	public static int IDEAL_SIZE;
+
 	public void init() {
 
-		/*
-		 * (Properties props) { isDouble = *
-		 * props.getBooleanProperty(DOUBLE_TMAZE, false); trialCount =
-		 * props.getIntProperty(TRIAL_COUNT, 200); rewardSwitchCount =
-		 * props.getIntProperty(REWARD_SWITCH_COUNT, 3); rewardSwitchVariation =
-		 * props.getDoubleProperty(REWARD_SWITCH_VARIATION, 0.2); passageLength
-		 * = props.getIntProperty(PASSAGE_LENGTH, 3); rewardLow =
-		 * props.getDoubleProperty(REWARD_LOW, 0.1); rewardHigh =
-		 * props.getDoubleProperty(REWARD_HIGH, 1); rewardCrash =
-		 * props.getDoubleProperty(REWARD_CRASH, 0); rewardLowColour =
-		 * props.getDoubleProperty(REWARD_LOW_COLOUR, 0.2); rewardHighColour =
-		 * props.getDoubleProperty(REWARD_HIGH_COLOUR, 1); }
-		 */
+		
 		log.debug("ConfigLoto init called");
 		// 0 for all inputs 01 feeded or
 		// 1 1 DIV OUT possible values feeded
 
 		switch (GAMETYPE) {
 		case SAYISALLOTO: {
+			
+			
 			if (INPUTVALUETYPE == DIGITAL) {
 				INPUTSIZE = SAYISALMAXSETVALUE49;
 			} else if (INPUTVALUETYPE == RAWVALUE) {
 				INPUTSIZE = SIZE6;
 			}
+			
+			
+		   if (OUTPUTVALUETYPE == SET6) {
+				OUTPUTSIZE = SIZE6;
+			} else if (OUTPUTVALUETYPE == SET12) {
+				OUTPUTSIZE = SIZE12;
+			}
+			
+			
+			
+			
 			// decide to use binary 49 or 6 number dived by 49 syntax
 			if (INPUTSIZE == SAYISALMAXSETVALUE49) {
-				TRAINSQL = TRAINSAY49SQL; // SAY49 or SAY6
-				TESTSQL = TESTSAY49SQL; // SAY49 or SAY6
-				INPUT_SIZE = INPUT_SIZE_SAY49; // SAY49 or SAY6
-				IDEAL_SIZE = IDEAL_SIZE_SAY49; // SAY49 or SAY6
+				
+				if (OUTPUTSIZE == SIZE6) {
+					TRAINSQL = TRAINSAY49SQL; // SAY49 or SAY6
+					TESTSQL = TESTSAY49SQL; // SAY49 or SAY6
+
+					INPUT_SIZE = INPUT_SIZE_SAY49; // SAY49 or SAY6
+					IDEAL_SIZE = IDEAL_SIZE_SAY49; // SAY49 or SAY6
+				} else if (OUTPUTSIZE == SIZE12) {
+					TRAINSQL = TRAINSAY49_12SQL; // SAY49 or SAY6
+					TESTSQL = TESTSAY49_12SQL; // SAY49 or SAY6
+
+					INPUT_SIZE = INPUT_SIZE_SAY49_12; // SAY49 or SAY6
+					IDEAL_SIZE = IDEAL_SIZE_SAY49_12; // SAY49 or SAY6
+				}
 
 				NEATPOPULATIONSIZE = 1000; // 1000:8000 ideal if decrease
 				// if increase time increase
@@ -430,21 +452,31 @@ public final class ConfigLoto {
 				PRECISION = 2;
 
 			} else if (INPUTSIZE == SIZE6) {
-				TRAINSQL = TRAINSAY6SQL; // SAY49 or SAY6
-				TESTSQL = TESTSAY6SQL; // SAY49 or SAY6
+			
+				if (OUTPUTSIZE == SIZE6) {
+					TRAINSQL = TRAINSAY6SQL; // SAY49 or SAY6
+					TESTSQL = TESTSAY6SQL; // SAY49 or SAY6
 
-				INPUT_SIZE = INPUT_SIZE_SAY6; // SAY49 or SAY6
-				IDEAL_SIZE = IDEAL_SIZE_SAY6; // SAY49 or SAY6
+					INPUT_SIZE = INPUT_SIZE_SAY6; // SAY49 or SAY6
+					IDEAL_SIZE = IDEAL_SIZE_SAY6; // SAY49 or SAY6
+				} else if (OUTPUTSIZE == SIZE12) {
+					TRAINSQL = TRAINSAY6_12SQL; // SAY49 or SAY6
+					TESTSQL = TESTSAY6_12SQL; // SAY49 or SAY6
+
+					INPUT_SIZE = INPUT_SIZE_SAY6_12; // SAY49 or SAY6
+					IDEAL_SIZE = IDEAL_SIZE_SAY6_12; // SAY49 or SAY6
+
+				}
 
 				NEATPOPULATIONSIZE = 1000; // 1000:8000 ideal if decrease
 				// if increase time increase
 				// 1200
 				// epoch and error increase
-				NEATPOPULATIONDENSITY = 0.2; // 1.0 0.45 0.35 0.3
+				NEATPOPULATIONDENSITY = 0.3; // 1.0 0.45 0.35 0.3
 												// ideal?
 				// if increase time epoch decrease
-				NEATDESIREDERROR = 0.022;// 0.024; possible 0.0218 0.0215 733
-											// dak 0.0215 951.66 (min)
+				NEATDESIREDERROR = 0.023;// 0.024; possible 0.0218 0.0215 733
+											// min 0.0215 951.66 (min)
 
 				// HyperNEAT
 				BASE_RESOLUTION = 12; // 6 X 2 ??
@@ -535,7 +567,8 @@ public final class ConfigLoto {
 					+ ConfigLoto.formatData(pair.getIdeal(), PRECISION));
 
 			log.debug("Success Report ---------");
-			ConfigLoto.calculateSuccess(calculatedOutput, pair.getIdeal());
+			ConfigLoto.calculateSuccess(weekNo - 1, calculatedOutput,
+					pair.getIdeal());
 		}
 	}
 
@@ -548,7 +581,8 @@ public final class ConfigLoto {
 	 *            ideal
 	 * @return The success count
 	 */
-	public static void calculateSuccess(final MLData actual, final MLData ideal) {
+	public static void calculateSuccess(final int weekNo, final MLData actual,
+			final MLData ideal) {
 
 		int counterSuccess = 0;
 		int counterLowSuccess = 0;
@@ -579,7 +613,11 @@ public final class ConfigLoto {
 
 					if (actual.getData(i) > MINVALUE) {
 						counterTotalPredict++;
-						PREDICTMAP.put(i + 1, round2(actual.getData(i)));
+						int predictNum = i + 1;
+						PREDICTMAP.put(predictNum, round2(actual.getData(i)));
+						logNEATPredictions.debug("	insert into NEAT values ("
+								+ weekNo + "," + predictNum + ");");
+
 					} else {
 						counterLowTotalPredict++;
 						PREDICTLOWMAP.put(i + 1, round2(actual.getData(i)));
@@ -598,7 +636,7 @@ public final class ConfigLoto {
 				log.debug("Result= " + sortHashMapByValues(PREDICTMAPRESULT)); // sortHashMapByValues(
 				log.debug("Prediction= " + sortHashMapByValues(PREDICTMAP));
 				log.debug("Total Predict Count= " + counterTotalPredict);
-				log.debug("Sorted All Predict/Actual= "
+				log.debug("Sorted All Predict(Actual)= "
 						+ sortHashMapByValues(sortMap));
 
 				log.debug("*****   LOW  ************");
@@ -638,6 +676,9 @@ public final class ConfigLoto {
 							.denormalizeMapminmax(actual.getData(i)));
 					PREDICTMAP.put(predictNum, round2(ConfigLoto
 							.denormalizeMapminmax(actual.getData(i))));
+					logNEATPredictions.debug("	insert into NEAT values ("
+							+ weekNo + "," + predictNum + ");");
+
 				}
 				counterSuccess = PREDICTMAPRESULT.size();
 				String str = "Successfull Predict Count= " + counterSuccess;
@@ -648,6 +689,7 @@ public final class ConfigLoto {
 				log.debug(str);
 				log.debug("Result= " + PREDICTMAPRESULT);
 				log.debug("Prediction= " + PREDICTMAP);
+
 				log.debug("*************************************");
 			}
 

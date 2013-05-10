@@ -30,7 +30,7 @@ import org.encog.util.simple.TrainingSetUtil;
 import com.semen.util.MySQLUtil;
 
 /**
- * NEATLoto: This network solves Loto neural network problem. However, it uses a
+ * NEATLoto: This network solves Loto neural network problem. It uses a
  * NEAT evolving network.
  * 
  * @author serdar semen
