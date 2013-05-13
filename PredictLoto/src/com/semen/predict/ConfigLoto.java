@@ -175,7 +175,7 @@ public final class ConfigLoto {
 	public static double NEATDESIREDERROR; // 15 te 12 predict pop= 7000
 											// 0.109
 	// exit training if error does not decrease
-	public static int NEATEPOCHEXITCOUNTER = 100;
+	public static int NEATEPOCHEXITCOUNTER = 300;
 	// public static int ERRPRECISION = 10000;
 	// 0.14 te 9 Predict
 	// 0.01 En çabuk 0.24 0.32
@@ -462,10 +462,10 @@ public final class ConfigLoto {
 				// if increase time increase
 				// 1200
 				// epoch and error increase
-				NEATPOPULATIONDENSITY = 0.22; // 1.0 0.45 0.35 0.3
+				NEATPOPULATIONDENSITY = 0.225; // 1.0 0.45 0.35 0.3
 												// ideal?
 				// if increase time epoch decrease
-				NEATDESIREDERROR = 0.02;// 0.024; possible 0.0218 0.0215 733
+				NEATDESIREDERROR = 0.0225;// 0.024; possible 0.0218 0.0215 733
 											// min 0.0215 951.66 (min)
 
 				// HyperNEAT
@@ -555,7 +555,7 @@ public final class ConfigLoto {
 			// for set12 get the real output from next pair
 			MLData nextWeekIdeal = null;
 			if (i < (training.size()-1)){
-				 nextWeekIdeal = training.get(i+1).getIdeal();
+				 nextWeekIdeal = training.get(i+1).getInput();
 			}
 			else {
 				 nextWeekIdeal = pair.getIdeal();
