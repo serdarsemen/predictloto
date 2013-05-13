@@ -310,7 +310,7 @@ eklendi
 ayrı log dosyası neatpredictions.txt kullanıldı içinde Ercan için insert into var
 ---------------**************************
 ----------------------
-propertiden okur hale getirmek?
+
 
 M2_repo için c:\users da ayar
 learn ahni
@@ -321,7 +321,7 @@ pnn araştır (probabilistic neural net)
 elman Jordan da sabit değer değil max lar predict edilsin.0.4 sabit olmasın
 
 read from text  properties
-
+propertiden okur hale getirmek?
 
 
 
