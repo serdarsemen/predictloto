@@ -160,7 +160,7 @@ public final class ConfigLoto {
 	public final static int IDEAL_SIZE_SANSTOPUSET2_1 = 1;
 
 	public final static int LO_WEEKNO = 150; // 1 start week for train0 or 500 ?
-	public final static int HI_WEEKNO = 854; // end week for train TRAIN_SIZE
+	public final static int HI_WEEKNO = 859; // end week for train TRAIN_SIZE
 												// 650
 
 	// Neat
@@ -465,7 +465,7 @@ public final class ConfigLoto {
 				NEATPOPULATIONDENSITY = 0.35; // 1.0 0.45 0.35 0.3
 												// ideal?
 				// if increase time epoch decrease
-				NEATDESIREDERROR = 0.027;// 0.0225;// 0.024; possible 0.0218 0.0215 733
+				NEATDESIREDERROR = 0.024;// 0.0225;// 0.024; possible 0.0218 0.0215 733
 											// min 0.0215 951.66 (min)
 
 				// HyperNEAT
