@@ -42,15 +42,24 @@ public class NEATLoto {
 	private static final long serialVersionUID = -3656587890L;
 	private static Properties prop = new Properties();
 
-	// For each file, you'll need a separate Logger.
-	// private static Logger log = * Logger.getLogger( JordanLoto.class )
-	// private static Logger connectionsLog = Logger.getLogger( "connections." +
-	// JordanLoto.class.getName() )
-	// private static Logger stacktracesLog = Logger.getLogger( "stacktraces." +
-	// JordanLoto.class.getName() )
-	// private static Logger httpLog = Logger.getLogger( "http." +
-	// JordanLoto.class.getName() )
-
+	
+	public static void createInsertSQLPart1(final double desired_Error){
+		if (ConfigLoto.ISHYPERNEAT == ConfigLoto.NEATMODE) {
+			ConfigLoto.INSERTSAYISALPREDICTPART1 = "\"NEAT\"," + desired_Error + ","
+					+ ConfigLoto.NEATPOPULATIONSIZE + ","
+					+ ConfigLoto.NEATPOPULATIONDENSITY + ",";
+		} else if (ConfigLoto.ISHYPERNEAT == ConfigLoto.HYPERNEATMODE) {
+			ConfigLoto.INSERTSAYISALPREDICTPART1 = "\"HYPERNEAT\"," + desired_Error
+					+ "," + ConfigLoto.NEATPOPULATIONSIZE + ","
+					+ ConfigLoto.NEATPOPULATIONDENSITY + ",";
+		} else {
+			ConfigLoto.INSERTSAYISALPREDICTPART1 = "\"NEAT\"," + desired_Error + ","
+					+ ConfigLoto.NEATPOPULATIONSIZE + ","
+					+ ConfigLoto.NEATPOPULATIONDENSITY + ",";
+		}
+	}
+	
+	
 	/**
 	 * Train to a specific error, using the specified training method, send the
 	 * output to the logger.
@@ -119,19 +128,7 @@ public class NEATLoto {
 				&& (sameErrorCount < ConfigLoto.NEATEPOCHEXITCOUNTER));
 		train.finishTraining();
 
-		if (ConfigLoto.ISHYPERNEAT == ConfigLoto.NEATMODE) {
-			ConfigLoto.INSERTSAYISALPREDICTPART1 = "\"NEAT\"," + desired_Error + ","
-					+ ConfigLoto.NEATPOPULATIONSIZE + ","
-					+ ConfigLoto.NEATPOPULATIONDENSITY + ",";
-		} else if (ConfigLoto.ISHYPERNEAT == ConfigLoto.HYPERNEATMODE) {
-			ConfigLoto.INSERTSAYISALPREDICTPART1 = "\"HYPERNEAT\"," + desired_Error
-					+ "," + ConfigLoto.NEATPOPULATIONSIZE + ","
-					+ ConfigLoto.NEATPOPULATIONDENSITY + ",";
-		} else {
-			ConfigLoto.INSERTSAYISALPREDICTPART1 = "\"NEAT\"," + desired_Error + ","
-					+ ConfigLoto.NEATPOPULATIONSIZE + ","
-					+ ConfigLoto.NEATPOPULATIONDENSITY + ",";
-		}
+		createInsertSQLPart1(desired_Error);
 	}
 
 	/*
@@ -176,6 +173,7 @@ public class NEATLoto {
 			double e = network.calculateError(trainingSet);
 			log.debug("Loaded NEAT network's error for previous train set is: "
 					+ e);
+			createInsertSQLPart1(e);
 		} else {
 			log.debug("NEAT network is NULL");
 		}
@@ -320,6 +318,7 @@ public class NEATLoto {
 			double e = network.calculateError(testSet);
 			log.debug("Loaded network's error is: " + e);
 
+			createInsertSQLPart1(e);
 			// test the neural network
 			log.debug("****     Neural Network Results:");
 			ConfigLoto.evaluate(network, testSet);

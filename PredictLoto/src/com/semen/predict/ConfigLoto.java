@@ -346,9 +346,9 @@ public final class ConfigLoto {
 			+ " FROM lotoresults6_12 " + " WHERE weekid>" + HI_WEEKNO
 			+ " ORDER BY weekid";
 
-	public static String INSERTSAYISALPREDICT = "";
+	public static String INSERTSAYISALPREDICT= null;
 
-	public static String INSERTSAYISALPREDICTPART1 = "";
+	public static String INSERTSAYISALPREDICTPART1 = null;
 
 	// algorithmethod NEAT
 	// train error
@@ -458,14 +458,14 @@ public final class ConfigLoto {
 					IDEAL_SIZE = IDEAL_SIZE_SAY6_12; // SAY49 or SAY6
 				}
 
-				NEATPOPULATIONSIZE = 300; // 1000:8000 ideal if decrease
+				NEATPOPULATIONSIZE = 1300; // 1000:8000 ideal if decrease
 				// if increase time increase
 				// 1200
 				// epoch and error increase
-				NEATPOPULATIONDENSITY = 0.225; // 1.0 0.45 0.35 0.3
+				NEATPOPULATIONDENSITY = 0.35; // 1.0 0.45 0.35 0.3
 												// ideal?
 				// if increase time epoch decrease
-				NEATDESIREDERROR = 0.0225;// 0.024; possible 0.0218 0.0215 733
+				NEATDESIREDERROR = 0.027;// 0.0225;// 0.024; possible 0.0218 0.0215 733
 											// min 0.0215 951.66 (min)
 
 				// HyperNEAT
@@ -563,15 +563,18 @@ public final class ConfigLoto {
 			log.debug("RealOutput= " // ideal
 					+ ConfigLoto.formatData(nextWeekIdeal, PRECISION));
 
+			INSERTSAYISALPREDICT = "INSERT INTO SAYISALPREDICT (`algo`,  `targeterr` ,  `populationsize` ,  `populationdensity` ,"
+					+ "`weekid` ,  `realoutput` ,  `successfulpredictcount`,  `successfulpredict` ,  `predict`)  VALUES (";
+			
+			INSERTSAYISALPREDICT = INSERTSAYISALPREDICT
+					+ INSERTSAYISALPREDICTPART1 + weekNo + ",\""
+					+ ConfigLoto.formatData(nextWeekIdeal, PRECISION) + "\",";
+			
 			log.debug("Success Report ---------");
 			ConfigLoto.calculateSuccess(weekNo - 1, calculatedOutput,
 					nextWeekIdeal);
 			
-			INSERTSAYISALPREDICT = "INSERT INTO SAYISALPREDICT (`algo`,  `targeterr` ,  `populationsize` ,  `populationdensity` ,"
-					+ "`weekid` ,  `realoutput` ,  `successfulpredictcount`,  `successfulpredict` ,  `predict`)  VALUES (";
-			INSERTSAYISALPREDICT = INSERTSAYISALPREDICT
-					+ INSERTSAYISALPREDICTPART1 + weekNo + ",\""
-					+ ConfigLoto.formatData(nextWeekIdeal, PRECISION) + "\",";
+			
 			
 		}
 	}
@@ -690,10 +693,12 @@ public final class ConfigLoto {
 
 				log.debug("*************************************");
 			}
-
+             
 			INSERTSAYISALPREDICT = INSERTSAYISALPREDICT + counterSuccess
 					+ ",\"" + PREDICTMAPRESULT + "\",\"" + PREDICTMAP + "\")";
 			try {
+				
+				log.debug("INSERTSAYISALPREDICT="+INSERTSAYISALPREDICT);
 				MySQLUtil.ExecuteSQLCommand(INSERTSAYISALPREDICT);
 			} catch (Throwable t) {
 				t.printStackTrace();
