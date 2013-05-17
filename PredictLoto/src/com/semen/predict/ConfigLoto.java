@@ -465,7 +465,7 @@ public final class ConfigLoto {
 				NEATPOPULATIONDENSITY = 0.35; // 1.0 0.45 0.35 0.3
 												// ideal?
 				// if increase time epoch decrease
-				NEATDESIREDERROR = 0.024;// 0.0225;// 0.024; possible 0.0218 0.0215 733
+				NEATDESIREDERROR = 0.021;// 0.0225;// 0.024; possible 0.0218 0.0215 733
 											// min 0.0215 951.66 (min)
 
 				// HyperNEAT

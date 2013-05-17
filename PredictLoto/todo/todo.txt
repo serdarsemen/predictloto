@@ -310,16 +310,17 @@ eklendi
 ayrı log dosyası neatpredictions.txt kullanıldı içinde Ercan için insert into var
 ---------------**************************
 ----------------------
-
-
-M2_repo için c:\users da ayar
-learn ahni
 apply hyperneat to rawvalue
+nevt.pdf öğren
+
+
+learn ahni
+
 
 pnn araştır (probabilistic neural net)
 
 elman Jordan da sabit değer değil max lar predict edilsin.0.4 sabit olmasın
-
+M2_repo için c:\users da ayar
 read from text  properties
 propertiden okur hale getirmek?
 
