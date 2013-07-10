@@ -97,7 +97,7 @@ public final class ConfigLoto {
 
 	// 0 for inputs and outputs 6 lı set
 	// 1 or inputs and outputs 12 lı set
-	public static int OUTPUTVALUETYPE = SET12; // SET6 or SET12
+	public static int OUTPUTVALUETYPE = SET6; // SET6 or SET12
 
 	// ****************************
 	public static int INPUTSIZE;
@@ -159,8 +159,8 @@ public final class ConfigLoto {
 	public final static int INPUT_SIZE_SANSTOPUSET2_1 = 1;
 	public final static int IDEAL_SIZE_SANSTOPUSET2_1 = 1;
 
-	public final static int LO_WEEKNO = 150; // 1 start week for train0 or 500 ?
-	public final static int HI_WEEKNO = 856; // end week for train TRAIN_SIZE
+	public final static int LO_WEEKNO = 650; // 1 start week for train0 or 500 ?
+	public final static int HI_WEEKNO = 862; // end week for train TRAIN_SIZE
 												// 650
 
 	// Neat
@@ -175,7 +175,7 @@ public final class ConfigLoto {
 	public static double NEATDESIREDERROR; // 15 te 12 predict pop= 7000
 											// 0.109
 	// exit training if error does not decrease
-	public static int NEATEPOCHEXITCOUNTER = 300;
+	public static int NEATEPOCHEXITCOUNTER = 400;
 	// public static int ERRPRECISION = 10000;
 	// 0.14 te 9 Predict
 	// 0.01 En çabuk 0.24 0.32
@@ -465,7 +465,7 @@ public final class ConfigLoto {
 				NEATPOPULATIONDENSITY = 0.2; // 1.0 0.45 0.35 0.3
 												// ideal?
 				// if increase time epoch decrease
-				NEATDESIREDERROR = 0.022;// 0.0225;// 0.024; possible 0.0218 0.0215 733
+				NEATDESIREDERROR = 0.021;// 0.0225;// 0.024; possible 0.0218 0.0215 733
 											// min 0.0215 951.66 (min)
 
 				// HyperNEAT

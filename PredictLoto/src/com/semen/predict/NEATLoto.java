@@ -115,7 +115,11 @@ public class NEATLoto {
 				}
 			}
 			epoch++;
-			if (prevtrainError == trainError) {
+		//	double roundedprevtrainError = (double) Math.round(prevtrainError * 100) / 100;
+		//	double roundedtrainError = (double) Math.round(trainError * 100) / 100;
+		//	if (roundedprevtrainError == roundedtrainError) {
+				if (prevtrainError == trainError) {
+				//if (prevtrainError == trainError) {
 				sameErrorCount++;
 				// log.debug("SameErrorCount=" + sameErrorCount + "preverr "
 				// + prevtrainError + "trainerr " + trainError);
@@ -124,8 +128,10 @@ public class NEATLoto {
 				// prevtrainError+"trainerr "+ trainError);
 				sameErrorCount = 0;
 			}
-		} while ((train.getError() > desired_Error)
+		} while ((trainError > desired_Error)
 				&& (sameErrorCount < ConfigLoto.NEATEPOCHEXITCOUNTER));
+		log.debug("SameErrorCount=  " + sameErrorCount + "  Preverr= "
+		 + prevtrainError + "  Trainerr= " + trainError);
 		train.finishTraining();
 
 		createInsertSQLPart1(desired_Error);

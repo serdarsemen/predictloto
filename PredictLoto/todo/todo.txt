@@ -308,8 +308,16 @@ TRAINSQL TESTSQL if içine
 log.debug("	insert into neat values ("+weekNo+","+predictNum+");");
 eklendi
 ayrı log dosyası neatpredictions.txt kullanıldı içinde Ercan için insert into var
+
+public class ErrorCalculation {
+
+	/**
+	 * The current error calculation mode.
+	 */
+	private static ErrorCalculationMode mode = ErrorCalculationMode.RMS;//  MSE;
 ---------------**************************
 ----------------------
+hızlı server için data text ten okunsun alternatifi
 apply hyperneat to rawvalue
 nevt.pdf öğren
 
